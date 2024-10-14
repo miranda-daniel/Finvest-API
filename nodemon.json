@@ -1,0 +1,13 @@
+{
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["src/**/*.test.ts", "node_modules"],
+  "exec": "ts-node -r tsconfig-paths/register src/index.ts",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "delay": "1000",
+  "events": {
+    "restart": "echo 'Changes detected. Updating app..'"
+  }
+}

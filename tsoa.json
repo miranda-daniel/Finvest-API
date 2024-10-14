@@ -1,0 +1,28 @@
+{
+  "entryFile": "src/index.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/controllers/*.ts"],
+  "spec": {
+    "outputDirectory": "build",
+    "specVersion": 3
+  },
+  "routes": {
+    "routesDir": "build",
+    "authenticationModule": "src/middlewares/authentication-middleware.ts"
+  },
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@config/*": ["config/*"],
+      "@controllers/*": ["controllers/*"],
+      "@helpers/*": ["helpers/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@routes/*": ["routes/*"],
+      "@serializers/*": ["serializers/*"],
+      "@services/*": ["services/*"],
+      "@test/*": ["test/*"],
+      "@typing/*": ["types/*"],
+      "@root/*": ["../*"]
+    }
+  }
+}
