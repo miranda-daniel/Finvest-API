@@ -11,7 +11,6 @@ export class SessionController extends Controller {
    * @returns {Session} 200 - Token
    */
   @Post('/login')
-  // testing husky
   public async login(@Body() body: LoginUserRequest) {
     const errorsList = loginValidations(body);
 

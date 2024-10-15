@@ -2,9 +2,12 @@ import { ValidateError } from 'tsoa';
 import { Request, Response, NextFunction } from 'express';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
+import logger from '@config/logger';
 
 const buildErrorResponse = (err: ApiError | ValidateError | unknown) => {
   if (err instanceof ApiError) {
+    logger.error(`API Error - Code: ${err.errorCode}, Message: ${err.message}`);
+
     // handle known error
     return {
       httpCode: err.httpCode,
@@ -12,6 +15,10 @@ const buildErrorResponse = (err: ApiError | ValidateError | unknown) => {
       message: err.message,
     };
   } else if (err instanceof ValidateError) {
+    logger.warn(
+      `Validation Error - Message: ${errors.VALIDATION_ERROR.description}`
+    );
+
     // handle TSOA validations
     const { httpCode, errorCode, description } = errors.VALIDATION_ERROR;
     return {
@@ -20,6 +27,10 @@ const buildErrorResponse = (err: ApiError | ValidateError | unknown) => {
       message: description,
     };
   } else {
+    logger.error(
+      `Internal Server Error - Message: ${errors.INTERNAL_SERVER_ERROR.description}`
+    );
+
     // handle Internal Server error
     const { httpCode, errorCode, description } = errors.INTERNAL_SERVER_ERROR;
     return {
@@ -38,6 +49,10 @@ export const errorHandler = (
   _next: NextFunction
 ) => {
   const responseError = buildErrorResponse(err);
+
+  logger.info(
+    `Request failed - URL: ${req.url}, Method: ${req.method}, Status Code: ${responseError.httpCode}`
+  );
 
   res.status(responseError.httpCode).send(responseError);
 };

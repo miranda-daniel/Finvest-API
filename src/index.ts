@@ -2,7 +2,6 @@ import express from 'express';
 import { router } from './routes';
 import { RegisterRoutes } from '@root/build/routes';
 import { ENV_VARIABLES } from './config/config';
-// import dotenv from 'dotenv';
 import {
   postRoutesMiddleware,
   preRoutesMiddleware,
@@ -10,7 +9,6 @@ import {
 import { errors } from '@config/errors';
 
 const app = express();
-// dotenv.config();
 
 preRoutesMiddleware(app);
 
