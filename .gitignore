@@ -4,3 +4,4 @@ coverage/
 build/
 .env
 .env.test
+.worktrees/
