@@ -10,7 +10,7 @@ const seed = async () => {
   try {
     const hashedPassword = await hashPassword(DEFAULT_PASSWORD);
 
-    await db.$transaction(async prisma => {
+    await db.$transaction(async (prisma) => {
       for (let i = 0; i < DEFAULT_USERS_AMOUNT; i++) {
         const email = faker.internet.email();
 

@@ -11,7 +11,7 @@ export class UserService {
       const usersListRaw = await db.user.findMany();
 
       return UserSerializer.serializeUserListIndex(usersListRaw) as UserIndex[];
-    } catch (err) {
+    } catch (_err) {
       throw new ApiError(errors.INTERNAL_SERVER_ERROR);
     }
   };
@@ -34,7 +34,7 @@ export class UserService {
       });
 
       return UserSerializer.serialize(userCreated) as User;
-    } catch (err) {
+    } catch (_err) {
       throw new ApiError(errors.USER_ALREADY_EXISTS);
     }
   };
