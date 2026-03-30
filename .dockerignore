@@ -1,1 +1,10 @@
 node_modules
+build
+coverage
+logs
+.worktrees
+.git
+.gitignore
+.env*
+*.md
+.vscode
