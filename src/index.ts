@@ -8,7 +8,7 @@ import {
   preRoutesMiddleware,
 } from '@middlewares/index-middlewares';
 import { errors } from '@config/errors';
-import { createApolloServer, ApolloContext } from '@graphQL/apolloServer';
+import { createApolloServer, ApolloContext } from '@graphql/apolloServer';
 import { db } from '@root/prisma/db';
 
 const app: Application = express();

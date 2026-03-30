@@ -40,7 +40,7 @@
       "@services/*": ["services/*"],
       "@test/*": ["test/*"],
       "@typing/*": ["types/*"],
-      "@graphQL/*": ["graphQL/*"],
+      "@graphql/*": ["graphql/*"],
       "@root/*": ["../*"]
     },
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
