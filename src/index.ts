@@ -8,6 +8,7 @@ import {
 } from '@middlewares/index-middlewares';
 import { errors } from '@config/errors';
 import { createApolloServer } from '@graphQL/apolloServer';
+import type { ServerRegistration } from 'apollo-server-express';
 
 const app: Application = express();
 
@@ -21,7 +22,12 @@ const server = createApolloServer();
 // Start ApolloServer and apply it to Express
 const startApolloServer = async () => {
   await server.start();
-  server.applyMiddleware({ app, path: '/graphql' });
+  // Cast needed because apollo-server-express bundles its own @types/express v4
+  // which is incompatible at the type level with @types/express v5.
+  server.applyMiddleware({
+    app: app as unknown as ServerRegistration['app'],
+    path: '/graphql',
+  });
 };
 
 // After starting ApolloServer, I register TSOA routes. Otherwise, TSOA would overwrite Apollo routes (/graphQL).
