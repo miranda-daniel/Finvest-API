@@ -14,6 +14,7 @@ const config: Config.InitialOptions = {
     '^@controllers/(.*)$': '<rootDir>/src/controllers/$1',
     '^@helpers/(.*)$': '<rootDir>/src/helpers/$1',
     '^@middlewares/(.*)$': '<rootDir>/src/middlewares/$1',
+    '^@repositories/(.*)$': '<rootDir>/src/repositories/$1',
     '^@routes/(.*)$': '<rootDir>/src/routes/$1',
     '^@serializers/(.*)$': '<rootDir>/src/serializers/$1',
     '^@services/(.*)$': '<rootDir>/src/services/$1',
@@ -26,8 +27,8 @@ const config: Config.InitialOptions = {
   collectCoverage: true,
   collectCoverageFrom: [
     'src/controllers/**/*.ts',
+    'src/repositories/**/*.ts',
     'src/services/**/*.ts',
-    'src/serializers/**/*.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['html', 'text-summary', 'lcov'],
