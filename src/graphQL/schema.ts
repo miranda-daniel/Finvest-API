@@ -1,6 +1,4 @@
-import { gql } from 'apollo-server-express';
-
-export const typeDefs = gql`
+export const typeDefs = `#graphql
   type Query {
     hello: String
   }

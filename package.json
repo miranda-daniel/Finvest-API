@@ -6,7 +6,8 @@
   "scripts": {
     "update-routes-and-swagger": "tsoa spec-and-routes",
     "start": "npm run update-routes-and-swagger && npx dotenv-cli -e .env.development -- nodemon",
-    "start:prod": "npx dotenv-cli -e .env.production -- node build/index.js",
+    "build": "npm run update-routes-and-swagger && tsc --outDir build && tsc-alias",
+    "start:prod": "node build/index.js",
     "lint": "eslint .",
     "seed": "npx ts-node prisma/seed.ts",
     "lint-fix": "eslint . --fix",
@@ -51,6 +52,7 @@
     "prettier": "^3.2.5",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.2"
   },
@@ -59,10 +61,11 @@
     "npm": "10.5"
   },
   "dependencies": {
+    "@apollo/server": "^5.5.0",
+    "@as-integrations/express5": "^1.1.2",
     "@graphql-tools/utils": "8.0.0",
     "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.6.0",
-    "apollo-server-express": "^3.13.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

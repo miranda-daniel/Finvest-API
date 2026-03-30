@@ -1,29 +1,21 @@
-import { ApolloServer } from 'apollo-server-express';
-import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
+import { ApolloServer } from '@apollo/server';
 import { db } from '@root/prisma/db';
 import { typeDefs } from './schema';
 import { Query } from './resolvers';
 import { isProduction } from '@config/environments';
 
+export interface ApolloContext {
+  db: typeof db;
+  userInfo: { userId: number };
+}
+
 export const createApolloServer = () => {
-  return new ApolloServer({
+  return new ApolloServer<ApolloContext>({
     typeDefs,
     resolvers: {
       Query,
     },
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    context: ({ req }) => {
-      return {
-        db,
-        userInfo: { userId: 1 }, // TODO: harcoded
-      };
-    },
-    // Avoid using Apollo playground on production
+    // Apollo Server 4 shows Apollo Sandbox in dev by default; disables it in production
     introspection: !isProduction(),
-
-    plugins: !isProduction()
-      ? [ApolloServerPluginLandingPageGraphQLPlayground()]
-      : [],
   });
 };

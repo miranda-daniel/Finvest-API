@@ -1,5 +1,6 @@
 import { router } from './routes';
 import express, { Application } from 'express';
+import { expressMiddleware } from '@as-integrations/express5';
 import { RegisterRoutes } from '@root/build/routes';
 import { ENV_VARIABLES } from '@config/config';
 import {
@@ -7,8 +8,8 @@ import {
   preRoutesMiddleware,
 } from '@middlewares/index-middlewares';
 import { errors } from '@config/errors';
-import { createApolloServer } from '@graphQL/apolloServer';
-import type { ServerRegistration } from 'apollo-server-express';
+import { createApolloServer, ApolloContext } from '@graphQL/apolloServer';
+import { db } from '@root/prisma/db';
 
 const app: Application = express();
 
@@ -19,23 +20,28 @@ app.use('/', router);
 
 const server = createApolloServer();
 
-// Start ApolloServer and apply it to Express
 const startApolloServer = async () => {
   await server.start();
-  // Cast needed because apollo-server-express bundles its own @types/express v4
-  // which is incompatible at the type level with @types/express v5.
-  server.applyMiddleware({
-    app: app as unknown as ServerRegistration['app'],
-    path: '/graphql',
-  });
+
+  // Apollo Server 4 requires express.json() before expressMiddleware
+  app.use(
+    '/graphql',
+    express.json(),
+    expressMiddleware<ApolloContext>(server, {
+      context: async () => ({
+        db,
+        userInfo: { userId: 1 }, // TODO: harcoded
+      }),
+    })
+  );
 };
 
-// After starting ApolloServer, I register TSOA routes. Otherwise, TSOA would overwrite Apollo routes (/graphQL).
+// After starting ApolloServer, register TSOA routes. Otherwise, TSOA would overwrite Apollo routes (/graphql).
 startApolloServer().then(() => {
   // TSOA generated routes
   RegisterRoutes(app);
 
-  // Middlware for handling errors.
+  // Middleware for handling errors.
   postRoutesMiddleware(app);
 
   // Handler 404 routes.
