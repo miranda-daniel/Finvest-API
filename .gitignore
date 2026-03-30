@@ -3,7 +3,8 @@ logs/
 coverage/
 build/
 .env
-.env.test
+.env.*
 .worktrees/
 src/generated/
+src/routes/
 .vscode/settings.json

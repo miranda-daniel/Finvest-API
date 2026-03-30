@@ -4,7 +4,7 @@ FROM node:20-alpine AS deps
 WORKDIR /app
 
 COPY package*.json .npmrc ./
-RUN npm ci --engine-strict=false
+RUN npm ci --engine-strict=false --ignore-scripts
 
 # Stage 2: Builder
 FROM node:20-alpine AS builder
@@ -13,8 +13,10 @@ WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
 
+COPY package*.json ./
 COPY tsconfig.json tsoa.json ./
 COPY prisma ./prisma/
+COPY prisma.config.ts ./
 COPY src ./src/
 
 # Generate Prisma client (DATABASE_URL required by prisma generate even if unused at build time)
@@ -31,13 +33,13 @@ WORKDIR /app
 # Create non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Install only production dependencies
+# Install only production dependencies (skip postinstall — prisma client copied from builder)
 COPY package*.json .npmrc ./
-RUN npm ci --engine-strict=false --omit=dev
+RUN npm ci --engine-strict=false --omit=dev --ignore-scripts
 
 # Copy compiled output and generated Prisma client
 COPY --from=builder /app/build ./build
-COPY --from=builder /app/src/generated ./src/generated
+COPY --from=builder /app/src/generated ./build/generated
 
 RUN chown -R appuser:appgroup /app
 

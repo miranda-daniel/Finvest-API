@@ -22,29 +22,49 @@ Finvest backend. REST API (TSOA + Express) with a GraphQL layer (Apollo Server) 
 ### Prerequisites
 
 - Node 20.13 / npm 10.5
-- Docker (for the database)
+- Docker
 
-### 1. Start the database
+---
+
+### Option A — Docker (DB + API)
+
+Run the full stack with a single command. Requires `.env.development` in the project root.
 
 ```bash
-docker compose --env-file .env.development up -d
+# First run (or after code changes)
+docker compose --env-file .env.development build --no-cache && docker compose --env-file .env.development up
+
+# Subsequent runs (no code changes)
+docker compose --env-file .env.development up
+```
+
+The DB becomes healthy first; the API waits and starts automatically after.
+
+---
+
+### Option B — Local development
+
+#### 1. Start the database only
+
+```bash
+docker compose --env-file .env.development up -d db
 ```
 
 This starts a PostgreSQL container on port `5432`.
 
-### 2. Run migrations
+#### 2. Run migrations
 
 ```bash
 npx dotenv-cli -e .env.development -- npx prisma migrate dev
 ```
 
-### 3. (Optional) Seed the database
+#### 3. (Optional) Seed the database
 
 ```bash
 npm run seed
 ```
 
-### 4. Install dependencies
+#### 4. Install dependencies
 
 ```bash
 npm install
@@ -52,7 +72,7 @@ npm install
 
 This also runs `prisma generate` automatically (via `postinstall`), which generates the Prisma client in `src/generated/prisma/`.
 
-### 5. Start the server
+#### 5. Start the server
 
 ```bash
 npm start

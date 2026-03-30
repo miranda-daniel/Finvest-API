@@ -1,4 +1,4 @@
-import { db } from '../../prisma/db';
+import { db } from '../config/db';
 
 module.exports = async () => {
   const tables = ['User'];

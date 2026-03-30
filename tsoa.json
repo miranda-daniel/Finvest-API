@@ -7,11 +7,12 @@
     "specVersion": 3
   },
   "routes": {
-    "routesDir": "build",
+    "routesDir": "src/routes",
     "authenticationModule": "src/middlewares/authentication-middleware.ts"
   },
   "compilerOptions": {
     "baseUrl": "./src",
+    "outDir": "../build",
     "paths": {
       "@config/*": ["config/*"],
       "@controllers/*": ["controllers/*"],

@@ -1,7 +1,7 @@
 import { router } from './routes';
 import express, { Application } from 'express';
 import { expressMiddleware } from '@as-integrations/express5';
-import { RegisterRoutes } from '@root/build/routes';
+import { RegisterRoutes } from './routes/routes';
 import { ENV_VARIABLES } from '@config/config';
 import {
   postRoutesMiddleware,

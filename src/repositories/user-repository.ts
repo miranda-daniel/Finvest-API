@@ -1,4 +1,4 @@
-import { db } from '@root/prisma/db';
+import { db } from '@config/db';
 import { RegisterUserRequest } from '@typing/user';
 
 export const UserRepository = {

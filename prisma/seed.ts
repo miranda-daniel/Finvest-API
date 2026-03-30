@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { hashPassword } from '../src/helpers/utils';
-import { db } from './db';
+import { db } from '../src/config/db';
 
 faker.seed(1);
 const DEFAULT_PASSWORD = 'Password1';
