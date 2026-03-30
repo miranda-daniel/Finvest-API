@@ -3,11 +3,6 @@ export interface UserIndex {
   lastName: string;
 }
 
-export interface UserIndexRaw {
-  firstName: string;
-  lastName: string;
-}
-
 export interface User {
   id: number;
   email: string;

@@ -1,11 +1,9 @@
 import { ApolloServer } from '@apollo/server';
-import { db } from '@root/prisma/db';
 import { typeDefs } from './schema/schema';
 import { Query } from './resolvers';
 import { isProduction } from '@config/environments';
 
 export interface ApolloContext {
-  db: typeof db;
   userInfo: { userId: number };
 }
 

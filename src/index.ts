@@ -9,7 +9,6 @@ import {
 } from '@middlewares/index-middlewares';
 import { errors } from '@config/errors';
 import { createApolloServer, ApolloContext } from '@graphql/apolloServer';
-import { db } from '@root/prisma/db';
 
 const app: Application = express();
 
@@ -29,8 +28,7 @@ const startApolloServer = async () => {
     express.json(),
     expressMiddleware<ApolloContext>(server, {
       context: async () => ({
-        db,
-        userInfo: { userId: 1 }, // TODO: harcoded
+        userInfo: { userId: 1 }, // TODO: hardcoded
       }),
     })
   );
