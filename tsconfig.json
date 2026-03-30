@@ -37,7 +37,6 @@
       "@middlewares/*": ["middlewares/*"],
       "@repositories/*": ["repositories/*"],
       "@routes/*": ["routes/*"],
-      "@serializers/*": ["serializers/*"],
       "@services/*": ["services/*"],
       "@test/*": ["test/*"],
       "@typing/*": ["types/*"],

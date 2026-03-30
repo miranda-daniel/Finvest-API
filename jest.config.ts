@@ -16,7 +16,6 @@ const config: Config.InitialOptions = {
     '^@middlewares/(.*)$': '<rootDir>/src/middlewares/$1',
     '^@repositories/(.*)$': '<rootDir>/src/repositories/$1',
     '^@routes/(.*)$': '<rootDir>/src/routes/$1',
-    '^@serializers/(.*)$': '<rootDir>/src/serializers/$1',
     '^@services/(.*)$': '<rootDir>/src/services/$1',
     '^@test/(.*)$': '<rootDir>/src/test/$1',
     '^@typing/(.*)$': '<rootDir>/src/types/$1',
