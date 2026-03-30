@@ -1,39 +1,38 @@
-import { db } from '@root/prisma/db';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
 import { hashPassword } from '@helpers/utils';
-import { UserSerializer } from '@serializers/user-seralizer';
-import { RegisterUserRequest, User, UserIndex, UserRaw } from '@typing/user';
+import { UserRepository } from '@repositories/user-repository';
+import { RegisterUserRequest, User, UserIndex } from '@typing/user';
 
 export class UserService {
-  static getUsersService = async () => {
+  static getUsersService = async (): Promise<UserIndex[]> => {
     try {
-      const usersListRaw = await db.user.findMany();
+      const users = await UserRepository.findMany();
 
-      return UserSerializer.serializeUserListIndex(usersListRaw) as UserIndex[];
+      return users.map(({ firstName, lastName }) => ({ firstName, lastName }));
     } catch (_err) {
       throw new ApiError(errors.INTERNAL_SERVER_ERROR);
     }
   };
 
-  static registerUserService = async (input: RegisterUserRequest) => {
+  static registerUserService = async (
+    input: RegisterUserRequest
+  ): Promise<User> => {
     const { firstName, lastName, email, password } = input;
 
     const hashedPassword = await hashPassword(password);
 
-    let userCreated: UserRaw;
-
     try {
-      userCreated = await db.user.create({
-        data: {
-          firstName,
-          lastName,
-          email,
-          password: hashedPassword,
-        },
+      const userCreated = await UserRepository.create({
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
       });
 
-      return UserSerializer.serialize(userCreated) as User;
+      const { password: _, ...user } = userCreated;
+
+      return user;
     } catch (_err) {
       throw new ApiError(errors.USER_ALREADY_EXISTS);
     }
