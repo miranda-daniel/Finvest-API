@@ -1,0 +1,3 @@
+# One file per external HTTP API integration.
+# No business logic here — only HTTP calls and response mapping.
+# Example: src/clients/stripe-client.ts, src/clients/sendgrid-client.ts
