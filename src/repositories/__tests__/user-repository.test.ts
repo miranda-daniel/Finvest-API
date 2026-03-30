@@ -3,15 +3,17 @@ import { UserRepository } from '@repositories/user-repository';
 describe('UserRepository', () => {
   describe('create', () => {
     it('creates and returns a user with all fields', async () => {
+      const email = `john.repo.${Date.now()}@test.com`;
+
       const user = await UserRepository.create({
         firstName: 'John',
         lastName: 'Doe',
-        email: 'john.repo@test.com',
+        email,
         password: 'hashedpassword',
       });
 
       expect(user.id).toBeDefined();
-      expect(user.email).toBe('john.repo@test.com');
+      expect(user.email).toBe(email);
       expect(user.firstName).toBe('John');
       expect(user.password).toBe('hashedpassword');
     });
@@ -19,21 +21,23 @@ describe('UserRepository', () => {
 
   describe('findByEmail', () => {
     it('returns the user when the email exists', async () => {
+      const email = `jane.repo.${Date.now()}@test.com`;
+
       await UserRepository.create({
         firstName: 'Jane',
         lastName: 'Doe',
-        email: 'jane.repo@test.com',
+        email,
         password: 'hash',
       });
 
-      const found = await UserRepository.findByEmail('jane.repo@test.com');
+      const found = await UserRepository.findByEmail(email);
 
       expect(found).not.toBeNull();
-      expect(found!.email).toBe('jane.repo@test.com');
+      expect(found!.email).toBe(email);
     });
 
     it('returns null when the email does not exist', async () => {
-      const found = await UserRepository.findByEmail('nobody@test.com');
+      const found = await UserRepository.findByEmail('nobody.repo@test.com');
 
       expect(found).toBeNull();
     });
@@ -41,10 +45,12 @@ describe('UserRepository', () => {
 
   describe('findById', () => {
     it('returns the user when the id exists', async () => {
+      const email = `bob.repo.${Date.now()}@test.com`;
+
       const created = await UserRepository.create({
         firstName: 'Bob',
         lastName: 'Smith',
-        email: 'bob.repo@test.com',
+        email,
         password: 'hash',
       });
 
@@ -62,27 +68,31 @@ describe('UserRepository', () => {
   });
 
   describe('findMany', () => {
-    it('returns an array that includes all created users', async () => {
+    it('returns an array that includes the created user', async () => {
+      const email = `alice.repo.${Date.now()}@test.com`;
+
       await UserRepository.create({
         firstName: 'Alice',
         lastName: 'A',
-        email: 'alice.repo@test.com',
+        email,
         password: 'hash',
       });
 
       const users = await UserRepository.findMany();
 
       expect(Array.isArray(users)).toBe(true);
-      expect(users.length).toBeGreaterThanOrEqual(1);
+      expect(users.some((u) => u.email === email)).toBe(true);
     });
   });
 
   describe('update', () => {
     it('updates and returns the modified user', async () => {
+      const email = `carol.repo.${Date.now()}@test.com`;
+
       const created = await UserRepository.create({
         firstName: 'Carol',
         lastName: 'C',
-        email: 'carol.repo@test.com',
+        email,
         password: 'hash',
       });
 
