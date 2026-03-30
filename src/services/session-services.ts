@@ -28,7 +28,7 @@ export class SessionService {
       { userId: user.id },
       ENV_VARIABLES.jsonSignature!,
       {
-        expiresIn: 3600000,
+        expiresIn: '1h',
       }
     );
 
