@@ -3,6 +3,7 @@ import { errors } from '@config/errors';
 import { hashPassword } from '@helpers/utils';
 import { UserRepository } from '@repositories/user-repository';
 import { RegisterUserRequest, User, UserIndex } from '@typing/user';
+import { Prisma } from '../generated/prisma';
 
 export class UserService {
   static getUsersService = async (): Promise<UserIndex[]> => {
@@ -33,8 +34,14 @@ export class UserService {
       const { password: _, ...user } = userCreated;
 
       return user;
-    } catch (_err) {
-      throw new ApiError(errors.USER_ALREADY_EXISTS);
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        throw new ApiError(errors.USER_ALREADY_EXISTS);
+      }
+      throw new ApiError(errors.INTERNAL_SERVER_ERROR);
     }
   };
 }

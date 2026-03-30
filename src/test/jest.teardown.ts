@@ -1,12 +1,13 @@
 import { db } from '../../prisma/db';
 
 module.exports = async () => {
-  // Define the tables in sequential order to be deleted after ALL tests.
   const tables = ['User'];
 
-  for (const table of tables) {
-    await db.$executeRawUnsafe(`DELETE FROM "${table}";`);
+  try {
+    for (const table of tables) {
+      await db.$executeRawUnsafe(`TRUNCATE "${table}" RESTART IDENTITY;`);
+    }
+  } finally {
+    await db.$disconnect();
   }
-
-  await db.$disconnect();
 };
