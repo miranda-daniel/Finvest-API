@@ -16,7 +16,7 @@ const flatRecommended = tseslint.configs['flat/recommended'];
 module.exports = [
   // Global ignores (replaces .eslintignore)
   {
-    ignores: ['node_modules/**', 'build/**', 'coverage/**', 'eslint.config.js'],
+    ignores: ['node_modules/**', 'build/**', 'coverage/**', 'eslint.config.js', 'src/generated/**'],
   },
 
   // Base config for all JS/TS files
