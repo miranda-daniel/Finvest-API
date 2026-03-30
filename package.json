@@ -14,6 +14,7 @@
     "prettier-fix": "npx prettier \"**/*.ts\" --write --log-level error",
     "test": "npx dotenv-cli -e .env.test -- jest ./src",
     "test-full": "npx dotenv-cli -e .env.test -- npx prisma migrate dev && update-routes-and-swagger && npx dotenv-cli -e .env.test -- jest ./src",
+    "postinstall": "npx dotenv-cli -e .env.development -- prisma generate",
     "prepare": "husky"
   },
   "repository": {

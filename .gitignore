@@ -6,3 +6,4 @@ build/
 .env.test
 .worktrees/
 src/generated/
+.vscode/settings.json
