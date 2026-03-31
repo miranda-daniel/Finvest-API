@@ -10,5 +10,6 @@
   "peacock.color": "#ff8331",
   "workbench.editor.limit.enabled": false,
   "workbench.editor.openSideBySideDirection": "right",
-  "workbench.editor.revealIfOpen": true
+  "workbench.editor.revealIfOpen": true,
+  "js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }

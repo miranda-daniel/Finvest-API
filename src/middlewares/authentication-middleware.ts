@@ -9,7 +9,7 @@ export async function expressAuthentication(
   request: Request,
   securityName: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  scopes?: string[]
+  scopes?: string[],
 ) {
   const jsonSignature = ENV_VARIABLES.jsonSignature;
 

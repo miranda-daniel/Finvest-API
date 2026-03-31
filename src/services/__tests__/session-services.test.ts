@@ -29,7 +29,7 @@ describe('SessionService', () => {
         SessionService.loginUser({
           email: 'nobody.session@test.com',
           password: 'password123',
-        })
+        }),
       ).rejects.toThrow(ApiError);
     });
 
@@ -44,7 +44,7 @@ describe('SessionService', () => {
       });
 
       await expect(
-        SessionService.loginUser({ email, password: 'wrongpassword' })
+        SessionService.loginUser({ email, password: 'wrongpassword' }),
       ).rejects.toThrow(ApiError);
     });
   });

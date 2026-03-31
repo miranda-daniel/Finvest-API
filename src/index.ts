@@ -8,7 +8,11 @@ import {
   preRoutesMiddleware,
 } from '@middlewares/index-middlewares';
 import { errors } from '@config/errors';
-import { createApolloServer, ApolloContext } from '@graphql/apolloServer';
+import {
+  createApolloServer,
+  buildApolloContext,
+  ApolloContext,
+} from '@graphql/apolloServer';
 
 const app: Application = express();
 
@@ -27,10 +31,8 @@ const startApolloServer = async () => {
     '/graphql',
     express.json(),
     expressMiddleware<ApolloContext>(server, {
-      context: async () => ({
-        userInfo: { userId: 1 }, // TODO: hardcoded
-      }),
-    })
+      context: buildApolloContext,
+    }),
   );
 };
 

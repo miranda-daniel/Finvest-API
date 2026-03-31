@@ -11,9 +11,91 @@ datasource db {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  email     String @unique
+  id        Int         @id @default(autoincrement())
+  email     String      @unique
   password  String
   firstName String
   lastName  String
+  portfolios Portfolio[]
+}
+
+// A portfolio groups holdings under a name (e.g. "Long Term", "Trading")
+model Portfolio {
+  id        Int       @id @default(autoincrement())
+  nombre    String
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  holdings  Holding[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// A holding represents a current position: X units of instrument Y in platform Z
+model Holding {
+  id           Int        @id @default(autoincrement())
+  portfolioId  Int
+  portfolio    Portfolio  @relation(fields: [portfolioId], references: [id])
+  instrumentId Int
+  instrument   Instrument @relation(fields: [instrumentId], references: [id])
+  platformId   Int
+  platform     Platform   @relation(fields: [platformId], references: [id])
+  operations   Operation[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+// A financial instrument (stock, ETF, bond, crypto, etc.)
+model Instrument {
+  id              Int             @id @default(autoincrement())
+  symbol          String          @unique
+  name            String
+  instrumentClassId Int
+  instrumentClass InstrumentClass @relation(fields: [instrumentClassId], references: [id])
+  holdings        Holding[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+// Classifies instruments: Stock, ETF, Bond, Crypto, Cash
+model InstrumentClass {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  instruments Instrument[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+// A broker or exchange where holdings are held (e.g. IBKR, Robinhood)
+model Platform {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  type      PlatformType
+  holdings  Holding[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// A buy, sell, or dividend operation on a holding
+model Operation {
+  id        Int           @id @default(autoincrement())
+  holdingId Int
+  holding   Holding       @relation(fields: [holdingId], references: [id])
+  type      OperationType
+  quantity  Decimal
+  price     Decimal
+  date      DateTime
+  createdAt DateTime      @default(now())
+}
+
+enum PlatformType {
+  BROKER
+  EXCHANGE
+  BANK
+}
+
+enum OperationType {
+  BUY
+  SELL
+  DIVIDEND
+  FEE
 }

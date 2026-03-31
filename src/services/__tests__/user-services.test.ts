@@ -18,7 +18,7 @@ describe('UserService', () => {
       expect(result.firstName).toBe('John');
       expect(result.lastName).toBe('Doe');
       expect(
-        (result as unknown as Record<string, unknown>).password
+        (result as unknown as Record<string, unknown>).password,
       ).toBeUndefined();
     });
 
@@ -34,7 +34,7 @@ describe('UserService', () => {
       await UserService.registerUserService(data);
 
       await expect(UserService.registerUserService(data)).rejects.toThrow(
-        ApiError
+        ApiError,
       );
     });
   });
@@ -53,14 +53,14 @@ describe('UserService', () => {
       const users = await UserService.getUsersService();
 
       const alice = users.find(
-        (u) => u.firstName === 'Alice' && u.lastName === 'Smith'
+        (u) => u.firstName === 'Alice' && u.lastName === 'Smith',
       );
       expect(alice).toBeDefined();
       expect(
-        (alice as unknown as Record<string, unknown>).password
+        (alice as unknown as Record<string, unknown>).password,
       ).toBeUndefined();
       expect(
-        (alice as unknown as Record<string, unknown>).email
+        (alice as unknown as Record<string, unknown>).email,
       ).toBeUndefined();
     });
   });

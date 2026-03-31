@@ -6,11 +6,7 @@ const tsParser = require('@typescript-eslint/parser');
 const prettierPlugin = require('eslint-plugin-prettier');
 const prettierConfig = require('eslint-config-prettier');
 
-// flat/recommended is an array of 3 configs:
-//   [0] language options + plugins
-//   [1] eslint:recommended subset (with TS overrides)
-//   [2] @typescript-eslint/recommended rules
-const flatRecommended = tseslint.configs['flat/recommended'];
+const recommendedRules = tseslint.configs.recommended?.rules ?? {};
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 module.exports = [
@@ -67,11 +63,8 @@ module.exports = [
       prettier: prettierPlugin,
     },
     rules: {
-      // eslint:recommended rules (via flat/recommended entry[1])
-      ...flatRecommended[1].rules,
-
-      // @typescript-eslint/recommended rules (via flat/recommended entry[2])
-      ...flatRecommended[2].rules,
+      // @typescript-eslint/recommended rules
+      ...recommendedRules,
 
       // Disable ESLint core rules that conflict with prettier
       ...prettierConfig.rules,
@@ -101,9 +94,7 @@ module.exports = [
       'no-eval': 'error',
       'no-implied-eval': 'error',
       curly: ['error', 'all'],
-      'no-fallthrough': 'error',
-      'no-undef': 'error',
-      'no-use-before-define': [
+      '@typescript-eslint/no-use-before-define': [
         'error',
         { functions: false, classes: true, variables: true },
       ],

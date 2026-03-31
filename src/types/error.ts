@@ -1,5 +1,3 @@
-export interface ErrorInterface {
-  httpCode: number;
-  errorCode: number;
-  description: string;
+export interface ErrorMessage {
+  message: string;
 }

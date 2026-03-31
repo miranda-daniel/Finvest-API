@@ -5,7 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 // swagger.json is generated to build/ by TSOA — load at runtime to avoid tsc-alias path issues
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const swaggerDocument: object = require(
-  path.join(__dirname, '../swagger.json')
+  path.join(__dirname, '../swagger.json'),
 );
 
 export const router = Router();

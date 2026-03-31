@@ -8,7 +8,7 @@ import { Session, LoginUserRequest } from '@typing/session';
 
 export class SessionService {
   static loginUser = async (
-    credentials: LoginUserRequest
+    credentials: LoginUserRequest,
   ): Promise<Session> => {
     const { email, password } = credentials;
 
@@ -29,7 +29,7 @@ export class SessionService {
       ENV_VARIABLES.jsonSignature!,
       {
         expiresIn: '1h',
-      }
+      },
     );
 
     return { errors: [], token: tokenCreated };

@@ -1,10 +1,8 @@
+import { ErrorMessage } from './error';
+
 export interface LoginUserRequest {
   email: string;
   password: string;
-}
-
-export interface ErrorMessage {
-  message: string;
 }
 
 export interface Session {
@@ -14,10 +12,4 @@ export interface Session {
 
 export interface TokenPayload {
   userId: number;
-}
-
-export interface Context {
-  user: TokenPayload & {
-    token: string;
-  };
 }

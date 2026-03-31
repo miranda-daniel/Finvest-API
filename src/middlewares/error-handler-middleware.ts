@@ -16,7 +16,7 @@ const buildErrorResponse = (err: ApiError | ValidateError | unknown) => {
     };
   } else if (err instanceof ValidateError) {
     logger.warn(
-      `Validation Error - Message: ${errors.VALIDATION_ERROR.description}`
+      `Validation Error - Message: ${errors.VALIDATION_ERROR.description}`,
     );
 
     // handle TSOA validations
@@ -28,7 +28,7 @@ const buildErrorResponse = (err: ApiError | ValidateError | unknown) => {
     };
   } else {
     logger.error(
-      `Internal Server Error - Message: ${errors.INTERNAL_SERVER_ERROR.description}`
+      `Internal Server Error - Message: ${errors.INTERNAL_SERVER_ERROR.description}`,
     );
 
     // handle Internal Server error
@@ -45,12 +45,12 @@ export const errorHandler = (
   err: unknown,
   req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) => {
   const responseError = buildErrorResponse(err);
 
   logger.info(
-    `Request failed - URL: ${req.url}, Method: ${req.method}, Status Code: ${responseError.httpCode}`
+    `Request failed - URL: ${req.url}, Method: ${req.method}, Status Code: ${responseError.httpCode}`,
   );
 
   res.status(responseError.httpCode).send(responseError);

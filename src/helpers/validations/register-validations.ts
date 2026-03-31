@@ -1,9 +1,9 @@
 import validator from 'validator';
 import { RegisterUserRequest } from '@typing/user';
-import { ErrorMessage } from '@typing/session';
+import { ErrorMessage } from '@typing/error';
 
 export const registerValidations = (
-  request: RegisterUserRequest
+  request: RegisterUserRequest,
 ): ErrorMessage[] => {
   const errors: ErrorMessage[] = [];
 
