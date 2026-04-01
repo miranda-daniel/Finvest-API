@@ -64,3 +64,38 @@ One file per domain/feature, not one per database table.
 
 Architecture diagrams and flow charts are stored in `docs/architecture/`.
 When adding new diagrams, place them there.
+
+## Commit messages
+
+Follow the **Conventional Commits** spec. Format:
+
+```
+<type>(<optional scope>): <short description>
+```
+
+**Types:**
+
+| Type | When to use |
+|---|---|
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `refactor` | Code change that neither adds nor fixes anything |
+| `chore` | Maintenance (deps, config, build tooling) |
+| `docs` | Documentation only |
+| `test` | Tests only |
+| `perf` | Performance improvement |
+
+**Rules:**
+- Description in English, imperative mood ("add", not "added")
+- Max ~72 characters on the first line
+- No trailing period
+
+**Examples:**
+```
+feat(portfolio): add portfolio creation endpoint
+fix(auth): token not invalidated on logout
+refactor(user): replace manual validation with Zod schema
+chore: remove validator dependency
+docs: add middleware flow diagram
+test(session): add missing edge cases for expired token
+```
