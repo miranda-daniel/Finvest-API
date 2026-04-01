@@ -24,6 +24,7 @@
       "@test/*": ["test/*"],
       "@typing/*": ["types/*"],
       "@graphql/*": ["graphql/*"],
+      "@generated/*": ["generated/*"],
       "@root/*": ["../*"]
     }
   }

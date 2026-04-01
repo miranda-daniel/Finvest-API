@@ -2,7 +2,7 @@ import JWT from 'jsonwebtoken';
 import { ApiError } from '@config/api-error';
 import { ENV_VARIABLES } from '@config/config';
 import { errors } from '@config/errors';
-import { comparePasswords } from '@helpers/utils';
+import { comparePasswords } from '@helpers/password';
 import { UserRepository } from '@repositories/user-repository';
 import { Session, LoginUserRequest } from '@typing/session';
 
@@ -26,12 +26,12 @@ export class SessionService {
 
     const tokenCreated = JWT.sign(
       { userId: user.id },
-      ENV_VARIABLES.jsonSignature!,
+      ENV_VARIABLES.jwtSignature,
       {
-        expiresIn: '1h',
+        expiresIn: ENV_VARIABLES.jwtExpiresIn,
       },
     );
 
-    return { errors: [], token: tokenCreated };
+    return { token: tokenCreated };
   };
 }

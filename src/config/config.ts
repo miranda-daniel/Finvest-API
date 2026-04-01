@@ -4,32 +4,24 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export interface EnvVariables {
+  databaseURL: string;
   port: string;
-  postgressUser: string;
-  postgressPassword: string;
-  postgressDbName: string;
-  dataBaseURL: string;
-  jsonSignature: string;
+  jwtSignature: string;
+  jwtExpiresIn: string;
 }
 
-const envVariablesSchema = z
-  .object({
-    POSTGRES_USER: z.string(),
-    POSTGRES_PASSWORD: z.string(),
-    POSTGRES_DB: z.string(),
-    PORT: z.string(),
-    DATABASE_URL: z.string(),
-    JSON_SIGNATURE: z.string(),
-  })
-  .passthrough();
+const envVariablesSchema = z.looseObject({
+  DATABASE_URL: z.string(),
+  PORT: z.string(),
+  JWT_SIGNATURE: z.string(),
+  JWT_EXPIRES_IN: z.string().default('1h'),
+});
 
 const envVars = envVariablesSchema.parse(process.env);
 
 export const ENV_VARIABLES: EnvVariables = {
-  postgressUser: envVars.POSTGRES_USER,
-  postgressPassword: envVars.POSTGRES_PASSWORD,
-  postgressDbName: envVars.POSTGRES_DB,
+  databaseURL: envVars.DATABASE_URL,
   port: envVars.PORT,
-  dataBaseURL: envVars.DATABASE_URL,
-  jsonSignature: envVars.JSON_SIGNATURE,
+  jwtSignature: envVars.JWT_SIGNATURE,
+  jwtExpiresIn: envVars.JWT_EXPIRES_IN,
 };

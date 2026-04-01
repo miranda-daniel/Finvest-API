@@ -1,7 +1,7 @@
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
 import logger from '@config/logger';
-import { hashPassword } from '@helpers/utils';
+import { hashPassword } from '@helpers/password';
 import { UserRepository } from '@repositories/user-repository';
 import { RegisterUserRequest, User, UserIndex } from '@typing/user';
 

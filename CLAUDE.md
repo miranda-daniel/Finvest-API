@@ -46,6 +46,7 @@ Never access, clone, or interact with any other GitHub repository.
 - No serializer layer. REST response shape is defined by TSOA decorators.
   GraphQL response shape is defined by the schema.
 - `clients/` is for external HTTP integrations only — not for internal modules.
+- `helpers/` is for pure utility functions only — no side effects, no DB access, no service imports. One file per concern (e.g. `password.ts`, `date.ts`, `currency.ts`).
 
 ### Types (`src/types/`)
 

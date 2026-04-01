@@ -19,8 +19,8 @@ COPY prisma ./prisma/
 COPY prisma.config.ts ./
 COPY src ./src/
 
-# Generate Prisma client (DATABASE_URL required by prisma generate even if unused at build time)
-RUN DATABASE_URL=postgresql://placeholder npx prisma generate
+# Generate Prisma client
+RUN npx prisma generate
 
 # Compile: TSOA routes + tsc + resolve path aliases
 RUN npm run build

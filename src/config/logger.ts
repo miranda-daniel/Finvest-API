@@ -1,8 +1,8 @@
-// In a production environment, logs should be saved in a folder on the server. Read more about this later.
-const logDirectory = process.env.LOG_DIR || 'logs';
-
 import { createLogger, format, transports } from 'winston';
+
 const { combine, timestamp, printf } = format;
+
+const logDirectory = process.env.LOG_DIR || 'logs';
 
 const customFormat = printf(({ level, message, timestamp }) => {
   return `${timestamp} [${level.toUpperCase()}]: ${message}`;

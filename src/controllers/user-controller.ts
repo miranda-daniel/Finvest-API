@@ -1,8 +1,11 @@
 import { Body, Get, Security, Controller, Post, Route } from 'tsoa';
 import { UserService } from '@services/user-services';
-import { registerValidations } from '@helpers/validations/register-validations';
-import { RegisterUserRequest, User, UserIndex } from '@typing/user';
-import { ErrorMessage } from '@typing/error';
+import {
+  registerUserSchema,
+  RegisterUserRequest,
+  User,
+  UserIndex,
+} from '@typing/user';
 
 @Route('users')
 export class UserController extends Controller {
@@ -14,12 +17,8 @@ export class UserController extends Controller {
   @Post('/')
   public async register(
     @Body() requestBody: RegisterUserRequest,
-  ): Promise<User | ErrorMessage[]> {
-    const errorsList = registerValidations(requestBody);
-
-    if (errorsList.length) {
-      return errorsList;
-    }
+  ): Promise<User> {
+    registerUserSchema.parse(requestBody);
 
     return await UserService.registerUserService(requestBody);
   }

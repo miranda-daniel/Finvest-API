@@ -41,6 +41,7 @@
       "@test/*": ["test/*"],
       "@typing/*": ["types/*"],
       "@graphql/*": ["graphql/*"],
+      "@generated/*": ["generated/*"],
       "@root/*": ["../*"]
     },
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */

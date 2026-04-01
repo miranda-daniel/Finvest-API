@@ -21,7 +21,6 @@ describe('SessionService', () => {
 
       expect(result.token).toBeDefined();
       expect(typeof result.token).toBe('string');
-      expect(result.errors).toHaveLength(0);
     });
 
     it('throws ApiError when the user does not exist', async () => {

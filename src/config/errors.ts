@@ -35,7 +35,6 @@ export const errors = {
     description: 'User already exists',
   },
   VALIDATION_ERROR: {
-    // tsoa error
     httpCode: 422,
     errorCode: 422_000,
     description: 'TSOA Validation error',

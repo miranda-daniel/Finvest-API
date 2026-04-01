@@ -1,25 +1,35 @@
 import { ValidateError } from 'tsoa';
+import { ZodError } from 'zod';
 import { Request, Response, NextFunction } from 'express';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
 import logger from '@config/logger';
 
-const buildErrorResponse = (err: ApiError | ValidateError | unknown) => {
+const buildErrorResponse = (
+  err: ApiError | ValidateError | ZodError | unknown,
+) => {
   if (err instanceof ApiError) {
     logger.error(`API Error - Code: ${err.errorCode}, Message: ${err.message}`);
 
-    // handle known error
     return {
       httpCode: err.httpCode,
       errorCode: err.errorCode,
       message: err.message,
+    };
+  } else if (err instanceof ZodError) {
+    logger.warn(`Validation Error - ${JSON.stringify(err.issues)}`);
+
+    const { httpCode, errorCode } = errors.VALIDATION_ERROR;
+    return {
+      httpCode,
+      errorCode,
+      message: err.issues.map((i) => i.message).join(', '),
     };
   } else if (err instanceof ValidateError) {
     logger.warn(
       `Validation Error - Message: ${errors.VALIDATION_ERROR.description}`,
     );
 
-    // handle TSOA validations
     const { httpCode, errorCode, description } = errors.VALIDATION_ERROR;
     return {
       httpCode,
@@ -31,7 +41,6 @@ const buildErrorResponse = (err: ApiError | ValidateError | unknown) => {
       `Internal Server Error - Message: ${errors.INTERNAL_SERVER_ERROR.description}`,
     );
 
-    // handle Internal Server error
     const { httpCode, errorCode, description } = errors.INTERNAL_SERVER_ERROR;
     return {
       httpCode,

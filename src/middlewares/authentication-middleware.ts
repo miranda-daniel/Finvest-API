@@ -11,8 +11,6 @@ export async function expressAuthentication(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   scopes?: string[],
 ) {
-  const jsonSignature = ENV_VARIABLES.jsonSignature;
-
   if (securityName === 'jwt') {
     const token = request.headers.authorization!;
 
@@ -21,7 +19,10 @@ export async function expressAuthentication(
     }
 
     try {
-      const payloadDecoded = jwt.verify(token, jsonSignature) as TokenPayload;
+      const payloadDecoded = jwt.verify(
+        token,
+        ENV_VARIABLES.jwtSignature,
+      ) as TokenPayload;
 
       return {
         ...payloadDecoded,

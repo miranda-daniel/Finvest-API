@@ -13,4 +13,6 @@ export const router = Router();
 router.use('/docs', swaggerUi.serve);
 router.get('/docs', swaggerUi.setup(swaggerDocument));
 
-router.get('/', (_req: Request, res: Response) => res.send('OK'));
+router.get('/', (_req: Request, res: Response) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});

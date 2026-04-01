@@ -1,6 +1,6 @@
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
-import { Prisma } from '../generated/prisma';
+import { Prisma } from '@generated/prisma';
 import { db } from '@config/db';
 import { RegisterUserRequest } from '@typing/user';
 

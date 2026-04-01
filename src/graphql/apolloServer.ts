@@ -37,7 +37,7 @@ export const buildApolloContext = async ({
   try {
     const user = jwt.verify(
       authHeader,
-      ENV_VARIABLES.jsonSignature,
+      ENV_VARIABLES.jwtSignature,
     ) as TokenPayload;
     return { user };
   } catch (err) {
