@@ -1,4 +1,4 @@
-import { db } from '../config/db';
+import { db } from '@config/db';
 
 module.exports = async () => {
   const tables = ['User'];
