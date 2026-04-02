@@ -6,6 +6,27 @@ import { UserRepository } from '@repositories/user-repository';
 import { RegisterUserRequest, User, UserIndex } from '@typing/user';
 
 export class UserService {
+  // TODO: remove - temporary method for testing purposes only
+  static getAllUsersService = async (): Promise<User[]> => {
+    try {
+      const users = await UserRepository.findMany();
+
+      return users.map(
+        ({ id, email, firstName, lastName, isActive, createdAt }) => ({
+          id,
+          email,
+          firstName,
+          lastName,
+          isActive,
+          createdAt,
+        }),
+      );
+    } catch (err) {
+      logger.error(`getAllUsersService failed: ${err}`);
+      throw new ApiError(errors.INTERNAL_SERVER_ERROR);
+    }
+  };
+
   static getUsersService = async (): Promise<UserIndex[]> => {
     try {
       const users = await UserRepository.findMany();
