@@ -33,7 +33,8 @@ describe('PortfolioService', () => {
       expect(result).toHaveLength(1);
       expect(result[0].name).toBe('Growth');
       expect(result[0].id).toBeDefined();
-      expect(result[0].createdAt).toBeDefined();
+      expect(typeof result[0].createdAt).toBe('string');
+      expect(result[0].createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     });
   });
 });

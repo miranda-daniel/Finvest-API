@@ -3,7 +3,7 @@ import { PortfolioRepository } from '@repositories/portfolio-repository';
 export interface Portfolio {
   id: number;
   name: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export class PortfolioService {
@@ -15,7 +15,7 @@ export class PortfolioService {
     return portfolios.map(({ id, name, createdAt }) => ({
       id,
       name,
-      createdAt,
+      createdAt: createdAt.toISOString(),
     }));
   };
 }
