@@ -24,14 +24,18 @@ export class SessionService {
       throw new ApiError(errors.INVALID_CREDENTIALS);
     }
 
-    const tokenCreated = JWT.sign(
-      { userId: user.id },
-      ENV_VARIABLES.jwtSignature,
-      {
-        expiresIn: ENV_VARIABLES.jwtExpiresIn,
-      },
-    );
+    const token = JWT.sign({ userId: user.id }, ENV_VARIABLES.jwtSignature, {
+      expiresIn: ENV_VARIABLES.jwtExpiresIn,
+    });
 
-    return { token: tokenCreated };
+    return {
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+    };
   };
 }

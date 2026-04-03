@@ -46,5 +46,28 @@ describe('SessionService', () => {
         SessionService.loginUser({ email, password: 'wrongpassword' }),
       ).rejects.toThrow(ApiError);
     });
+
+    it('returns user data alongside the token on valid credentials', async () => {
+      const email = `login.userdata.${Date.now()}@test.com`;
+
+      await UserService.registerUserService({
+        firstName: 'Data',
+        lastName: 'Test',
+        email,
+        password: 'password123',
+      });
+
+      const result = await SessionService.loginUser({
+        email,
+        password: 'password123',
+      });
+
+      expect(result.user).toBeDefined();
+      expect(result.user.email).toBe(email);
+      expect(result.user.firstName).toBe('Data');
+      expect(result.user.lastName).toBe('Test');
+      expect(result.user.id).toBeDefined();
+      expect(typeof result.user.id).toBe('number');
+    });
   });
 });

@@ -19,8 +19,9 @@ const config: Config.InitialOptions = {
     '^@services/(.*)$': '<rootDir>/src/services/$1',
     '^@test/(.*)$': '<rootDir>/src/test/$1',
     '^@typing/(.*)$': '<rootDir>/src/types/$1',
-    '^@graphql/(.*)$': '<rootDir>/src/graphql/$1',
+    '^@graphql/(.*)$': '<rootDir>/src/apollo/$1',
     '^@root/(.*)$': '<rootDir>/$1',
+    '^@generated/(.*)$': '<rootDir>/src/generated/$1',
   },
 
   collectCoverage: true,
