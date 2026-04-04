@@ -60,6 +60,15 @@ One file per domain/feature, not one per database table.
 **What belongs in `types/`:** request/response shapes and domain types shared across layers.
 **What does NOT belong:** types used by a single file (keep them inline), Prisma-generated types (`src/generated/prisma/`), config types (keep them in `config/` next to the file that uses them).
 
+## Deferred improvements
+
+These are intentionally not installed yet — they add complexity that isn't justified at the current scale. Add them when the trigger condition is met.
+
+| What | When to add | Notes |
+|---|---|---|
+| `express-rate-limit` | Before going to production | Rate limit auth endpoints (`/session/login`, `/users`) by IP to prevent brute force. One middleware call per route — trivial to add. |
+| `@prisma/extension-accelerate` or PgBouncer | When DB connections become a bottleneck | Prisma Accelerate adds connection pooling at the edge. Only relevant under real concurrent load — irrelevant with a single user. |
+
 ## Diagrams
 
 Architecture diagrams and flow charts are stored in `docs/architecture/`.

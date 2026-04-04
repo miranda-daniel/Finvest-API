@@ -16,9 +16,9 @@ import { ApolloContext } from '@graphql/apolloServer';
 // The resolver's only job is to call the service and return the result.
 // No request parsing, no response shaping — Apollo handles both.
 export const Query = {
-  hello: () => 'Hello, World!',
   // TODO: remove - temporary resolver for testing purposes only
   users: () => UserService.getAllUsersService(),
+
   portfolios: (_: unknown, __: unknown, context: ApolloContext) => {
     if (!context.user) {
       throw new GraphQLError('Not authenticated', {

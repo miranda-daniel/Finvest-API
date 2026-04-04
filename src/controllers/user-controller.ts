@@ -7,6 +7,13 @@ import {
   UserIndex,
 } from '@typing/user';
 
+// REST entry point for user endpoints.
+//
+// TSOA reads the decorators (@Route, @Post, @Get, @Security, etc.) and
+// auto-generates src/routes/routes.ts, which wires each method to an Express
+// route. Do not edit routes.ts manually — regenerate it with `npm run build`.
+//
+// Flow: HTTP request → routes.ts (generated) → Controller method → Service → Repository
 @Route('users')
 export class UserController extends Controller {
   /**
