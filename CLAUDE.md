@@ -29,7 +29,7 @@ Never access, clone, or interact with any other GitHub repository.
 - **services/**: Business logic only. Imports from repositories, never from `db` directly.
   Shared between REST controllers and GraphQL resolvers.
 - **controllers/**: REST only (TSOA). Thin — call a service, return the result.
-- **graphql/resolvers/**: GraphQL only. Thin — call a service, return the result.
+- **apollo/resolvers/**: GraphQL only. Thin — call a service, return the result.
 - **clients/**: One file per external API. No business logic.
 
 ### REST vs GraphQL

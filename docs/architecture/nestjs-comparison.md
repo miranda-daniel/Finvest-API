@@ -66,7 +66,7 @@ HTTP Request
 | ------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
 | Setup               | Manual: `createApolloServer()` + `expressMiddleware()`  | `GraphQLModule.forRoot()` in the app module             |
 | Schema              | SDL-first: `typeDefs` string in `schema.ts`             | Code-first (default): schema generated from decorators, or SDL-first optionally |
-| Resolvers           | Plain objects/functions in `src/graphql/resolvers/`     | Classes with `@Resolver`, `@Query`, `@Mutation` decorators |
+| Resolvers           | Plain objects/functions in `src/apollo/resolvers/`     | Classes with `@Resolver`, `@Query`, `@Mutation` decorators |
 | Context / Auth      | `buildApolloContext()` — manual per-request function    | Same Guard system as REST — `@UseGuards(JwtAuthGuard)`  |
 | Mounting            | Manually mounted before TSOA routes (order matters)     | Managed by the framework module system — no order issues |
 

@@ -23,7 +23,7 @@
       "@services/*": ["services/*"],
       "@test/*": ["test/*"],
       "@typing/*": ["types/*"],
-      "@graphql/*": ["graphql/*"],
+      "@graphql/*": ["apollo/*"],
       "@generated/*": ["generated/*"],
       "@root/*": ["../*"]
     }

@@ -20,26 +20,26 @@
                           │                                   │
                           │                                   │
              ┌────────────▼───────────┐          ┌────────────▼────────────┐
-             │  expressAuthentication │          │   buildApolloContext     │
+             │  expressAuthentication │          │   buildApolloContext    │
              │  (per @Security('jwt'))│          │   reads Authorization   │
              │  validates JWT         │          │   header → user | null  │
              └────────────┬───────────┘          └────────────┬────────────┘
                           │                                   │
                           ▼                                   ▼
-             ┌────────────────────────┐          ┌─────────────────────────┐
+             ┌────────────────────────┐          ┌──────────────────────────┐
              │     CONTROLLERS        │          │       RESOLVERS          │
-             │  (src/controllers/)    │          │  (src/graphql/resolvers/)│
+             │  (src/controllers/)    │          │  (src/apollo/resolvers/) │
              │                        │          │                          │
              │  Thin layer:           │          │  Thin layer:             │
              │  - parse request       │          │  - read context.user     │
              │  - call service        │          │  - throw if auth needed  │
              │  - return response     │          │  - call service          │
-             └────────────┬───────────┘          └────────────┬────────────┘
+             └────────────┬───────────┘          └────────────┬─────────────┘
                           │                                   │
                           └──────────────┬────────────────────┘
                                          │
                                          ▼
-                          ┌──────────────────────────┐
+                          ┌───────────────────────────┐
                           │        SERVICES           │
                           │    (src/services/)        │
                           │                           │
@@ -52,7 +52,7 @@
                           └──────────────┬────────────┘
                                          │
                                          ▼
-                          ┌──────────────────────────┐
+                          ┌───────────────────────────┐
                           │      REPOSITORIES         │
                           │   (src/repositories/)     │
                           │                           │
@@ -65,30 +65,30 @@
                           └──────────────┬────────────┘
                                          │
                                          ▼
-                          ┌──────────────────────────┐
+                          ┌───────────────────────────┐
                           │     Prisma Client         │
                           │   (src/config/db.ts)      │
                           │   PrismaClient + PrismaPg │
                           └──────────────┬────────────┘
                                          │
                                          ▼
-                          ┌──────────────────────────┐
+                          ┌───────────────────────────┐
                           │      PostgreSQL           │
                           │   (Docker container)      │
-                          └──────────────────────────┘
+                          └───────────────────────────┘
 ```
 
 ---
 
 ## Layer responsibilities
 
-| Layer            | Location                 | Responsibility                                                                         |
-| ---------------- | ------------------------ | -------------------------------------------------------------------------------------- |
-| **Controllers**  | `src/controllers/`       | REST only. Parse request, call service, return response. No business logic.            |
-| **Resolvers**    | `src/graphql/resolvers/` | GraphQL only. Read context, check auth, call service. No business logic.               |
-| **Services**     | `src/services/`          | Business logic. Shared between controllers and resolvers. Never imports `db` directly. |
-| **Repositories** | `src/repositories/`      | Only layer that imports `db`. All Prisma queries live here. No business logic.         |
-| **Clients**      | `src/clients/`           | External HTTP integrations (e.g. stock quote APIs).                                    |
+| Layer            | Location                | Responsibility                                                                         |
+| ---------------- | ----------------------- | -------------------------------------------------------------------------------------- |
+| **Controllers**  | `src/controllers/`      | REST only. Parse request, call service, return response. No business logic.            |
+| **Resolvers**    | `src/apollo/resolvers/` | GraphQL only. Read context, check auth, call service. No business logic.               |
+| **Services**     | `src/services/`         | Business logic. Shared between controllers and resolvers. Never imports `db` directly. |
+| **Repositories** | `src/repositories/`     | Only layer that imports `db`. All Prisma queries live here. No business logic.         |
+| **Clients**      | `src/clients/`          | External HTTP integrations (e.g. stock quote APIs).                                    |
 
 ---
 
@@ -145,7 +145,7 @@ Request
 | `src/config/environments.ts`                   | `isDevelopment()`, `isProduction()`, `isTest()` helpers. |
 | `src/config/errors.ts`                         | Centralized error definitions.                           |
 | `src/middlewares/authentication-middleware.ts` | TSOA JWT validation for REST.                            |
-| `src/graphql/apolloServer.ts`                  | Apollo Server factory + `buildApolloContext`.            |
+| `src/apollo/apolloServer.ts`                   | Apollo Server factory + `buildApolloContext`.            |
 | `src/routes/index.ts`                          | Manual Express router (healthcheck + Swagger UI).        |
 | `src/routes/routes.ts`                         | TSOA generated — do not edit manually.                   |
 | `prisma/schema.prisma`                         | Database schema.                                         |
