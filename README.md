@@ -4,18 +4,18 @@ Finvest backend. REST API (TSOA + Express) with a GraphQL layer (Apollo Server) 
 
 ## Stack
 
-| Layer | Technology | Version |
-|---|---|---|
-| Language | TypeScript | 6 |
-| Runtime | Node.js | 20.13 |
-| Framework | Express | v5 |
-| REST docs/routes | TSOA | v5 |
-| GraphQL | Apollo Server | v3 |
-| ORM | Prisma | v7 |
-| Database | PostgreSQL | 13 |
-| Validation | Zod | v4 |
-| Logging | Winston | v3 |
-| Testing | Jest | v30 |
+| Layer            | Technology    | Version |
+| ---------------- | ------------- | ------- |
+| Language         | TypeScript    | 6       |
+| Runtime          | Node.js       | 20.13   |
+| Framework        | Express       | v5      |
+| REST docs/routes | TSOA          | v5      |
+| GraphQL          | Apollo Server | v5      |
+| ORM              | Prisma        | v7      |
+| Database         | PostgreSQL    | 13      |
+| Validation       | Zod           | v4      |
+| Logging          | Winston       | v3      |
+| Testing          | Jest          | v30     |
 
 ## Getting started
 
@@ -104,12 +104,8 @@ npm run update-routes-and-swagger
 
 ## Endpoints
 
-| Type | URL | Description |
-|---|---|---|
-| REST | `http://localhost:3001/` | REST API |
-| REST docs | `http://localhost:3001/docs` | Swagger UI |
-| GraphQL | `http://localhost:3001/graphql` | Apollo Server + Playground |
-
-## Code Style
-
-All code comments must be written in **English**.
+| Type      | URL                             | Description                |
+| --------- | ------------------------------- | -------------------------- |
+| REST      | `http://localhost:3001/`        | REST API                   |
+| REST docs | `http://localhost:3001/docs`    | Swagger UI                 |
+| GraphQL   | `http://localhost:3001/graphql` | Apollo Server + Playground |
