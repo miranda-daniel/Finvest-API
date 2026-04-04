@@ -24,16 +24,19 @@ model User {
 
 // A portfolio groups holdings under a name (e.g. "Long Term", "Trading")
 model Portfolio {
-  id        Int       @id @default(autoincrement())
-  name      String
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  holdings  Holding[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  holdings    Holding[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
-// A holding represents a current position: X units of instrument Y in platform Z
+// A holding represents a current position: X units of instrument Y on platform Z.
+// Computed fields (avg cost, unrealized P&L, allocation %) are derived from operations
+// at query time — they are never stored here.
 model Holding {
   id           Int         @id @default(autoincrement())
   portfolioId  Int
@@ -48,15 +51,19 @@ model Holding {
 }
 
 // A financial instrument (stock, ETF, bond, crypto, etc.)
+// All prices are tracked in USD. Non-US instruments are tracked via their ADR listing.
 model Instrument {
-  id                Int             @id @default(autoincrement())
-  symbol            String          @unique
+  id                Int              @id @default(autoincrement())
+  symbol            String           @unique  // Ticker as listed on US exchange (e.g. "AAPL", "BABA")
   name              String
+  exchange          String?          // Exchange where it trades (e.g. "NYSE", "NASDAQ")
+  country           String?          // Country of origin (ISO 3166-1 alpha-2, e.g. "US", "CN")
   instrumentClassId Int
-  instrumentClass   InstrumentClass @relation(fields: [instrumentClassId], references: [id], onDelete: Restrict)
+  instrumentClass   InstrumentClass  @relation(fields: [instrumentClassId], references: [id], onDelete: Restrict)
   holdings          Holding[]
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  priceSnapshots    PriceSnapshot[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 }
 
 // Classifies instruments: Stock, ETF, Bond, Crypto, Cash
@@ -68,7 +75,7 @@ model InstrumentClass {
   updatedAt   DateTime     @updatedAt
 }
 
-// A broker or exchange where holdings are held (e.g. IBKR, Robinhood)
+// A broker or exchange where holdings are held (e.g. IBKR, Robinhood, Binance)
 model Platform {
   id        Int          @id @default(autoincrement())
   name      String       @unique
@@ -78,17 +85,34 @@ model Platform {
   updatedAt DateTime     @updatedAt
 }
 
-// A buy, sell, or dividend operation on a holding
+// A buy, sell, dividend, or fee operation on a holding.
+// All monetary values are in USD.
 model Operation {
   id        Int           @id @default(autoincrement())
   holdingId Int
   holding   Holding       @relation(fields: [holdingId], references: [id], onDelete: Cascade)
   type      OperationType
-  quantity  Decimal
-  price     Decimal
+  quantity  Decimal       // Number of units (shares, coins, etc.). 0 for DIVIDEND and FEE.
+  price     Decimal       // Price per unit for BUY/SELL. Total amount for DIVIDEND/FEE.
+  fees      Decimal       @default(0) // Broker commission or transaction cost, in USD.
   date      DateTime
+  notes     String?       // Optional free-text note from the user (e.g. "earnings play")
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+}
+
+// Daily closing price for an instrument.
+// Used to compute portfolio value over time (the performance chart in the dashboard).
+// Populated by a background job or manual import — never derived from operations.
+model PriceSnapshot {
+  id           Int        @id @default(autoincrement())
+  instrumentId Int
+  instrument   Instrument @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
+  date         DateTime   @db.Date          // One row per instrument per day
+  closePrice   Decimal                      // Closing price in USD
+  createdAt    DateTime   @default(now())
+
+  @@unique([instrumentId, date])
 }
 
 enum PlatformType {
