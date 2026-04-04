@@ -19,11 +19,20 @@ COPY prisma ./prisma/
 COPY prisma.config.ts ./
 COPY src ./src/
 
-# Generate Prisma client
+# Generate Prisma client (outputs to src/generated/prisma/)
 RUN npx prisma generate
 
-# Compile: TSOA routes + tsc + resolve path aliases
-RUN npm run build
+# Step 1: TSOA routes + TypeScript compilation
+RUN npm run update-routes-and-swagger && npx tsc --outDir build
+
+# Step 2: Copy Prisma-generated files into build/ before tsc-alias runs.
+# tsc-alias only rewrites a path alias if the target directory already exists in outDir.
+# Since Prisma generates .js/.d.ts files (not .ts source), tsc does not include them
+# in build/ — so we copy manually here so tsc-alias can resolve @generated/*.
+RUN cp -r src/generated build/
+
+# Step 3: Resolve all path aliases (@config/*, @services/*, @generated/*, etc.)
+RUN npx tsc-alias
 
 # Stage 3: Runner
 FROM node:20-alpine AS runner
@@ -37,9 +46,8 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 COPY package*.json .npmrc ./
 RUN npm ci --engine-strict=false --omit=dev --ignore-scripts
 
-# Copy compiled output and generated Prisma client
+# build/ already contains generated/prisma/ (copied in builder step 2 above)
 COPY --from=builder /app/build ./build
-COPY --from=builder /app/src/generated ./build/generated
 
 RUN chown -R appuser:appgroup /app
 
