@@ -3,13 +3,20 @@ import { ApiError } from '@config/api-error';
 import { ENV_VARIABLES } from '@config/config';
 import { errors } from '@config/errors';
 import { comparePasswords } from '@helpers/password';
+import {
+  generateRefreshToken,
+  getRefreshTokenExpiry,
+  hashToken,
+} from '@helpers/token';
+import { RefreshTokenRepository } from '@repositories/refresh-token-repository';
 import { UserRepository } from '@repositories/user-repository';
-import { Session, LoginUserRequest } from '@typing/session';
+import { LoginUserRequest, LoginResult } from '@typing/session';
 
-export class SessionService {
-  static loginUser = async (
+export const SessionService = {
+  loginUser: async (
     credentials: LoginUserRequest,
-  ): Promise<Session> => {
+    ip: string,
+  ): Promise<LoginResult> => {
     const { email, password } = credentials;
 
     const user = await UserRepository.findByEmail(email);
@@ -24,12 +31,23 @@ export class SessionService {
       throw new ApiError(errors.INVALID_CREDENTIALS);
     }
 
-    const token = JWT.sign({ userId: user.id }, ENV_VARIABLES.jwtSignature, {
+    const jwtToken = JWT.sign({ userId: user.id }, ENV_VARIABLES.jwtSignature, {
       expiresIn: ENV_VARIABLES.jwtExpiresIn,
     });
 
+    const rawRefreshToken = generateRefreshToken();
+    const tokenHash = hashToken(rawRefreshToken);
+
+    await RefreshTokenRepository.create({
+      token: tokenHash,
+      userId: user.id,
+      expires: getRefreshTokenExpiry(),
+      createdByIp: ip,
+    });
+
     return {
-      token,
+      jwtToken,
+      rawRefreshToken,
       user: {
         id: user.id,
         email: user.email,
@@ -37,5 +55,5 @@ export class SessionService {
         lastName: user.lastName,
       },
     };
-  };
-}
+  },
+};

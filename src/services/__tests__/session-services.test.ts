@@ -2,9 +2,11 @@ import { SessionService } from '@services/session-services';
 import { UserService } from '@services/user-services';
 import { ApiError } from '@config/api-error';
 
+const TEST_IP = '127.0.0.1';
+
 describe('SessionService', () => {
   describe('loginUser', () => {
-    it('returns a JWT token on valid credentials', async () => {
+    it('returns a jwtToken on valid credentials', async () => {
       const email = `login.valid.${Date.now()}@test.com`;
 
       await UserService.registerUserService({
@@ -14,21 +16,40 @@ describe('SessionService', () => {
         password: 'password123',
       });
 
-      const result = await SessionService.loginUser({
+      const result = await SessionService.loginUser(
+        { email, password: 'password123' },
+        TEST_IP,
+      );
+
+      expect(result.jwtToken).toBeDefined();
+      expect(typeof result.jwtToken).toBe('string');
+    });
+
+    it('returns a rawRefreshToken on valid credentials', async () => {
+      const email = `login.refresh.${Date.now()}@test.com`;
+
+      await UserService.registerUserService({
+        firstName: 'Login',
+        lastName: 'User',
         email,
         password: 'password123',
       });
 
-      expect(result.token).toBeDefined();
-      expect(typeof result.token).toBe('string');
+      const result = await SessionService.loginUser(
+        { email, password: 'password123' },
+        TEST_IP,
+      );
+
+      expect(result.rawRefreshToken).toBeDefined();
+      expect(typeof result.rawRefreshToken).toBe('string');
     });
 
     it('throws ApiError when the user does not exist', async () => {
       await expect(
-        SessionService.loginUser({
-          email: 'nobody.session@test.com',
-          password: 'password123',
-        }),
+        SessionService.loginUser(
+          { email: 'nobody.session@test.com', password: 'password123' },
+          TEST_IP,
+        ),
       ).rejects.toThrow(ApiError);
     });
 
@@ -43,7 +64,7 @@ describe('SessionService', () => {
       });
 
       await expect(
-        SessionService.loginUser({ email, password: 'wrongpassword' }),
+        SessionService.loginUser({ email, password: 'wrongpassword' }, TEST_IP),
       ).rejects.toThrow(ApiError);
     });
 
@@ -57,10 +78,10 @@ describe('SessionService', () => {
         password: 'password123',
       });
 
-      const result = await SessionService.loginUser({
-        email,
-        password: 'password123',
-      });
+      const result = await SessionService.loginUser(
+        { email, password: 'password123' },
+        TEST_IP,
+      );
 
       expect(result.user).toBeDefined();
       expect(result.user.email).toBe(email);
