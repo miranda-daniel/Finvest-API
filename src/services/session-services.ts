@@ -10,7 +10,7 @@ import {
 } from '@helpers/token';
 import { RefreshTokenRepository } from '@repositories/refresh-token-repository';
 import { UserRepository } from '@repositories/user-repository';
-import { LoginUserRequest, LoginResult } from '@typing/session';
+import { LoginUserRequest, LoginResult, RefreshResult } from '@typing/session';
 
 export const SessionService = {
   loginUser: async (
@@ -55,5 +55,50 @@ export const SessionService = {
         lastName: user.lastName,
       },
     };
+  },
+
+  refreshToken: async (
+    rawToken: string,
+    ip: string,
+  ): Promise<RefreshResult> => {
+    const tokenHash = hashToken(rawToken);
+    const stored = await RefreshTokenRepository.findByToken(tokenHash);
+
+    if (!stored) {
+      throw new ApiError(errors.INVALID_REFRESH_TOKEN);
+    }
+
+    // Theft detection: if already revoked, invalidate entire token family
+    if (stored.revoked) {
+      await RefreshTokenRepository.revokeAllForUser(stored.userId);
+      throw new ApiError(errors.INVALID_REFRESH_TOKEN);
+    }
+
+    if (stored.expires < new Date()) {
+      throw new ApiError(errors.INVALID_REFRESH_TOKEN);
+    }
+
+    // Rotate: generate new token, revoke old one
+    const newRawToken = generateRefreshToken();
+    const newHash = hashToken(newRawToken);
+
+    await RefreshTokenRepository.create({
+      token: newHash,
+      userId: stored.userId,
+      expires: getRefreshTokenExpiry(),
+      createdByIp: ip,
+    });
+
+    await RefreshTokenRepository.revoke(stored.id, ip, newHash);
+
+    const jwtToken = JWT.sign(
+      { userId: stored.userId },
+      ENV_VARIABLES.jwtSignature,
+      {
+        expiresIn: ENV_VARIABLES.jwtExpiresIn,
+      },
+    );
+
+    return { jwtToken, rawRefreshToken: newRawToken };
   },
 };

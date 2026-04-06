@@ -1,6 +1,8 @@
 import { SessionService } from '@services/session-services';
 import { UserService } from '@services/user-services';
 import { ApiError } from '@config/api-error';
+import { generateRefreshToken, hashToken } from '@helpers/token';
+import { RefreshTokenRepository } from '@repositories/refresh-token-repository';
 
 const TEST_IP = '127.0.0.1';
 
@@ -89,6 +91,87 @@ describe('SessionService', () => {
       expect(result.user.lastName).toBe('Test');
       expect(result.user.id).toBeDefined();
       expect(typeof result.user.id).toBe('number');
+    });
+  });
+
+  describe('refreshToken', () => {
+    it('returns a new jwtToken and rawRefreshToken on valid token', async () => {
+      const email = `refresh.valid.${Date.now()}@test.com`;
+
+      await UserService.registerUserService({
+        firstName: 'Refresh',
+        lastName: 'User',
+        email,
+        password: 'password123',
+      });
+
+      const login = await SessionService.loginUser(
+        { email, password: 'password123' },
+        TEST_IP,
+      );
+      const result = await SessionService.refreshToken(
+        login.rawRefreshToken,
+        TEST_IP,
+      );
+
+      expect(result.jwtToken).toBeDefined();
+      expect(typeof result.jwtToken).toBe('string');
+      expect(result.rawRefreshToken).toBeDefined();
+      expect(result.rawRefreshToken).not.toBe(login.rawRefreshToken);
+    });
+
+    it('throws ApiError when token does not exist in DB', async () => {
+      await expect(
+        SessionService.refreshToken('nonexistent-token-value', TEST_IP),
+      ).rejects.toThrow(ApiError);
+    });
+
+    it('throws ApiError and revokes token family when token is already revoked', async () => {
+      const email = `refresh.revoked.${Date.now()}@test.com`;
+
+      await UserService.registerUserService({
+        firstName: 'Revoked',
+        lastName: 'User',
+        email,
+        password: 'password123',
+      });
+
+      const login = await SessionService.loginUser(
+        { email, password: 'password123' },
+        TEST_IP,
+      );
+      // Use it once legitimately to rotate
+      await SessionService.refreshToken(login.rawRefreshToken, TEST_IP);
+      // Try to reuse the original (now revoked) token — simulates theft
+      await expect(
+        SessionService.refreshToken(login.rawRefreshToken, TEST_IP),
+      ).rejects.toThrow(ApiError);
+    });
+
+    it('throws ApiError when token is expired', async () => {
+      const email = `refresh.expired.${Date.now()}@test.com`;
+
+      const user = await UserService.registerUserService({
+        firstName: 'Expired',
+        lastName: 'User',
+        email,
+        password: 'password123',
+      });
+
+      // Manually create a token that expired in the past
+      const raw = generateRefreshToken();
+      const hash = hashToken(raw);
+
+      await RefreshTokenRepository.create({
+        token: hash,
+        userId: user.id,
+        expires: new Date(Date.now() - 1000), // already expired
+        createdByIp: '127.0.0.1',
+      });
+
+      await expect(SessionService.refreshToken(raw, TEST_IP)).rejects.toThrow(
+        ApiError,
+      );
     });
   });
 });
