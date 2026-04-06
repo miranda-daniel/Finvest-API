@@ -103,7 +103,7 @@ function buildRefreshCookie(value: string, maxAge: number): string {
   const parts = [
     `refreshToken=${value}`,
     'HttpOnly',
-    'SameSite=Strict',
+    'SameSite=Lax',
     'Path=/session',
     `Max-Age=${maxAge}`,
   ];

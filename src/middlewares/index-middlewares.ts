@@ -24,7 +24,12 @@ const devHelmetConfig: HelmetOptions = {
 };
 
 export const preRoutesMiddleware = (app: Application) => {
-  app.use(cors());
+  app.use(
+    cors({
+      credentials: true,
+      origin: process.env.FRONTEND_URL ?? 'http://localhost:5173',
+    }),
+  );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
