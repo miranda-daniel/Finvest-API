@@ -1,4 +1,6 @@
 import { Body, Controller, Post, Route, SuccessResponse } from 'tsoa';
+import { Request } from 'tsoa';
+import type { Request as ExpressRequest } from 'express';
 import { SessionService } from '@services/session-services';
 import {
   loginSchema,
@@ -8,6 +10,8 @@ import {
 } from '@typing/session';
 import { isProduction } from '@config/environments';
 import { REFRESH_TOKEN_COOKIE_MAX_AGE } from '@helpers/token';
+import { ApiError } from '@config/api-error';
+import { errors } from '@config/errors';
 
 // REST entry point for session endpoints (auth).
 //
@@ -23,12 +27,16 @@ export class SessionController extends Controller {
    * @summary Login user
    */
   @Post('/login')
-  public async login(@Body() body: LoginUserRequest): Promise<Session> {
+  public async login(
+    @Body() body: LoginUserRequest,
+    @Request() request: ExpressRequest,
+  ): Promise<Session> {
     loginSchema.parse(body);
 
+    const ip = request.ip ?? 'unknown';
     const { rawRefreshToken, ...session } = await SessionService.loginUser(
       body,
-      'unknown',
+      ip,
     );
 
     this.setHeader(
@@ -45,11 +53,19 @@ export class SessionController extends Controller {
    */
   @Post('/refresh-token')
   public async refreshToken(
-    @Body() body: { refreshToken: string },
+    @Request() request: ExpressRequest,
   ): Promise<RefreshTokenResponse> {
+    const rawToken = (request.cookies as Record<string, string | undefined>)
+      ?.refreshToken;
+
+    if (!rawToken) {
+      throw new ApiError(errors.INVALID_REFRESH_TOKEN);
+    }
+
+    const ip = request.ip ?? 'unknown';
     const { rawRefreshToken, jwtToken } = await SessionService.refreshToken(
-      body.refreshToken,
-      'unknown',
+      rawToken,
+      ip,
     );
 
     this.setHeader(
@@ -67,11 +83,16 @@ export class SessionController extends Controller {
   @SuccessResponse(200, 'Logged out')
   @Post('/logout')
   public async logout(
-    @Body() body: { refreshToken: string },
+    @Request() request: ExpressRequest,
   ): Promise<{ message: string }> {
-    await SessionService.logoutUser(body.refreshToken, 'unknown');
+    const rawToken = (request.cookies as Record<string, string | undefined>)
+      ?.refreshToken;
+    const ip = request.ip ?? 'unknown';
 
-    // Clear the cookie regardless of whether the token was found
+    if (rawToken) {
+      await SessionService.logoutUser(rawToken, ip);
+    }
+
     this.setHeader('Set-Cookie', buildRefreshCookie('', 0));
 
     return { message: 'Logged out successfully' };
