@@ -11,15 +11,16 @@ datasource db {
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  email      String      @unique
-  password   String
-  firstName  String
-  lastName   String
-  isActive   Boolean     @default(true)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  portfolios Portfolio[]
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
+  password       String
+  firstName      String
+  lastName       String
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  portfolios     Portfolio[]
+  refreshTokens  RefreshToken[]
 }
 
 // A portfolio groups holdings under a name (e.g. "Long Term", "Trading")
@@ -126,4 +127,17 @@ enum OperationType {
   SELL
   DIVIDEND
   FEE
+}
+
+model RefreshToken {
+  id              Int       @id @default(autoincrement())
+  token           String    @unique       // SHA-256 hash of the raw token
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires         DateTime
+  createdByIp     String
+  revoked         DateTime?
+  revokedByIp     String?
+  replacedByToken String?   // hash of the token that replaced this one (audit trail)
+  createdAt       DateTime  @default(now())
 }
