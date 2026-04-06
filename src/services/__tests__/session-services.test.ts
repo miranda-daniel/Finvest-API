@@ -174,4 +174,34 @@ describe('SessionService', () => {
       );
     });
   });
+
+  describe('logoutUser', () => {
+    it('revokes the refresh token on logout', async () => {
+      const email = `logout.valid.${Date.now()}@test.com`;
+
+      await UserService.registerUserService({
+        firstName: 'Logout',
+        lastName: 'User',
+        email,
+        password: 'password123',
+      });
+
+      const login = await SessionService.loginUser(
+        { email, password: 'password123' },
+        TEST_IP,
+      );
+      await SessionService.logoutUser(login.rawRefreshToken, TEST_IP);
+
+      // Token should now be revoked — refreshToken should throw
+      await expect(
+        SessionService.refreshToken(login.rawRefreshToken, TEST_IP),
+      ).rejects.toThrow(ApiError);
+    });
+
+    it('does not throw when given an unknown token (idempotent)', async () => {
+      await expect(
+        SessionService.logoutUser('unknown-raw-token', TEST_IP),
+      ).resolves.not.toThrow();
+    });
+  });
 });

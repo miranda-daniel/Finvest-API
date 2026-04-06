@@ -101,4 +101,14 @@ export const SessionService = {
 
     return { jwtToken, rawRefreshToken: newRawToken };
   },
+
+  logoutUser: async (rawToken: string, ip: string): Promise<void> => {
+    const tokenHash = hashToken(rawToken);
+    const stored = await RefreshTokenRepository.findByToken(tokenHash);
+
+    if (stored && !stored.revoked) {
+      await RefreshTokenRepository.revoke(stored.id, ip);
+    }
+    // If token not found or already revoked, do nothing (idempotent)
+  },
 };
