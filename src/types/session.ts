@@ -18,8 +18,25 @@ export interface SessionUser {
 
 // The full response returned by POST /session/login.
 export interface Session {
-  token: string;
+  jwtToken: string;
   user: SessionUser;
+}
+
+// Internal result from loginUser service — includes the raw refresh token
+// so the controller can set it as an HTTP-only cookie.
+// rawRefreshToken is never returned to the client.
+export interface LoginResult extends Session {
+  rawRefreshToken: string;
+}
+
+// Response returned by POST /session/refresh-token.
+export interface RefreshTokenResponse {
+  jwtToken: string;
+}
+
+// Internal result from refreshToken service.
+export interface RefreshResult extends RefreshTokenResponse {
+  rawRefreshToken: string;
 }
 
 export interface TokenPayload {
