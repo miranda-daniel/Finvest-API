@@ -24,6 +24,11 @@ export const errors = {
     errorCode: 401_001,
     description: 'Token expired',
   },
+  INVALID_REFRESH_TOKEN: {
+    httpCode: 401,
+    errorCode: 401_002,
+    description: 'Invalid or expired refresh token',
+  },
   NOT_FOUND: {
     httpCode: 404,
     errorCode: 404_000,
