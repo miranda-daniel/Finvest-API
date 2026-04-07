@@ -10,12 +10,18 @@ import {
 } from '@helpers/token';
 import { RefreshTokenRepository } from '@repositories/refresh-token-repository';
 import { UserRepository } from '@repositories/user-repository';
-import { LoginUserRequest, LoginResult, RefreshResult } from '@typing/session';
+import {
+  LoginUserRequest,
+  LoginResult,
+  RefreshResult,
+  ActiveSession,
+} from '@typing/session';
 
 export const SessionService = {
   loginUser: async (
     credentials: LoginUserRequest,
     ip: string,
+    userAgent?: string,
   ): Promise<LoginResult> => {
     const { email, password } = credentials;
 
@@ -43,6 +49,7 @@ export const SessionService = {
       userId: user.id,
       expires: getRefreshTokenExpiry(),
       createdByIp: ip,
+      userAgent,
     });
 
     return {
@@ -110,5 +117,20 @@ export const SessionService = {
       await RefreshTokenRepository.revoke(stored.id, ip);
     }
     // If token not found or already revoked, do nothing (idempotent)
+  },
+
+  listActiveSessions: async (userId: number): Promise<ActiveSession[]> => {
+    const tokens = await RefreshTokenRepository.findActiveByUserId(userId);
+    return tokens.map((t) => ({
+      id: t.id,
+      createdByIp: t.createdByIp,
+      userAgent: t.userAgent,
+      createdAt: t.createdAt,
+      expires: t.expires,
+    }));
+  },
+
+  revokeAllSessions: async (userId: number): Promise<void> => {
+    await RefreshTokenRepository.revokeAllForUser(userId);
   },
 };

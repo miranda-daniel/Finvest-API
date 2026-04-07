@@ -42,3 +42,12 @@ export interface RefreshResult extends RefreshTokenResponse {
 export interface TokenPayload {
   userId: number;
 }
+
+// A single active (non-revoked, non-expired) refresh token session for a user.
+export interface ActiveSession {
+  id: number;
+  createdByIp: string;
+  userAgent: string | null;
+  createdAt: Date;
+  expires: Date;
+}

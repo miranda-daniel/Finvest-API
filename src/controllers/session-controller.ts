@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Route, SuccessResponse } from 'tsoa';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Route,
+  Security,
+  SuccessResponse,
+} from 'tsoa';
 import { Request } from 'tsoa';
 import type { Request as ExpressRequest } from 'express';
 import { SessionService } from '@services/session-services';
@@ -7,6 +15,8 @@ import {
   LoginUserRequest,
   Session,
   RefreshTokenResponse,
+  ActiveSession,
+  TokenPayload,
 } from '@typing/session';
 import { isProduction } from '@config/environments';
 import { REFRESH_TOKEN_COOKIE_MAX_AGE } from '@helpers/token';
@@ -34,9 +44,11 @@ export class SessionController extends Controller {
     loginSchema.parse(body);
 
     const ip = request.ip ?? 'unknown';
+    const userAgent = request.headers['user-agent'];
     const { rawRefreshToken, ...session } = await SessionService.loginUser(
       body,
       ip,
+      userAgent,
     );
 
     this.setHeader(
@@ -96,6 +108,35 @@ export class SessionController extends Controller {
     this.setHeader('Set-Cookie', buildRefreshCookie('', 0));
 
     return { message: 'Logged out successfully' };
+  }
+
+  /**
+   * List all active sessions for the authenticated user.
+   * @summary List active sessions
+   */
+  @Security('jwt')
+  @Get('/')
+  public async getActiveSessions(
+    @Request() request: ExpressRequest,
+  ): Promise<ActiveSession[]> {
+    const { userId } = (request as unknown as { user: TokenPayload }).user;
+    return SessionService.listActiveSessions(userId);
+  }
+
+  /**
+   * Revoke all active sessions for the authenticated user.
+   * @summary Revoke all sessions
+   */
+  @Security('jwt')
+  @SuccessResponse(200, 'All sessions revoked')
+  @Post('/revoke-all')
+  public async revokeAllSessions(
+    @Request() request: ExpressRequest,
+  ): Promise<{ message: string }> {
+    const { userId } = (request as unknown as { user: TokenPayload }).user;
+    await SessionService.revokeAllSessions(userId);
+    this.setHeader('Set-Cookie', buildRefreshCookie('', 0));
+    return { message: 'All sessions revoked' };
   }
 }
 

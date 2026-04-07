@@ -8,6 +8,7 @@ Execution order for every HTTP request to the API.
                                ▼
                 ┌──────────────────────────────┐
                 │           cors()             │  Allow cross-origin requests
+                │  credentials: true           │  (required for cookie auth)
                 └──────────────┬───────────────┘
                                │
                                ▼
@@ -19,6 +20,11 @@ Execution order for every HTTP request to the API.
                 ┌──────────────────────────────┐
                 │    express.urlencoded()      │  Parse URL-encoded body
                 └──────────────┬───────────────┘
+                               │
+                               ▼
+                ┌──────────────────────────────┐
+                │       cookieParser()         │  Parse HTTP-only cookies
+                └──────────────┬───────────────┘  (refresh token reads)
                                │
                                ▼
                 ┌──────────────────────────────┐  production  → default (strict)
@@ -81,7 +87,7 @@ Execution order for every HTTP request to the API.
 
 ## Notes
 
-- `preRoutesMiddleware` registers: cors, express.json, express.urlencoded, helmet
+- `preRoutesMiddleware` registers: cors, express.json, express.urlencoded, cookieParser, helmet
 - `postRoutesMiddleware` registers: errorHandler
 - Apollo (`/graphql`) is mounted **before** TSOA routes to prevent route conflicts
 - The 404 handler fires for any path not matched by router, Apollo, or TSOA

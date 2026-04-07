@@ -14,6 +14,18 @@ classDiagram
     +DateTime updatedAt
   }
 
+  class RefreshToken {
+    +Int id
+    +String token
+    +Int userId
+    +DateTime expires
+    +String createdByIp
+    +DateTime? revoked
+    +String? revokedByIp
+    +String? replacedByToken
+    +DateTime createdAt
+  }
+
   class Portfolio {
     +Int id
     +String name
@@ -99,6 +111,7 @@ classDiagram
     FEE
   }
 
+  User "1" --> "0..*" RefreshToken : has
   User "1" --> "0..*" Portfolio : owns
   Portfolio "1" --> "0..*" Holding : contains
   Holding "0..*" --> "1" Instrument : tracks
@@ -112,6 +125,8 @@ classDiagram
 
 ## Notes
 
+- `RefreshToken.token` stores the **SHA-256 hash** of the raw token — never the raw value itself.
+- `RefreshToken.replacedByToken` stores the hash of the successor token, enabling full rotation chain tracing for auditing.
 - All monetary values are in **USD**. Non-US instruments are tracked via their ADR listing.
 - `Holding` has no stored computed fields. `avgCost`, `quantity`, `unrealizedPnl`, and
   `allocationPct` are always derived from `Operation` rows at query time.

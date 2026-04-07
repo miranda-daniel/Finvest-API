@@ -204,4 +204,66 @@ describe('SessionService', () => {
       ).resolves.not.toThrow();
     });
   });
+
+  describe('listActiveSessions', () => {
+    it('returns active sessions for a user', async () => {
+      const email = `sessions.list.${Date.now()}@test.com`;
+      const user = await UserService.registerUserService({
+        firstName: 'Sessions',
+        lastName: 'Test',
+        email,
+        password: 'password123',
+      });
+
+      await SessionService.loginUser(
+        { email, password: 'password123' },
+        '127.0.0.1',
+        'Mozilla/5.0',
+      );
+
+      const sessions = await SessionService.listActiveSessions(user.id);
+      expect(sessions.length).toBeGreaterThan(0);
+      expect(sessions[0].id).toBeDefined();
+      expect(sessions[0].createdByIp).toBe('127.0.0.1');
+      expect(sessions[0].userAgent).toBe('Mozilla/5.0');
+    });
+
+    it('returns empty array when user has no active sessions', async () => {
+      const email = `sessions.empty.${Date.now()}@test.com`;
+      const user = await UserService.registerUserService({
+        firstName: 'NoSession',
+        lastName: 'Test',
+        email,
+        password: 'password123',
+      });
+
+      const sessions = await SessionService.listActiveSessions(user.id);
+      expect(sessions).toEqual([]);
+    });
+  });
+
+  describe('revokeAllSessions', () => {
+    it('revokes all active sessions for a user', async () => {
+      const email = `sessions.revoke.${Date.now()}@test.com`;
+      const user = await UserService.registerUserService({
+        firstName: 'Revoke',
+        lastName: 'All',
+        email,
+        password: 'password123',
+      });
+
+      const login = await SessionService.loginUser(
+        { email, password: 'password123' },
+        '127.0.0.1',
+      );
+      await SessionService.revokeAllSessions(user.id);
+
+      await expect(
+        SessionService.refreshToken(login.rawRefreshToken, '127.0.0.1'),
+      ).rejects.toThrow(ApiError);
+
+      const sessions = await SessionService.listActiveSessions(user.id);
+      expect(sessions).toEqual([]);
+    });
+  });
 });

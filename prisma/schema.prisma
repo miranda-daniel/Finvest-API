@@ -136,6 +136,7 @@ model RefreshToken {
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   expires         DateTime
   createdByIp     String
+  userAgent       String?
   revoked         DateTime?
   revokedByIp     String?
   replacedByToken String?   // hash of the token that replaced this one (audit trail)

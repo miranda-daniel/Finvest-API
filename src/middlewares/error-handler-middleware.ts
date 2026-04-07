@@ -5,49 +5,73 @@ import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
 import logger from '@config/logger';
 
-const buildErrorResponse = (
-  err: ApiError | ValidateError | ZodError | unknown,
-) => {
-  if (err instanceof ApiError) {
-    logger.error(`API Error - Code: ${err.errorCode}, Message: ${err.message}`);
+// Shape returned by every error handler.
+interface ErrorResponse {
+  httpCode: number;
+  errorCode: number;
+  message: string;
+}
 
+// Each handler returns an ErrorResponse if it recognises the error, or null to pass it on.
+// To support a new error type, add an entry here — no other code needs to change.
+const errorHandlers: Array<(err: unknown) => ErrorResponse | null> = [
+  (err) => {
+    if (!(err instanceof ApiError)) {
+      return null;
+    }
+    logger.error(`API Error - Code: ${err.errorCode}, Message: ${err.message}`);
     return {
       httpCode: err.httpCode,
       errorCode: err.errorCode,
       message: err.message,
     };
-  } else if (err instanceof ZodError) {
-    logger.warn(`Validation Error - ${JSON.stringify(err.issues)}`);
+  },
 
+  (err) => {
+    if (!(err instanceof ZodError)) {
+      return null;
+    }
+    logger.warn(`Validation Error - ${JSON.stringify(err.issues)}`);
     const { httpCode, errorCode } = errors.VALIDATION_ERROR;
     return {
       httpCode,
       errorCode,
       message: err.issues.map((i) => i.message).join(', '),
     };
-  } else if (err instanceof ValidateError) {
+  },
+
+  (err) => {
+    if (!(err instanceof ValidateError)) {
+      return null;
+    }
     logger.warn(
       `Validation Error - Message: ${errors.VALIDATION_ERROR.description}`,
     );
-
     const { httpCode, errorCode, description } = errors.VALIDATION_ERROR;
     return {
       httpCode,
       errorCode,
       message: description,
     };
-  } else {
-    logger.error(
-      `Internal Server Error - Message: ${errors.INTERNAL_SERVER_ERROR.description}`,
-    );
+  },
+];
 
-    const { httpCode, errorCode, description } = errors.INTERNAL_SERVER_ERROR;
-    return {
-      httpCode,
-      errorCode,
-      message: description,
-    };
+const fallbackHandler = (err: unknown): ErrorResponse => {
+  const detail =
+    err instanceof Error ? `${err.message}\n${err.stack}` : String(err);
+  logger.error(`Internal Server Error - ${detail}`);
+  const { httpCode, errorCode, description } = errors.INTERNAL_SERVER_ERROR;
+  return { httpCode, errorCode, message: description };
+};
+
+const buildErrorResponse = (err: unknown): ErrorResponse => {
+  for (const handler of errorHandlers) {
+    const result = handler(err);
+    if (result) {
+      return result;
+    }
   }
+  return fallbackHandler(err);
 };
 
 export const errorHandler = (

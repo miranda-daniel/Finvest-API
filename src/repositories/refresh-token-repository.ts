@@ -7,12 +7,24 @@ export const RefreshTokenRepository = {
     userId: number;
     expires: Date;
     createdByIp: string;
+    userAgent?: string;
   }): Promise<RefreshToken> => {
     return db.refreshToken.create({ data });
   },
 
   findByToken: async (token: string): Promise<RefreshToken | null> => {
     return db.refreshToken.findUnique({ where: { token } });
+  },
+
+  findActiveByUserId: async (userId: number): Promise<RefreshToken[]> => {
+    return db.refreshToken.findMany({
+      where: {
+        userId,
+        revoked: null,
+        expires: { gt: new Date() },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
   },
 
   revoke: async (

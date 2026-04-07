@@ -94,13 +94,17 @@
 
 ## Authentication flow
 
+Dual-token strategy: short-lived JWT (15m) in memory + long-lived refresh token (7d) in HTTP-only cookie.
+See [`auth-refresh-token-flow.md`](auth-refresh-token-flow.md) for the full flow diagrams.
+
 ### REST — `@Security('jwt')`
 
 ```
 Request
   → TSOA generated routes.ts calls expressAuthentication()
   → Validates JWT from Authorization header
-  → Throws ApiError if invalid/expired
+  → Throws ApiError(EXPIRED_TOKEN) if expired → frontend interceptor renews JWT silently
+  → Throws ApiError(INVALID_TOKEN) if invalid
   → Returns TokenPayload — available as request.user in controller
 ```
 
@@ -113,6 +117,14 @@ Request
   → If valid token → context.user = { userId }
   → If invalid/expired token → throws GraphQLError (UNAUTHENTICATED)
   → Resolver decides whether to require context.user
+```
+
+### Session endpoints (no JWT required)
+
+```
+POST /session/login        → validate credentials, issue JWT + set refresh token cookie
+POST /session/refresh-token → read cookie, rotate refresh token, return new JWT
+POST /session/logout        → revoke refresh token in DB, clear cookie
 ```
 
 ---
@@ -145,6 +157,7 @@ Request
 | `src/config/environments.ts`                   | `isDevelopment()`, `isProduction()`, `isTest()` helpers. |
 | `src/config/errors.ts`                         | Centralized error definitions.                           |
 | `src/middlewares/authentication-middleware.ts` | TSOA JWT validation for REST.                            |
+| `src/helpers/token.ts`                         | Pure utils: generate refresh token, hash (SHA-256), expiry. |
 | `src/apollo/apolloServer.ts`                   | Apollo Server factory + `buildApolloContext`.            |
 | `src/routes/index.ts`                          | Manual Express router (healthcheck + Swagger UI).        |
 | `src/routes/routes.ts`                         | TSOA generated — do not edit manually.                   |

@@ -12,11 +12,15 @@ export async function expressAuthentication(
   scopes?: string[],
 ) {
   if (securityName === 'jwt') {
-    const token = request.headers.authorization!;
+    const authHeader = request.headers.authorization;
 
-    if (!token) {
+    if (!authHeader) {
       throw new ApiError(errors.UNAUTHENTICATED);
     }
+
+    const token = authHeader.startsWith('Bearer ')
+      ? authHeader.slice(7)
+      : authHeader;
 
     try {
       const payloadDecoded = jwt.verify(
