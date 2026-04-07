@@ -23,9 +23,11 @@ const buildRefreshCookie = (value: string, maxAge: number): string => {
     'Path=/session',
     `Max-Age=${maxAge}`,
   ];
+
   if (isProduction()) {
     parts.push('Secure');
   }
+
   return parts.join('; ');
 };
 
@@ -51,6 +53,7 @@ export class SessionController extends Controller {
 
     const ip = request.ip ?? 'unknown';
     const userAgent = request.headers['user-agent'];
+
     const { rawRefreshToken, ...session } = await SessionService.loginUser(body, ip, userAgent);
 
     this.setHeader('Set-Cookie', buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE));
