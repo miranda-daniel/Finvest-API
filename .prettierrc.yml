@@ -1,8 +1,10 @@
+printWidth: 100
 semi: true
-tabWidth: 2
-useTabs: false
 singleQuote: true
+tabWidth: 2
 trailingComma: "all"
 bracketSpacing: true
+bracketSameLine: false
 arrowParens: "always"
+quoteProps: "as-needed"
 endOfLine: "lf"

@@ -11,16 +11,14 @@ export class UserService {
     try {
       const users = await UserRepository.findMany();
 
-      return users.map(
-        ({ id, email, firstName, lastName, isActive, createdAt }) => ({
-          id,
-          email,
-          firstName,
-          lastName,
-          isActive,
-          createdAt,
-        }),
-      );
+      return users.map(({ id, email, firstName, lastName, isActive, createdAt }) => ({
+        id,
+        email,
+        firstName,
+        lastName,
+        isActive,
+        createdAt,
+      }));
     } catch (err) {
       logger.error(`getAllUsersService failed: ${err}`);
       throw new ApiError(errors.INTERNAL_SERVER_ERROR);
@@ -38,9 +36,7 @@ export class UserService {
     }
   };
 
-  static registerUserService = async (
-    input: RegisterUserRequest,
-  ): Promise<User> => {
+  static registerUserService = async (input: RegisterUserRequest): Promise<User> => {
     const { firstName, lastName, email, password } = input;
 
     const hashedPassword = await hashPassword(password);

@@ -7,9 +7,7 @@ export interface Portfolio {
 }
 
 export class PortfolioService {
-  static getPortfoliosByUserId = async (
-    userId: number,
-  ): Promise<Portfolio[]> => {
+  static getPortfoliosByUserId = async (userId: number): Promise<Portfolio[]> => {
     const portfolios = await PortfolioRepository.findManyByUserId(userId);
 
     return portfolios.map(({ id, name, createdAt }) => ({

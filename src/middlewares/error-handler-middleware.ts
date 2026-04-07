@@ -44,9 +44,7 @@ const errorHandlers: Array<(err: unknown) => ErrorResponse | null> = [
     if (!(err instanceof ValidateError)) {
       return null;
     }
-    logger.warn(
-      `Validation Error - Message: ${errors.VALIDATION_ERROR.description}`,
-    );
+    logger.warn(`Validation Error - Message: ${errors.VALIDATION_ERROR.description}`);
     const { httpCode, errorCode, description } = errors.VALIDATION_ERROR;
     return {
       httpCode,
@@ -57,8 +55,7 @@ const errorHandlers: Array<(err: unknown) => ErrorResponse | null> = [
 ];
 
 const fallbackHandler = (err: unknown): ErrorResponse => {
-  const detail =
-    err instanceof Error ? `${err.message}\n${err.stack}` : String(err);
+  const detail = err instanceof Error ? `${err.message}\n${err.stack}` : String(err);
   logger.error(`Internal Server Error - ${detail}`);
   const { httpCode, errorCode, description } = errors.INTERNAL_SERVER_ERROR;
   return { httpCode, errorCode, message: description };
@@ -74,12 +71,7 @@ const buildErrorResponse = (err: unknown): ErrorResponse => {
   return fallbackHandler(err);
 };
 
-export const errorHandler = (
-  err: unknown,
-  req: Request,
-  res: Response,
-  _next: NextFunction,
-) => {
+export const errorHandler = (err: unknown, req: Request, res: Response, _next: NextFunction) => {
   const responseError = buildErrorResponse(err);
 
   logger.info(

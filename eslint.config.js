@@ -69,8 +69,8 @@ module.exports = [
       // Disable ESLint core rules that conflict with prettier
       ...prettierConfig.rules,
 
-      // Prettier as an ESLint rule
-      'prettier/prettier': 'error',
+      // Prettier as an ESLint rule — options must match .prettierrc.yml exactly
+      'prettier/prettier': ['error', { printWidth: 100 }],
 
       // Allow unused variables/args prefixed with underscore
       '@typescript-eslint/no-unused-vars': [
@@ -101,8 +101,8 @@ module.exports = [
       'max-len': [
         'warn',
         {
-          code: 120,
-          comments: 120,
+          code: 100,
+          comments: 100,
           ignoreComments: false,
           ignoreTrailingComments: true,
           ignoreUrls: true,

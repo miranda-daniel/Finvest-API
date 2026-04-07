@@ -41,6 +41,7 @@ Never access, clone, or interact with any other GitHub repository.
 
 ### Rules
 
+- Always use arrow functions (`const foo = () => {}`) — never `function` declarations
 - Services must not import `db` — use a repository.
 - Controllers and resolvers must not import `db` or repositories — use a service.
 - No serializer layer. REST response shape is defined by TSOA decorators.

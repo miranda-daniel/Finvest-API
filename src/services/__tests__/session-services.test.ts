@@ -18,10 +18,7 @@ describe('SessionService', () => {
         password: 'password123',
       });
 
-      const result = await SessionService.loginUser(
-        { email, password: 'password123' },
-        TEST_IP,
-      );
+      const result = await SessionService.loginUser({ email, password: 'password123' }, TEST_IP);
 
       expect(result.jwtToken).toBeDefined();
       expect(typeof result.jwtToken).toBe('string');
@@ -37,10 +34,7 @@ describe('SessionService', () => {
         password: 'password123',
       });
 
-      const result = await SessionService.loginUser(
-        { email, password: 'password123' },
-        TEST_IP,
-      );
+      const result = await SessionService.loginUser({ email, password: 'password123' }, TEST_IP);
 
       expect(result.rawRefreshToken).toBeDefined();
       expect(typeof result.rawRefreshToken).toBe('string');
@@ -80,10 +74,7 @@ describe('SessionService', () => {
         password: 'password123',
       });
 
-      const result = await SessionService.loginUser(
-        { email, password: 'password123' },
-        TEST_IP,
-      );
+      const result = await SessionService.loginUser({ email, password: 'password123' }, TEST_IP);
 
       expect(result.user).toBeDefined();
       expect(result.user.email).toBe(email);
@@ -105,14 +96,8 @@ describe('SessionService', () => {
         password: 'password123',
       });
 
-      const login = await SessionService.loginUser(
-        { email, password: 'password123' },
-        TEST_IP,
-      );
-      const result = await SessionService.refreshToken(
-        login.rawRefreshToken,
-        TEST_IP,
-      );
+      const login = await SessionService.loginUser({ email, password: 'password123' }, TEST_IP);
+      const result = await SessionService.refreshToken(login.rawRefreshToken, TEST_IP);
 
       expect(result.jwtToken).toBeDefined();
       expect(typeof result.jwtToken).toBe('string');
@@ -121,9 +106,9 @@ describe('SessionService', () => {
     });
 
     it('throws ApiError when token does not exist in DB', async () => {
-      await expect(
-        SessionService.refreshToken('nonexistent-token-value', TEST_IP),
-      ).rejects.toThrow(ApiError);
+      await expect(SessionService.refreshToken('nonexistent-token-value', TEST_IP)).rejects.toThrow(
+        ApiError,
+      );
     });
 
     it('throws ApiError and revokes token family when token is already revoked', async () => {
@@ -136,16 +121,13 @@ describe('SessionService', () => {
         password: 'password123',
       });
 
-      const login = await SessionService.loginUser(
-        { email, password: 'password123' },
-        TEST_IP,
-      );
+      const login = await SessionService.loginUser({ email, password: 'password123' }, TEST_IP);
       // Use it once legitimately to rotate
       await SessionService.refreshToken(login.rawRefreshToken, TEST_IP);
       // Try to reuse the original (now revoked) token — simulates theft
-      await expect(
-        SessionService.refreshToken(login.rawRefreshToken, TEST_IP),
-      ).rejects.toThrow(ApiError);
+      await expect(SessionService.refreshToken(login.rawRefreshToken, TEST_IP)).rejects.toThrow(
+        ApiError,
+      );
     });
 
     it('throws ApiError when token is expired', async () => {
@@ -169,9 +151,7 @@ describe('SessionService', () => {
         createdByIp: '127.0.0.1',
       });
 
-      await expect(SessionService.refreshToken(raw, TEST_IP)).rejects.toThrow(
-        ApiError,
-      );
+      await expect(SessionService.refreshToken(raw, TEST_IP)).rejects.toThrow(ApiError);
     });
   });
 
@@ -186,22 +166,17 @@ describe('SessionService', () => {
         password: 'password123',
       });
 
-      const login = await SessionService.loginUser(
-        { email, password: 'password123' },
-        TEST_IP,
-      );
+      const login = await SessionService.loginUser({ email, password: 'password123' }, TEST_IP);
       await SessionService.logoutUser(login.rawRefreshToken, TEST_IP);
 
       // Token should now be revoked — refreshToken should throw
-      await expect(
-        SessionService.refreshToken(login.rawRefreshToken, TEST_IP),
-      ).rejects.toThrow(ApiError);
+      await expect(SessionService.refreshToken(login.rawRefreshToken, TEST_IP)).rejects.toThrow(
+        ApiError,
+      );
     });
 
     it('does not throw when given an unknown token (idempotent)', async () => {
-      await expect(
-        SessionService.logoutUser('unknown-raw-token', TEST_IP),
-      ).resolves.not.toThrow();
+      await expect(SessionService.logoutUser('unknown-raw-token', TEST_IP)).resolves.not.toThrow();
     });
   });
 
@@ -252,15 +227,12 @@ describe('SessionService', () => {
         password: 'password123',
       });
 
-      const login = await SessionService.loginUser(
-        { email, password: 'password123' },
-        '127.0.0.1',
-      );
+      const login = await SessionService.loginUser({ email, password: 'password123' }, '127.0.0.1');
       await SessionService.revokeAllSessions(user.id);
 
-      await expect(
-        SessionService.refreshToken(login.rawRefreshToken, '127.0.0.1'),
-      ).rejects.toThrow(ApiError);
+      await expect(SessionService.refreshToken(login.rawRefreshToken, '127.0.0.1')).rejects.toThrow(
+        ApiError,
+      );
 
       const sessions = await SessionService.listActiveSessions(user.id);
       expect(sessions).toEqual([]);

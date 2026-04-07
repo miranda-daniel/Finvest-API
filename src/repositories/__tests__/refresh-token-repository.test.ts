@@ -52,8 +52,7 @@ describe('RefreshTokenRepository', () => {
     });
 
     it('returns null when token does not exist', async () => {
-      const found =
-        await RefreshTokenRepository.findByToken('nonexistent-hash');
+      const found = await RefreshTokenRepository.findByToken('nonexistent-hash');
       expect(found).toBeNull();
     });
   });

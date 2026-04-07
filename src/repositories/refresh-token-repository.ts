@@ -27,11 +27,7 @@ export const RefreshTokenRepository = {
     });
   },
 
-  revoke: async (
-    id: number,
-    ip: string,
-    replacedByToken?: string,
-  ): Promise<void> => {
+  revoke: async (id: number, ip: string, replacedByToken?: string): Promise<void> => {
     await db.refreshToken.update({
       where: { id },
       data: {

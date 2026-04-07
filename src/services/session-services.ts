@@ -3,19 +3,10 @@ import { ApiError } from '@config/api-error';
 import { ENV_VARIABLES } from '@config/config';
 import { errors } from '@config/errors';
 import { comparePasswords } from '@helpers/password';
-import {
-  generateRefreshToken,
-  getRefreshTokenExpiry,
-  hashToken,
-} from '@helpers/token';
+import { generateRefreshToken, getRefreshTokenExpiry, hashToken } from '@helpers/token';
 import { RefreshTokenRepository } from '@repositories/refresh-token-repository';
 import { UserRepository } from '@repositories/user-repository';
-import {
-  LoginUserRequest,
-  LoginResult,
-  RefreshResult,
-  ActiveSession,
-} from '@typing/session';
+import { LoginUserRequest, LoginResult, RefreshResult, ActiveSession } from '@typing/session';
 
 export const SessionService = {
   loginUser: async (
@@ -64,10 +55,7 @@ export const SessionService = {
     };
   },
 
-  refreshToken: async (
-    rawToken: string,
-    ip: string,
-  ): Promise<RefreshResult> => {
+  refreshToken: async (rawToken: string, ip: string): Promise<RefreshResult> => {
     const tokenHash = hashToken(rawToken);
     const stored = await RefreshTokenRepository.findByToken(tokenHash);
 
@@ -98,13 +86,9 @@ export const SessionService = {
 
     await RefreshTokenRepository.revoke(stored.id, ip, newHash);
 
-    const jwtToken = JWT.sign(
-      { userId: stored.userId },
-      ENV_VARIABLES.jwtSignature,
-      {
-        expiresIn: ENV_VARIABLES.jwtExpiresIn,
-      },
-    );
+    const jwtToken = JWT.sign({ userId: stored.userId }, ENV_VARIABLES.jwtSignature, {
+      expiresIn: ENV_VARIABLES.jwtExpiresIn,
+    });
 
     return { jwtToken, rawRefreshToken: newRawToken };
   },

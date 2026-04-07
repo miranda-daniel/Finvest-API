@@ -9,9 +9,7 @@ module.exports = async () => {
   await client.connect();
 
   try {
-    await client.query(
-      `TRUNCATE "User", "Portfolio" RESTART IDENTITY CASCADE;`,
-    );
+    await client.query(`TRUNCATE "User", "Portfolio" RESTART IDENTITY CASCADE;`);
   } finally {
     await client.end();
   }

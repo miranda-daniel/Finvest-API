@@ -3,16 +3,9 @@ import express, { Application } from 'express';
 import { expressMiddleware } from '@as-integrations/express5';
 import { RegisterRoutes } from './routes/routes';
 import { ENV_VARIABLES } from '@config/config';
-import {
-  postRoutesMiddleware,
-  preRoutesMiddleware,
-} from '@middlewares/index-middlewares';
+import { postRoutesMiddleware, preRoutesMiddleware } from '@middlewares/index-middlewares';
 import { errors } from '@config/errors';
-import {
-  createApolloServer,
-  buildApolloContext,
-  ApolloContext,
-} from '@graphql/apolloServer';
+import { createApolloServer, buildApolloContext, ApolloContext } from '@graphql/apolloServer';
 
 const app: Application = express();
 

@@ -17,9 +17,7 @@ describe('UserService', () => {
       expect(result.email).toBe(email);
       expect(result.firstName).toBe('John');
       expect(result.lastName).toBe('Doe');
-      expect(
-        (result as unknown as Record<string, unknown>).password,
-      ).toBeUndefined();
+      expect((result as unknown as Record<string, unknown>).password).toBeUndefined();
     });
 
     it('throws ApiError when the email is already registered', async () => {
@@ -33,9 +31,7 @@ describe('UserService', () => {
 
       await UserService.registerUserService(data);
 
-      await expect(UserService.registerUserService(data)).rejects.toThrow(
-        ApiError,
-      );
+      await expect(UserService.registerUserService(data)).rejects.toThrow(ApiError);
     });
   });
 
@@ -52,16 +48,10 @@ describe('UserService', () => {
 
       const users = await UserService.getUsersService();
 
-      const alice = users.find(
-        (u) => u.firstName === 'Alice' && u.lastName === 'Smith',
-      );
+      const alice = users.find((u) => u.firstName === 'Alice' && u.lastName === 'Smith');
       expect(alice).toBeDefined();
-      expect(
-        (alice as unknown as Record<string, unknown>).password,
-      ).toBeUndefined();
-      expect(
-        (alice as unknown as Record<string, unknown>).email,
-      ).toBeUndefined();
+      expect((alice as unknown as Record<string, unknown>).password).toBeUndefined();
+      expect((alice as unknown as Record<string, unknown>).email).toBeUndefined();
     });
   });
 });

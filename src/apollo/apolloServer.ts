@@ -23,11 +23,7 @@ export const createApolloServer = () => {
   });
 };
 
-export const buildApolloContext = async ({
-  req,
-}: {
-  req: Request;
-}): Promise<ApolloContext> => {
+export const buildApolloContext = async ({ req }: { req: Request }): Promise<ApolloContext> => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -35,9 +31,7 @@ export const buildApolloContext = async ({
   }
 
   try {
-    const token = authHeader.startsWith('Bearer ')
-      ? authHeader.slice(7)
-      : authHeader;
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
     const user = jwt.verify(token, ENV_VARIABLES.jwtSignature) as TokenPayload;
     return { user };
   } catch (err) {

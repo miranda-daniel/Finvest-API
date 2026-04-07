@@ -18,15 +18,10 @@ export async function expressAuthentication(
       throw new ApiError(errors.UNAUTHENTICATED);
     }
 
-    const token = authHeader.startsWith('Bearer ')
-      ? authHeader.slice(7)
-      : authHeader;
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
 
     try {
-      const payloadDecoded = jwt.verify(
-        token,
-        ENV_VARIABLES.jwtSignature,
-      ) as TokenPayload;
+      const payloadDecoded = jwt.verify(token, ENV_VARIABLES.jwtSignature) as TokenPayload;
 
       return {
         ...payloadDecoded,

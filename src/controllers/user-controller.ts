@@ -1,11 +1,6 @@
 import { Body, Get, Security, Controller, Post, Route } from 'tsoa';
 import { UserService } from '@services/user-services';
-import {
-  registerUserSchema,
-  RegisterUserRequest,
-  User,
-  UserIndex,
-} from '@typing/user';
+import { registerUserSchema, RegisterUserRequest, User, UserIndex } from '@typing/user';
 
 // REST entry point for user endpoints.
 //
@@ -22,9 +17,7 @@ export class UserController extends Controller {
    * @returns {User} 200 - User
    */
   @Post('/')
-  public async register(
-    @Body() requestBody: RegisterUserRequest,
-  ): Promise<User> {
+  public async register(@Body() requestBody: RegisterUserRequest): Promise<User> {
     registerUserSchema.parse(requestBody);
 
     return await UserService.registerUserService(requestBody);

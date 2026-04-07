@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Route,
-  Security,
-  SuccessResponse,
-} from 'tsoa';
+import { Body, Controller, Get, Post, Route, Security, SuccessResponse } from 'tsoa';
 import { Request } from 'tsoa';
 import type { Request as ExpressRequest } from 'express';
 import { SessionService } from '@services/session-services';
@@ -22,6 +14,20 @@ import { isProduction } from '@config/environments';
 import { REFRESH_TOKEN_COOKIE_MAX_AGE } from '@helpers/token';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
+
+const buildRefreshCookie = (value: string, maxAge: number): string => {
+  const parts = [
+    `refreshToken=${value}`,
+    'HttpOnly',
+    'SameSite=Lax',
+    'Path=/session',
+    `Max-Age=${maxAge}`,
+  ];
+  if (isProduction()) {
+    parts.push('Secure');
+  }
+  return parts.join('; ');
+};
 
 // REST entry point for session endpoints (auth).
 //
@@ -45,16 +51,9 @@ export class SessionController extends Controller {
 
     const ip = request.ip ?? 'unknown';
     const userAgent = request.headers['user-agent'];
-    const { rawRefreshToken, ...session } = await SessionService.loginUser(
-      body,
-      ip,
-      userAgent,
-    );
+    const { rawRefreshToken, ...session } = await SessionService.loginUser(body, ip, userAgent);
 
-    this.setHeader(
-      'Set-Cookie',
-      buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE),
-    );
+    this.setHeader('Set-Cookie', buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE));
 
     return session;
   }
@@ -64,26 +63,17 @@ export class SessionController extends Controller {
    * @summary Refresh JWT
    */
   @Post('/refresh-token')
-  public async refreshToken(
-    @Request() request: ExpressRequest,
-  ): Promise<RefreshTokenResponse> {
-    const rawToken = (request.cookies as Record<string, string | undefined>)
-      ?.refreshToken;
+  public async refreshToken(@Request() request: ExpressRequest): Promise<RefreshTokenResponse> {
+    const rawToken = (request.cookies as Record<string, string | undefined>)?.refreshToken;
 
     if (!rawToken) {
       throw new ApiError(errors.INVALID_REFRESH_TOKEN);
     }
 
     const ip = request.ip ?? 'unknown';
-    const { rawRefreshToken, jwtToken } = await SessionService.refreshToken(
-      rawToken,
-      ip,
-    );
+    const { rawRefreshToken, jwtToken } = await SessionService.refreshToken(rawToken, ip);
 
-    this.setHeader(
-      'Set-Cookie',
-      buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE),
-    );
+    this.setHeader('Set-Cookie', buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE));
 
     return { jwtToken };
   }
@@ -94,11 +84,8 @@ export class SessionController extends Controller {
    */
   @SuccessResponse(200, 'Logged out')
   @Post('/logout')
-  public async logout(
-    @Request() request: ExpressRequest,
-  ): Promise<{ message: string }> {
-    const rawToken = (request.cookies as Record<string, string | undefined>)
-      ?.refreshToken;
+  public async logout(@Request() request: ExpressRequest): Promise<{ message: string }> {
+    const rawToken = (request.cookies as Record<string, string | undefined>)?.refreshToken;
     const ip = request.ip ?? 'unknown';
 
     if (rawToken) {
@@ -116,9 +103,7 @@ export class SessionController extends Controller {
    */
   @Security('jwt')
   @Get('/')
-  public async getActiveSessions(
-    @Request() request: ExpressRequest,
-  ): Promise<ActiveSession[]> {
+  public async getActiveSessions(@Request() request: ExpressRequest): Promise<ActiveSession[]> {
     const { userId } = (request as unknown as { user: TokenPayload }).user;
     return SessionService.listActiveSessions(userId);
   }
@@ -130,26 +115,10 @@ export class SessionController extends Controller {
   @Security('jwt')
   @SuccessResponse(200, 'All sessions revoked')
   @Post('/revoke-all')
-  public async revokeAllSessions(
-    @Request() request: ExpressRequest,
-  ): Promise<{ message: string }> {
+  public async revokeAllSessions(@Request() request: ExpressRequest): Promise<{ message: string }> {
     const { userId } = (request as unknown as { user: TokenPayload }).user;
     await SessionService.revokeAllSessions(userId);
     this.setHeader('Set-Cookie', buildRefreshCookie('', 0));
     return { message: 'All sessions revoked' };
   }
-}
-
-function buildRefreshCookie(value: string, maxAge: number): string {
-  const parts = [
-    `refreshToken=${value}`,
-    'HttpOnly',
-    'SameSite=Lax',
-    'Path=/session',
-    `Max-Age=${maxAge}`,
-  ];
-  if (isProduction()) {
-    parts.push('Secure');
-  }
-  return parts.join('; ');
 }
