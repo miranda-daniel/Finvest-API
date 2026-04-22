@@ -68,4 +68,54 @@ describe('PortfolioService', () => {
       expect(result[0].isFavorite).toBe(false);
     });
   });
+
+  describe('createPortfolio', () => {
+    it('creates a portfolio and returns it with isFavorite: false when not marked', async () => {
+      const user = await UserService.registerUserService({
+        firstName: 'Create',
+        lastName: 'NoFav',
+        email: `create.nofav.${Date.now()}@test.com`,
+        password: 'password123',
+      });
+
+      const result = await PortfolioService.createPortfolio(user.id, 'My New Portfolio');
+
+      expect(result.name).toBe('My New Portfolio');
+      expect(result.id).toBeDefined();
+      expect(typeof result.createdAt).toBe('string');
+      expect(result.isFavorite).toBe(false);
+    });
+
+    it('creates a portfolio and sets it as favorite when isFavorite is true', async () => {
+      const user = await UserService.registerUserService({
+        firstName: 'Create',
+        lastName: 'Fav',
+        email: `create.fav.${Date.now()}@test.com`,
+        password: 'password123',
+      });
+
+      const result = await PortfolioService.createPortfolio(user.id, 'Favorite Portfolio', true);
+
+      expect(result.isFavorite).toBe(true);
+
+      const updatedUser = await UserRepository.findById(user.id);
+      expect(updatedUser?.favoritePortfolioId).toBe(result.id);
+    });
+
+    it('replaces the previous favorite when creating a new one marked as favorite', async () => {
+      const user = await UserService.registerUserService({
+        firstName: 'Replace',
+        lastName: 'Fav',
+        email: `replace.fav.${Date.now()}@test.com`,
+        password: 'password123',
+      });
+
+      const first = await PortfolioService.createPortfolio(user.id, 'First', true);
+      const second = await PortfolioService.createPortfolio(user.id, 'Second', true);
+
+      const updatedUser = await UserRepository.findById(user.id);
+      expect(updatedUser?.favoritePortfolioId).toBe(second.id);
+      expect(first.id).not.toBe(second.id);
+    });
+  });
 });
