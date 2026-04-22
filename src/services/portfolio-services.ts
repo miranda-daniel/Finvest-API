@@ -28,6 +28,29 @@ export class PortfolioService {
     };
   };
 
+  static setFavoritePortfolio = async (
+    userId: number,
+    portfolioId: number | null,
+  ): Promise<Portfolio | null> => {
+    await UserRepository.setFavoritePortfolio(userId, portfolioId);
+
+    if (portfolioId === null) {
+      return null;
+    }
+
+    const portfolio = await PortfolioRepository.findById(portfolioId);
+    if (!portfolio) {
+      return null;
+    }
+
+    return {
+      id: portfolio.id,
+      name: portfolio.name,
+      createdAt: portfolio.createdAt.toISOString(),
+      isFavorite: true,
+    };
+  };
+
   static getPortfoliosByUserId = async (userId: number): Promise<Portfolio[]> => {
     const [portfolios, user] = await Promise.all([
       PortfolioRepository.findManyByUserId(userId),

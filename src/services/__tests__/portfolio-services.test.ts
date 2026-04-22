@@ -69,6 +69,41 @@ describe('PortfolioService', () => {
     });
   });
 
+  describe('setFavoritePortfolio', () => {
+    it('sets a portfolio as favorite and returns it with isFavorite: true', async () => {
+      const user = await UserService.registerUserService({
+        firstName: 'Set',
+        lastName: 'Fav',
+        email: `set.fav.${Date.now()}@test.com`,
+        password: 'password123',
+      });
+      const portfolio = await PortfolioRepository.create({ name: 'Star Me', userId: user.id });
+
+      const result = await PortfolioService.setFavoritePortfolio(user.id, portfolio.id);
+
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe(portfolio.id);
+      expect(result?.isFavorite).toBe(true);
+    });
+
+    it('returns null and clears the favorite when portfolioId is null', async () => {
+      const user = await UserService.registerUserService({
+        firstName: 'Clear',
+        lastName: 'Fav',
+        email: `clear.fav.${Date.now()}@test.com`,
+        password: 'password123',
+      });
+      const portfolio = await PortfolioRepository.create({ name: 'Unstar Me', userId: user.id });
+      await UserRepository.setFavoritePortfolio(user.id, portfolio.id);
+
+      const result = await PortfolioService.setFavoritePortfolio(user.id, null);
+
+      expect(result).toBeNull();
+      const updatedUser = await UserRepository.findById(user.id);
+      expect(updatedUser?.favoritePortfolioId).toBeNull();
+    });
+  });
+
   describe('createPortfolio', () => {
     it('creates a portfolio and returns it with isFavorite: false when not marked', async () => {
       const user = await UserService.registerUserService({
