@@ -60,4 +60,27 @@ describe('PortfolioRepository', () => {
       expect(portfolios).toHaveLength(0);
     });
   });
+
+  describe('findById', () => {
+    it('returns a portfolio by id', async () => {
+      const user = await UserRepository.create({
+        firstName: 'Find',
+        lastName: 'ById',
+        email: `find.byid.${Date.now()}@test.com`,
+        password: 'hash',
+      });
+      const created = await PortfolioRepository.create({ name: 'Find Me', userId: user.id });
+
+      const result = await PortfolioRepository.findById(created.id);
+
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe(created.id);
+      expect(result?.name).toBe('Find Me');
+    });
+
+    it('returns null when portfolio does not exist', async () => {
+      const result = await PortfolioRepository.findById(999999);
+      expect(result).toBeNull();
+    });
+  });
 });
