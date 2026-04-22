@@ -26,17 +26,26 @@ Finvest backend. REST API (TSOA + Express) with a GraphQL layer (Apollo Server) 
 
 ---
 
-### Option A — Docker (DB + API)
+### Option A — Docker development (recommended)
 
-Run the full stack with a single command. Requires `.env.development` in the project root.
+Uses `docker-compose.dev.yml` + `Dockerfile.dev`. The API runs with `nodemon` inside the container and watches `./src` via a volume mount — code changes reload automatically without rebuilding the image.
 
 ```bash
-# First run (or after code changes)
-docker compose --env-file .env.development build --no-cache && docker compose --env-file .env.development up
+# First run, or after changing package.json / prisma schema / tsconfig
+npm run docker:dev:build
 
-# Subsequent runs (no code changes)
-docker compose --env-file .env.development up
+# Normal workflow — just start, edits reload automatically
+npm run docker:dev
 ```
+
+**When `--build` is required:**
+
+| Change | Rebuild needed |
+| --------------------------------- | -------------- |
+| Edit `src/` files | No — nodemon handles it |
+| Add/remove npm dependency | Yes |
+| Change Prisma schema | Yes |
+| Change `tsconfig.json` / `tsoa.json` | Yes |
 
 The DB becomes healthy first; the API waits and starts automatically after.
 
@@ -83,6 +92,12 @@ The API runs at `http://localhost:3001`.
 ## Commands
 
 ```bash
+# Start Docker dev stack (hot reload, no rebuild on code changes)
+npm run docker:dev
+
+# Start Docker dev stack and rebuild image
+npm run docker:dev:build
+
 # Start development server (with hot reload)
 npm start
 

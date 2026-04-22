@@ -1,0 +1,14 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json .npmrc ./
+RUN npm ci --engine-strict=false --ignore-scripts
+
+COPY tsconfig.json tsoa.json nodemon.json ./
+COPY prisma ./prisma/
+COPY prisma.config.ts ./
+
+RUN npx prisma generate
+
+CMD ["npm", "start"]

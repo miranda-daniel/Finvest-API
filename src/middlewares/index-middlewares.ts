@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import helmet, { HelmetOptions } from 'helmet';
 import { errorHandler } from './error-handler-middleware';
+import { requestLogger } from './request-logger-middleware';
 import { isProduction } from '@config/environments';
 
 // Relaxed CSP needed for Apollo Sandbox to load external scripts in development
@@ -24,6 +25,7 @@ const devHelmetConfig: HelmetOptions = {
 };
 
 export const preRoutesMiddleware = (app: Application) => {
+  app.use(requestLogger);
   app.use(
     cors({
       credentials: true,
