@@ -11,28 +11,31 @@ datasource db {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  email          String         @unique
-  password       String
-  firstName      String
-  lastName       String
-  isActive       Boolean        @default(true)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  portfolios     Portfolio[]
-  refreshTokens  RefreshToken[]
+  id                   Int            @id @default(autoincrement())
+  email                String         @unique
+  password             String
+  firstName            String
+  lastName             String
+  isActive             Boolean        @default(true)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  portfolios           Portfolio[]
+  refreshTokens        RefreshToken[]
+  favoritePortfolioId  Int?
+  favoritePortfolio    Portfolio?     @relation("UserFavoritePortfolio", fields: [favoritePortfolioId], references: [id], onDelete: SetNull)
 }
 
 // A portfolio groups holdings under a name (e.g. "Long Term", "Trading")
 model Portfolio {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  userId      Int
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  holdings    Holding[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           Int       @id @default(autoincrement())
+  name         String
+  description  String?
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  holdings     Holding[]
+  favoritedBy  User[]    @relation("UserFavoritePortfolio")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 // A holding represents a current position: X units of instrument Y on platform Z.
