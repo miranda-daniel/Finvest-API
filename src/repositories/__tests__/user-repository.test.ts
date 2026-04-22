@@ -1,4 +1,5 @@
 import { UserRepository } from '@repositories/user-repository';
+import { PortfolioRepository } from '@repositories/portfolio-repository';
 
 describe('UserRepository', () => {
   describe('create', () => {
@@ -102,6 +103,37 @@ describe('UserRepository', () => {
 
       expect(updated.firstName).toBe('Caroline');
       expect(updated.id).toBe(created.id);
+    });
+  });
+
+  describe('setFavoritePortfolio', () => {
+    it('sets the favorite portfolio id on a user', async () => {
+      const user = await UserRepository.create({
+        firstName: 'Fav',
+        lastName: 'Test',
+        email: `fav.set.${Date.now()}@test.com`,
+        password: 'hash',
+      });
+      const portfolio = await PortfolioRepository.create({ name: 'My Portfolio', userId: user.id });
+
+      const updated = await UserRepository.setFavoritePortfolio(user.id, portfolio.id);
+
+      expect(updated.favoritePortfolioId).toBe(portfolio.id);
+    });
+
+    it('unsets the favorite portfolio when called with null', async () => {
+      const user = await UserRepository.create({
+        firstName: 'Fav',
+        lastName: 'Unset',
+        email: `fav.unset.${Date.now()}@test.com`,
+        password: 'hash',
+      });
+      const portfolio = await PortfolioRepository.create({ name: 'My Portfolio', userId: user.id });
+      await UserRepository.setFavoritePortfolio(user.id, portfolio.id);
+
+      const updated = await UserRepository.setFavoritePortfolio(user.id, null);
+
+      expect(updated.favoritePortfolioId).toBeNull();
     });
   });
 });

@@ -24,4 +24,7 @@ export const UserRepository = {
 
   update: (id: number, data: Partial<RegisterUserRequest>) =>
     db.user.update({ where: { id }, data }),
+
+  setFavoritePortfolio: (userId: number, portfolioId: number | null) =>
+    db.user.update({ where: { id: userId }, data: { favoritePortfolioId: portfolioId } }),
 };
