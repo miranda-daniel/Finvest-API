@@ -13,6 +13,7 @@ export const typeDefs = `#graphql
     id: Int!
     name: String!
     createdAt: String!
+    isFavorite: Boolean!
   }
 
   type Query {
@@ -22,5 +23,12 @@ export const typeDefs = `#graphql
     # Returns the portfolios owned by the authenticated user.
     # Requires a valid JWT in the Authorization header.
     portfolios: [Portfolio!]!
+  }
+
+  type Mutation {
+    # Creates a new portfolio. If isFavorite is true, replaces any existing favorite.
+    createPortfolio(name: String!, isFavorite: Boolean): Portfolio!
+    # Sets the favorite portfolio for the authenticated user. Pass null to unset.
+    setFavoritePortfolio(portfolioId: Int): Portfolio
   }
 `;

@@ -3,7 +3,7 @@ import { GraphQLError } from 'graphql';
 import jwt from 'jsonwebtoken';
 import { Request } from 'express';
 import { typeDefs } from './schema/schema';
-import { Query } from './resolvers';
+import { Query, Mutation } from './resolvers';
 import { isProduction } from '@config/environments';
 import { ENV_VARIABLES } from '@config/config';
 import { TokenPayload } from '@typing/session';
@@ -17,6 +17,7 @@ export const createApolloServer = () => {
     typeDefs,
     resolvers: {
       Query,
+      Mutation,
     },
     // Apollo Server 4 shows Apollo Sandbox in dev by default; disables it in production
     introspection: !isProduction(),
