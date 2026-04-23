@@ -11,7 +11,6 @@ import {
 import type { Request as ExpressRequest } from 'express';
 import { SessionService } from '@services/session-services';
 import {
-  loginSchema,
   LoginUserRequest,
   Session,
   RefreshTokenResponse,
@@ -40,8 +39,6 @@ export class SessionController extends Controller {
     @Body() body: LoginUserRequest,
     @Request() request: ExpressRequest,
   ): Promise<Session> {
-    loginSchema.parse(body);
-
     const ip = request.ip ?? 'unknown';
     const userAgent = request.headers['user-agent'];
 

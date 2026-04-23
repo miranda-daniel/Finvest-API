@@ -5,6 +5,7 @@ import helmet, { HelmetOptions } from 'helmet';
 import { errorHandler } from './error-handler-middleware';
 import { requestLogger } from './request-logger-middleware';
 import { isProduction } from '@config/environments';
+import logger from '@config/logger';
 
 // Relaxed CSP needed for Apollo Sandbox to load external scripts in development
 const devHelmetConfig: HelmetOptions = {
@@ -16,10 +17,16 @@ const devHelmetConfig: HelmetOptions = {
 
 export const preRoutesMiddleware = (app: Application) => {
   app.use(requestLogger);
+
+  const frontendUrl = process.env.FRONTEND_URL;
+  if (!frontendUrl && isProduction()) {
+    logger.warn('FRONTEND_URL is not set — CORS will default to localhost:5173 in production');
+  }
+
   app.use(
     cors({
       credentials: true,
-      origin: process.env.FRONTEND_URL ?? 'http://localhost:5173',
+      origin: frontendUrl ?? 'http://localhost:5173',
     }),
   );
   app.use(express.json());
