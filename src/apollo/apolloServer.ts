@@ -1,8 +1,6 @@
 import { ApolloServer } from '@apollo/server';
-import {
-  ApolloServerPluginLandingPageLocalDefault,
-  ApolloServerPluginLandingPageDisabled,
-} from '@apollo/server/plugin/landingPage/default';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { GraphQLError } from 'graphql';
 import jwt from 'jsonwebtoken';
 import { Request } from 'express';
