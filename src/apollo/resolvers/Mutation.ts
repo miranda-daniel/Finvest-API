@@ -4,7 +4,7 @@ import { ApiError } from '@config/api-error';
 import { ApolloContext } from '@graphql/context';
 
 export const Mutation = {
-  createPortfolio: (
+  createPortfolio: async (
     _: unknown,
     args: { name: string; description?: string; isFavorite?: boolean },
     context: ApolloContext,
@@ -15,12 +15,21 @@ export const Mutation = {
       });
     }
 
-    return PortfolioService.createPortfolio(
-      context.user.userId,
-      args.name,
-      args.description,
-      args.isFavorite,
-    );
+    try {
+      return await PortfolioService.createPortfolio(
+        context.user.userId,
+        args.name,
+        args.description,
+        args.isFavorite,
+      );
+    } catch (err) {
+      if (err instanceof ApiError) {
+        throw new GraphQLError(err.message, {
+          extensions: { code: err.message, httpCode: err.httpCode },
+        });
+      }
+      throw err;
+    }
   },
 
   setFavoritePortfolio: async (

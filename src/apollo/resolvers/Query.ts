@@ -1,6 +1,7 @@
 import { GraphQLError } from 'graphql';
 import { UserService } from '@services/user-services';
 import { PortfolioService } from '@services/portfolio-services';
+import { ApiError } from '@config/api-error';
 import { ApolloContext } from '@graphql/context';
 
 // GraphQL resolvers — the entry point for all Query operations.
@@ -19,12 +20,21 @@ export const Query = {
   // TODO: remove - temporary resolver for testing purposes only
   users: () => UserService.getAllUsersService(),
 
-  portfolios: (_: unknown, __: unknown, context: ApolloContext) => {
+  portfolios: async (_: unknown, __: unknown, context: ApolloContext) => {
     if (!context.user) {
       throw new GraphQLError('Not authenticated', {
         extensions: { code: 'UNAUTHENTICATED' },
       });
     }
-    return PortfolioService.getPortfoliosByUserId(context.user.userId);
+    try {
+      return await PortfolioService.getPortfoliosByUserId(context.user.userId);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        throw new GraphQLError(err.message, {
+          extensions: { code: err.message, httpCode: err.httpCode },
+        });
+      }
+      throw err;
+    }
   },
 };

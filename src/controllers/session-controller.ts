@@ -65,11 +65,18 @@ export class SessionController extends Controller {
     }
 
     const ip = request.ip ?? 'unknown';
-    const { rawRefreshToken, jwtToken } = await SessionService.refreshToken(rawToken, ip);
 
-    this.setHeader('Set-Cookie', buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE));
-
-    return { jwtToken };
+    try {
+      const { rawRefreshToken, jwtToken } = await SessionService.refreshToken(rawToken, ip);
+      this.setHeader(
+        'Set-Cookie',
+        buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE),
+      );
+      return { jwtToken };
+    } catch (err) {
+      this.setHeader('Set-Cookie', buildRefreshCookie('', 0));
+      throw err;
+    }
   }
 
   /**
