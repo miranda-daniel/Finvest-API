@@ -8,29 +8,10 @@ import { isProduction } from '@config/environments';
 
 // Relaxed CSP needed for Apollo Sandbox to load external scripts in development
 const devHelmetConfig: HelmetOptions = {
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'", 'https://cdn.jsdelivr.net'],
-      scriptSrc: [
-        "'self'",
-        "'unsafe-inline'",
-        'https://cdn.jsdelivr.net',
-        'https://embeddable-sandbox.cdn.apollographql.com',
-      ],
-      styleSrc: [
-        "'self'",
-        "'unsafe-inline'",
-        'https://fonts.googleapis.com',
-        'https://cdn.jsdelivr.net',
-      ],
-      imgSrc: ["'self'", 'data:', 'https://cdn.jsdelivr.net'],
-      connectSrc: [
-        "'self'",
-        'https://cdn.jsdelivr.net',
-        'https://embeddable-sandbox.cdn.apollographql.com',
-      ],
-    },
-  },
+  // Apollo Sandbox loads many resources from apollographql.com CDN (scripts, fonts,
+  // manifest, favicons). Disabling CSP in dev avoids whitelisting each one individually.
+  // Production keeps the full restrictive CSP via the default helmet() call.
+  contentSecurityPolicy: false,
 };
 
 export const preRoutesMiddleware = (app: Application) => {
