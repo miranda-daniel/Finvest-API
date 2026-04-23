@@ -228,7 +228,7 @@ describe('SessionService', () => {
       });
 
       const login = await SessionService.loginUser({ email, password: 'password123' }, '127.0.0.1');
-      await SessionService.revokeAllSessions(user.id);
+      await SessionService.revokeAllSessions(user.id, '127.0.0.1');
 
       await expect(SessionService.refreshToken(login.rawRefreshToken, '127.0.0.1')).rejects.toThrow(
         ApiError,

@@ -34,10 +34,13 @@ Never access, clone, or interact with any other GitHub repository.
 
 ### REST vs GraphQL
 
-- Use REST for: auth endpoints, mutations with side effects (file upload, email send),
-  anything consumed by non-GraphQL clients.
-- Use GraphQL for: data fetching, flexible queries, anything the frontend queries
-  for display purposes.
+- Use REST for: auth endpoints (login, register, logout, refresh token), calls to external
+  APIs (e.g. fetching stock quotes from a market data provider), and anything consumed by
+  non-GraphQL clients.
+- Use GraphQL for: data fetching, flexible queries, and domain mutations (create, update,
+  delete) that the frontend drives. GraphQL mutations are acceptable for domain operations —
+  "side effects" in the REST rule refers to infrastructure-level effects like file uploads,
+  email sends, or external API calls, not normal DB writes.
 
 ### Rules
 

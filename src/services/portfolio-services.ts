@@ -1,5 +1,7 @@
 import { PortfolioRepository } from '@repositories/portfolio-repository';
 import { UserRepository } from '@repositories/user-repository';
+import { ApiError } from '@config/api-error';
+import { errors } from '@config/errors';
 import { Portfolio } from '@typing/portfolio';
 
 export type { Portfolio };
@@ -36,8 +38,9 @@ export const PortfolioService = {
     }
 
     const portfolio = await PortfolioRepository.findById(portfolioId);
+
     if (!portfolio || portfolio.userId !== userId) {
-      return null;
+      throw new ApiError(errors.NOT_FOUND);
     }
 
     await UserRepository.setFavoritePortfolio(userId, portfolioId);

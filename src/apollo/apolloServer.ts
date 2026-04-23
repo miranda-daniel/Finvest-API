@@ -33,6 +33,7 @@ export const buildApolloContext = async ({ req }: { req: Request }): Promise<Apo
   try {
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
     const user = jwt.verify(token, ENV_VARIABLES.jwtSignature) as TokenPayload;
+
     return { user };
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {

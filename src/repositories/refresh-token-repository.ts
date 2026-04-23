@@ -38,10 +38,10 @@ export const RefreshTokenRepository = {
     });
   },
 
-  revokeAllForUser: async (userId: number): Promise<void> => {
+  revokeAllForUser: async (userId: number, ip?: string): Promise<void> => {
     await db.refreshToken.updateMany({
       where: { userId, revoked: null },
-      data: { revoked: new Date() },
+      data: { revoked: new Date(), revokedByIp: ip ?? null },
     });
   },
 };

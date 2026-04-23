@@ -30,7 +30,8 @@ const startApolloServer = async () => {
   );
 };
 
-// After starting ApolloServer, register TSOA routes. Otherwise, TSOA would overwrite Apollo routes (/graphql).
+// After starting ApolloServer, register TSOA routes. Otherwise, TSOA would overwrite
+// Apollo routes (/graphql).
 startApolloServer().then(() => {
   // TSOA generated routes
   RegisterRoutes(app);

@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { PortfolioService } from '@services/portfolio-services';
+import { ApiError } from '@config/api-error';
 import { ApolloContext } from '@graphql/context';
 
 export const Mutation = {
@@ -32,6 +33,19 @@ export const Mutation = {
         extensions: { code: 'UNAUTHENTICATED' },
       });
     }
-    return PortfolioService.setFavoritePortfolio(context.user.userId, args.portfolioId ?? null);
+
+    try {
+      return await PortfolioService.setFavoritePortfolio(
+        context.user.userId,
+        args.portfolioId ?? null,
+      );
+    } catch (err) {
+      if (err instanceof ApiError) {
+        throw new GraphQLError(err.message, {
+          extensions: { code: 'NOT_FOUND', httpCode: err.httpCode },
+        });
+      }
+      throw err;
+    }
   },
 };

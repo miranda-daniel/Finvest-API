@@ -111,7 +111,8 @@ export class SessionController extends Controller {
   @Post('/revoke-all')
   public async revokeAllSessions(@Request() request: ExpressRequest): Promise<{ message: string }> {
     const { userId } = (request as unknown as { user: TokenPayload }).user;
-    await SessionService.revokeAllSessions(userId);
+    const ip = request.ip ?? 'unknown';
+    await SessionService.revokeAllSessions(userId, ip);
     this.setHeader('Set-Cookie', buildRefreshCookie('', 0));
     return { message: 'All sessions revoked' };
   }

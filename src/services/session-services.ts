@@ -65,7 +65,7 @@ export const SessionService = {
 
     // Theft detection: if already revoked, invalidate entire token family
     if (stored.revoked) {
-      await RefreshTokenRepository.revokeAllForUser(stored.userId);
+      await RefreshTokenRepository.revokeAllForUser(stored.userId, ip);
       throw new ApiError(errors.INVALID_REFRESH_TOKEN);
     }
 
@@ -114,7 +114,7 @@ export const SessionService = {
     }));
   },
 
-  revokeAllSessions: async (userId: number): Promise<void> => {
-    await RefreshTokenRepository.revokeAllForUser(userId);
+  revokeAllSessions: async (userId: number, ip: string): Promise<void> => {
+    await RefreshTokenRepository.revokeAllForUser(userId, ip);
   },
 };
