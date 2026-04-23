@@ -6,20 +6,6 @@ import { UserRepository } from '@repositories/user-repository';
 import { RegisterUserRequest, User, UserIndex } from '@typing/user';
 
 export const UserService = {
-  // TODO: remove - temporary method for testing purposes only
-  getAllUsersService: async (): Promise<User[]> => {
-    const users = await UserRepository.findMany();
-
-    return users.map(({ id, email, firstName, lastName, isActive, createdAt }) => ({
-      id,
-      email,
-      firstName,
-      lastName,
-      isActive,
-      createdAt,
-    }));
-  },
-
   getUsersService: async (): Promise<UserIndex[]> => {
     const users = await UserRepository.findMany();
 
