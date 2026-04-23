@@ -5,5 +5,6 @@ export const PortfolioRepository = {
 
   findById: (id: number) => db.portfolio.findUnique({ where: { id } }),
 
-  create: (data: { name: string; userId: number }) => db.portfolio.create({ data }),
+  create: (data: { name: string; description?: string; userId: number }) =>
+    db.portfolio.create({ data }),
 };

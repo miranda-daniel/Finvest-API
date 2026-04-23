@@ -11,4 +11,4 @@ COPY prisma.config.ts ./
 
 RUN npx prisma generate
 
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]

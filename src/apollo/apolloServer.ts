@@ -7,10 +7,9 @@ import { Query, Mutation } from './resolvers';
 import { isProduction } from '@config/environments';
 import { ENV_VARIABLES } from '@config/config';
 import { TokenPayload } from '@typing/session';
+import { ApolloContext } from './context';
 
-export interface ApolloContext {
-  user: TokenPayload | null;
-}
+export type { ApolloContext } from './context';
 
 export const createApolloServer = () => {
   return new ApolloServer<ApolloContext>({

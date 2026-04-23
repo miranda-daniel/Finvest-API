@@ -1,0 +1,406 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"SessionUser": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"email": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"email",
+					"firstName",
+					"lastName"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Session": {
+				"properties": {
+					"jwtToken": {
+						"type": "string"
+					},
+					"user": {
+						"$ref": "#/components/schemas/SessionUser"
+					}
+				},
+				"required": [
+					"jwtToken",
+					"user"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"z.infer_typeofloginSchema_": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"email"
+				],
+				"type": "object"
+			},
+			"LoginUserRequest": {
+				"$ref": "#/components/schemas/z.infer_typeofloginSchema_"
+			},
+			"RefreshTokenResponse": {
+				"properties": {
+					"jwtToken": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"jwtToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ActiveSession": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdByIp": {
+						"type": "string"
+					},
+					"userAgent": {
+						"type": "string",
+						"nullable": true
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"expires": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"createdByIp",
+					"userAgent",
+					"createdAt",
+					"expires"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"User": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"email": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"email",
+					"firstName",
+					"lastName",
+					"isActive",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"z.infer_typeofregisterUserSchema_": {
+				"properties": {
+					"lastName": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"lastName",
+					"firstName",
+					"password",
+					"email"
+				],
+				"type": "object"
+			},
+			"RegisterUserRequest": {
+				"$ref": "#/components/schemas/z.infer_typeofregisterUserSchema_"
+			},
+			"UserIndex": {
+				"properties": {
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"firstName",
+					"lastName"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "finvest-api",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/session/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Session"
+								}
+							}
+						}
+					}
+				},
+				"description": "Login user and receive a JWT + refresh token cookie.",
+				"summary": "Login user",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginUserRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/session/refresh-token": {
+			"post": {
+				"operationId": "RefreshToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RefreshTokenResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Refresh the JWT using the HTTP-only refresh token cookie.",
+				"summary": "Refresh JWT",
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/session/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"200": {
+						"description": "Logged out",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Logout — revokes the refresh token and clears the cookie.",
+				"summary": "Logout user",
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/session": {
+			"get": {
+				"operationId": "GetActiveSessions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ActiveSession"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "List all active sessions for the authenticated user.",
+				"summary": "List active sessions",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/session/revoke-all": {
+			"post": {
+				"operationId": "RevokeAllSessions",
+				"responses": {
+					"200": {
+						"description": "All sessions revoked",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Revoke all active sessions for the authenticated user.",
+				"summary": "Revoke all sessions",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/users": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"200": {
+						"description": "200 - User",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					}
+				},
+				"description": "Register User.",
+				"summary": "Register new user in database.",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterUserRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetAllUsers",
+				"responses": {
+					"200": {
+						"description": "200 - List of users",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/UserIndex"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Index - Get all users.",
+				"summary": "Get a list of all users.",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

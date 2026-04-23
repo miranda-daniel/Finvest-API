@@ -5,12 +5,11 @@ import { errors } from '@config/errors';
 import { ENV_VARIABLES } from '@config/config';
 import { TokenPayload } from '@typing/session';
 
-export async function expressAuthentication(
+export const expressAuthentication = async (
   request: Request,
   securityName: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  scopes?: string[],
-) {
+  _scopes?: string[],
+): Promise<(TokenPayload & { token: string }) | null> => {
   if (securityName === 'jwt') {
     const authHeader = request.headers.authorization;
 
@@ -37,4 +36,4 @@ export async function expressAuthentication(
   }
 
   return null;
-}
+};

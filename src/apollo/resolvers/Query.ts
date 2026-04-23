@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 import { UserService } from '@services/user-services';
 import { PortfolioService } from '@services/portfolio-services';
-import { ApolloContext } from '@graphql/apolloServer';
+import { ApolloContext } from '@graphql/context';
 
 // GraphQL resolvers — the entry point for all Query operations.
 //

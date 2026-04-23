@@ -129,7 +129,12 @@ describe('PortfolioService', () => {
         password: 'password123',
       });
 
-      const result = await PortfolioService.createPortfolio(user.id, 'Favorite Portfolio', true);
+      const result = await PortfolioService.createPortfolio(
+        user.id,
+        'Favorite Portfolio',
+        undefined,
+        true,
+      );
 
       expect(result.isFavorite).toBe(true);
 
@@ -145,8 +150,8 @@ describe('PortfolioService', () => {
         password: 'password123',
       });
 
-      const first = await PortfolioService.createPortfolio(user.id, 'First', true);
-      const second = await PortfolioService.createPortfolio(user.id, 'Second', true);
+      const first = await PortfolioService.createPortfolio(user.id, 'First', undefined, true);
+      const second = await PortfolioService.createPortfolio(user.id, 'Second', undefined, true);
 
       const updatedUser = await UserRepository.findById(user.id);
       expect(updatedUser?.favoritePortfolioId).toBe(second.id);

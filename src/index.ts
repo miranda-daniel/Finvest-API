@@ -1,5 +1,6 @@
 import { router } from './routes';
 import express, { Application } from 'express';
+import logger from '@config/logger';
 import { expressMiddleware } from '@as-integrations/express5';
 import { RegisterRoutes } from './routes/routes';
 import { ENV_VARIABLES } from '@config/config';
@@ -39,11 +40,11 @@ startApolloServer().then(() => {
 
   // Handler 404 routes.
   app.use((req, res) => {
-    console.log('Route Not Found:', req.path);
+    logger.warn(`Route Not Found: ${req.path}`);
     res.status(errors.NOT_FOUND.httpCode).json(errors.NOT_FOUND);
   });
 
   app.listen(ENV_VARIABLES.port, () => {
-    console.info('Listening on port', ENV_VARIABLES.port);
+    logger.info(`Listening on port ${ENV_VARIABLES.port}`);
   });
 });

@@ -10,7 +10,7 @@ const customFormat = printf(({ level, message, timestamp }) => {
 });
 
 const logger = createLogger({
-  level: isDevelopment() ? 'debug' : 'warn',
+  level: isDevelopment() ? 'debug' : 'http',
   format: combine(timestamp(), customFormat),
   transports: [
     new transports.Console(),

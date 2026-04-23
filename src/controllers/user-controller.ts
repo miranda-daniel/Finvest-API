@@ -1,4 +1,4 @@
-import { Body, Get, Security, Controller, Post, Route } from 'tsoa';
+import { Body, Get, Security, Controller, Post, Route } from '@tsoa/runtime';
 import { UserService } from '@services/user-services';
 import { registerUserSchema, RegisterUserRequest, User, UserIndex } from '@typing/user';
 

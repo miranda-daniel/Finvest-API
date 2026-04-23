@@ -1,11 +1,11 @@
 import { GraphQLError } from 'graphql';
 import { PortfolioService } from '@services/portfolio-services';
-import { ApolloContext } from '@graphql/apolloServer';
+import { ApolloContext } from '@graphql/context';
 
 export const Mutation = {
   createPortfolio: (
     _: unknown,
-    args: { name: string; isFavorite?: boolean },
+    args: { name: string; description?: string; isFavorite?: boolean },
     context: ApolloContext,
   ) => {
     if (!context.user) {
@@ -13,7 +13,13 @@ export const Mutation = {
         extensions: { code: 'UNAUTHENTICATED' },
       });
     }
-    return PortfolioService.createPortfolio(context.user.userId, args.name, args.isFavorite);
+
+    return PortfolioService.createPortfolio(
+      context.user.userId,
+      args.name,
+      args.description,
+      args.isFavorite,
+    );
   },
 
   setFavoritePortfolio: (

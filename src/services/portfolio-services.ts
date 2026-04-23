@@ -1,20 +1,17 @@
 import { PortfolioRepository } from '@repositories/portfolio-repository';
 import { UserRepository } from '@repositories/user-repository';
+import { Portfolio } from '@typing/portfolio';
 
-export interface Portfolio {
-  id: number;
-  name: string;
-  createdAt: string;
-  isFavorite: boolean;
-}
+export type { Portfolio };
 
-export class PortfolioService {
-  static createPortfolio = async (
+export const PortfolioService = {
+  createPortfolio: async (
     userId: number,
     name: string,
+    description?: string,
     isFavorite?: boolean,
   ): Promise<Portfolio> => {
-    const portfolio = await PortfolioRepository.create({ name, userId });
+    const portfolio = await PortfolioRepository.create({ name, description, userId });
 
     if (isFavorite) {
       await UserRepository.setFavoritePortfolio(userId, portfolio.id);
@@ -23,45 +20,49 @@ export class PortfolioService {
     return {
       id: portfolio.id,
       name: portfolio.name,
+      description: portfolio.description ?? null,
       createdAt: portfolio.createdAt.toISOString(),
       isFavorite: !!isFavorite,
     };
-  };
+  },
 
-  static setFavoritePortfolio = async (
+  setFavoritePortfolio: async (
     userId: number,
     portfolioId: number | null,
   ): Promise<Portfolio | null> => {
-    await UserRepository.setFavoritePortfolio(userId, portfolioId);
-
     if (portfolioId === null) {
+      await UserRepository.setFavoritePortfolio(userId, null);
       return null;
     }
 
     const portfolio = await PortfolioRepository.findById(portfolioId);
-    if (!portfolio) {
+    if (!portfolio || portfolio.userId !== userId) {
       return null;
     }
+
+    await UserRepository.setFavoritePortfolio(userId, portfolioId);
 
     return {
       id: portfolio.id,
       name: portfolio.name,
+      description: portfolio.description ?? null,
       createdAt: portfolio.createdAt.toISOString(),
       isFavorite: true,
     };
-  };
+  },
 
-  static getPortfoliosByUserId = async (userId: number): Promise<Portfolio[]> => {
+  getPortfoliosByUserId: async (userId: number): Promise<Portfolio[]> => {
     const [portfolios, user] = await Promise.all([
       PortfolioRepository.findManyByUserId(userId),
       UserRepository.findById(userId),
     ]);
 
-    return portfolios.map(({ id, name, createdAt }) => ({
+    return portfolios.map(({ id, name, description, createdAt }) => ({
       id,
       name,
+      description: description ?? null,
       createdAt: createdAt.toISOString(),
       isFavorite: user?.favoritePortfolioId === id,
     }));
-  };
-}
+  },
+};

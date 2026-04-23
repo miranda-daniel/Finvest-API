@@ -1,5 +1,13 @@
-import { Body, Controller, Get, Post, Route, Security, SuccessResponse } from 'tsoa';
-import { Request } from 'tsoa';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Route,
+  Security,
+  SuccessResponse,
+  Request,
+} from '@tsoa/runtime';
 import type { Request as ExpressRequest } from 'express';
 import { SessionService } from '@services/session-services';
 import {
@@ -10,26 +18,9 @@ import {
   ActiveSession,
   TokenPayload,
 } from '@typing/session';
-import { isProduction } from '@config/environments';
-import { REFRESH_TOKEN_COOKIE_MAX_AGE } from '@helpers/token';
+import { REFRESH_TOKEN_COOKIE_MAX_AGE, buildRefreshCookie } from '@helpers/token';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
-
-const buildRefreshCookie = (value: string, maxAge: number): string => {
-  const parts = [
-    `refreshToken=${value}`,
-    'HttpOnly',
-    'SameSite=Lax',
-    'Path=/session',
-    `Max-Age=${maxAge}`,
-  ];
-
-  if (isProduction()) {
-    parts.push('Secure');
-  }
-
-  return parts.join('; ');
-};
 
 // REST entry point for session endpoints (auth).
 //

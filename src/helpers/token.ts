@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { isProduction } from '@config/environments';
 
 export const REFRESH_TOKEN_EXPIRY_DAYS = 7;
 export const REFRESH_TOKEN_COOKIE_MAX_AGE = REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60; // seconds
@@ -15,4 +16,20 @@ export const getRefreshTokenExpiry = (): Date => {
   const expires = new Date();
   expires.setDate(expires.getDate() + REFRESH_TOKEN_EXPIRY_DAYS);
   return expires;
+};
+
+export const buildRefreshCookie = (value: string, maxAge: number): string => {
+  const parts = [
+    `refreshToken=${value}`,
+    'HttpOnly',
+    'SameSite=Lax',
+    'Path=/session',
+    `Max-Age=${maxAge}`,
+  ];
+
+  if (isProduction()) {
+    parts.push('Secure');
+  }
+
+  return parts.join('; ');
 };

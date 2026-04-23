@@ -28,6 +28,8 @@ const config: Config.InitialOptions = {
   collectCoverage: true,
   collectCoverageFrom: [
     'src/controllers/**/*.ts',
+    'src/helpers/**/*.ts',
+    'src/middlewares/**/*.ts',
     'src/repositories/**/*.ts',
     'src/services/**/*.ts',
   ],
