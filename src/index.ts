@@ -7,8 +7,6 @@ import { ENV_VARIABLES } from '@config/config';
 import { postRoutesMiddleware, preRoutesMiddleware } from '@middlewares/index-middlewares';
 import { errors } from '@config/errors';
 import { createApolloServer, buildApolloContext, ApolloContext } from '@graphql/apolloServer';
-import { isDevelopment } from '@config/environments';
-import expressPlayground from 'graphql-playground-middleware-express';
 
 const app: Application = express();
 
@@ -40,11 +38,6 @@ startApolloServer().then(() => {
 
   // Middleware for handling errors.
   postRoutesMiddleware(app);
-
-  // GraphQL Playground — dev only, served locally without external CDN dependency
-  if (isDevelopment()) {
-    app.get('/graphql/playground', expressPlayground({ endpoint: '/graphql' }));
-  }
 
   // Handler 404 routes.
   app.use((req, res) => {

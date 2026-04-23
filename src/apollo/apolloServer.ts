@@ -1,4 +1,8 @@
 import { ApolloServer } from '@apollo/server';
+import {
+  ApolloServerPluginLandingPageLocalDefault,
+  ApolloServerPluginLandingPageDisabled,
+} from '@apollo/server/plugin/landingPage/default';
 import { GraphQLError } from 'graphql';
 import jwt from 'jsonwebtoken';
 import { Request } from 'express';
@@ -18,8 +22,12 @@ export const createApolloServer = () => {
       Query,
       Mutation,
     },
-    // Apollo Server 4 shows Apollo Sandbox in dev by default; disables it in production
     introspection: !isProduction(),
+    plugins: [
+      isProduction()
+        ? ApolloServerPluginLandingPageDisabled()
+        : ApolloServerPluginLandingPageLocalDefault({ embed: true }),
+    ],
   });
 };
 

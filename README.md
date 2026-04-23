@@ -119,9 +119,8 @@ npm run update-routes-and-swagger
 
 ## Endpoints
 
-| Type             | URL                                        | Description              |
-| ---------------- | ------------------------------------------ | ------------------------ |
-| REST             | `http://localhost:3001/`                   | REST API                 |
-| REST docs        | `http://localhost:3001/docs`               | Swagger UI               |
-| GraphQL          | `http://localhost:3001/graphql`            | GraphQL endpoint         |
-| GraphQL Playground | `http://localhost:3001/graphql/playground` | Interactive GraphQL UI (dev only) |
+| Type               | URL                             | Description                        |
+| ------------------ | ------------------------------- | ---------------------------------- |
+| REST               | `http://localhost:3001/`        | REST API                           |
+| REST docs          | `http://localhost:3001/docs`    | Swagger UI                         |
+| GraphQL            | `http://localhost:3001/graphql` | GraphQL endpoint + Sandbox (dev)   |
