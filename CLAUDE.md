@@ -52,6 +52,38 @@ Never access, clone, or interact with any other GitHub repository.
 - `clients/` is for external HTTP integrations only — not for internal modules.
 - `helpers/` is for pure utility functions only — no side effects, no DB access, no service imports. One file per concern (e.g. `password.ts`, `date.ts`, `currency.ts`).
 
+### Error handling
+
+Never silence errors with empty catch blocks or by returning `null`/`undefined` when something went wrong. Errors must propagate so the caller knows what happened.
+
+- **Services** — throw `ApiError` with a specific error code (`NOT_FOUND`, `UNAUTHENTICATED`, etc.). Never wrap repository calls in try/catch just to rethrow as `INTERNAL_SERVER_ERROR` — that masks the real error.
+- **REST controllers** — let `ApiError` propagate naturally. The Express error handler in `postRoutesMiddleware` catches it and returns the correct HTTP response. No try/catch needed.
+- **GraphQL resolvers** — catch `ApiError` explicitly and convert it to `GraphQLError` (Apollo does not understand `ApiError`). Re-throw anything else unchanged.
+
+```ts
+// ✅ Correct pattern in a GraphQL resolver
+try {
+  return await SomeService.doSomething(...);
+} catch (err) {
+  if (err instanceof ApiError) {
+    throw new GraphQLError(err.message, {
+      extensions: { code: 'NOT_FOUND', httpCode: err.httpCode },
+    });
+  }
+  throw err;
+}
+
+// ❌ Never do this — silences the error
+} catch (err) {
+  return null;
+}
+
+// ❌ Never do this — masks the real error
+} catch (err) {
+  throw new ApiError(errors.INTERNAL_SERVER_ERROR);
+}
+```
+
 ### Types (`src/types/`)
 
 One file per domain/feature, not one per database table.

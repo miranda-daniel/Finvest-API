@@ -23,7 +23,7 @@ export const Mutation = {
     );
   },
 
-  setFavoritePortfolio: (
+  setFavoritePortfolio: async (
     _: unknown,
     args: { portfolioId?: number | null },
     context: ApolloContext,
