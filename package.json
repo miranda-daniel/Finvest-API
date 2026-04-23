@@ -75,6 +75,7 @@
     "dotenv": "^16.4.5",
     "express": "^5.2.1",
     "graphql": "^16.13.2",
+    "graphql-playground-middleware-express": "^1.7.23",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^7.6.0",
