@@ -7,4 +7,14 @@ export const PortfolioRepository = {
 
   create: (data: { name: string; description?: string; userId: number }) =>
     db.portfolio.create({ data }),
+
+  createAndSetFavorite: (data: { name: string; description?: string; userId: number }) =>
+    db.$transaction(async (tx) => {
+      const portfolio = await tx.portfolio.create({ data });
+      await tx.user.update({
+        where: { id: data.userId },
+        data: { favoritePortfolioId: portfolio.id },
+      });
+      return portfolio;
+    }),
 };

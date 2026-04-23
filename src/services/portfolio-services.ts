@@ -13,11 +13,9 @@ export const PortfolioService = {
     description?: string,
     isFavorite?: boolean,
   ): Promise<Portfolio> => {
-    const portfolio = await PortfolioRepository.create({ name, description, userId });
-
-    if (isFavorite) {
-      await UserRepository.setFavoritePortfolio(userId, portfolio.id);
-    }
+    const portfolio = isFavorite
+      ? await PortfolioRepository.createAndSetFavorite({ name, description, userId })
+      : await PortfolioRepository.create({ name, description, userId });
 
     return {
       id: portfolio.id,

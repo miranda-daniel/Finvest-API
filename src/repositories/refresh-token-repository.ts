@@ -32,6 +32,26 @@ export const RefreshTokenRepository = {
     });
   },
 
+  rotate: (
+    oldId: number,
+    ip: string,
+    newData: {
+      token: string;
+      userId: number;
+      expires: Date;
+      createdByIp: string;
+      userAgent?: string;
+    },
+  ) =>
+    db.$transaction(async (tx) => {
+      const newToken = await tx.refreshToken.create({ data: newData });
+      await tx.refreshToken.update({
+        where: { id: oldId },
+        data: { revoked: new Date(), revokedByIp: ip, replacedByToken: newData.token },
+      });
+      return newToken;
+    }),
+
   revokeAllForUser: async (userId: number, ip?: string) => {
     await db.refreshToken.updateMany({
       where: { userId, revoked: null },
