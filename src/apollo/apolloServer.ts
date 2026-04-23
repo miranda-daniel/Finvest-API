@@ -1,4 +1,5 @@
 import { ApolloServer } from '@apollo/server';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { GraphQLError } from 'graphql';
 import jwt from 'jsonwebtoken';
@@ -20,7 +21,11 @@ export const createApolloServer = () => {
       Mutation,
     },
     introspection: !isProduction(),
-    plugins: [ApolloServerPluginLandingPageDisabled()],
+    plugins: [
+      isProduction()
+        ? ApolloServerPluginLandingPageDisabled()
+        : ApolloServerPluginLandingPageLocalDefault(),
+    ],
   });
 };
 

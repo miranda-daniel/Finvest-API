@@ -40,12 +40,12 @@ npm run dev
 
 **When `--build` is required:**
 
-| Change | Rebuild needed |
-| --------------------------------- | -------------- |
-| Edit `src/` files | No — nodemon handles it |
-| Add/remove npm dependency | Yes |
-| Change Prisma schema | Yes |
-| Change `tsconfig.json` / `tsoa.json` | Yes |
+| Change                               | Rebuild needed          |
+| ------------------------------------ | ----------------------- |
+| Edit `src/` files                    | No — nodemon handles it |
+| Add/remove npm dependency            | Yes                     |
+| Change Prisma schema                 | Yes                     |
+| Change `tsconfig.json` / `tsoa.json` | Yes                     |
 
 The DB becomes healthy first; the API waits and starts automatically after.
 
@@ -119,8 +119,8 @@ npm run update-routes-and-swagger
 
 ## Endpoints
 
-| Type               | URL                             | Description                        |
-| ------------------ | ------------------------------- | ---------------------------------- |
-| REST               | `http://localhost:3001/`        | REST API                           |
-| REST docs          | `http://localhost:3001/docs`    | Swagger UI                         |
-| GraphQL            | `http://localhost:3001/graphql` | GraphQL endpoint + Sandbox (dev)   |
+| Type      | URL                             | Description                      |
+| --------- | ------------------------------- | -------------------------------- |
+| REST      | `http://localhost:3001/`        | REST API                         |
+| REST docs | `http://localhost:3001/docs`    | Swagger UI (endpoints)           |
+| GraphQL   | `http://localhost:3001/graphql` | GraphQL endpoint + Sandbox (dev) |

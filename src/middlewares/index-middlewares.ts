@@ -11,7 +11,12 @@ const devHelmetConfig: HelmetOptions = {
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'", 'https://cdn.jsdelivr.net'],
-      scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        'https://cdn.jsdelivr.net',
+        'https://embeddable-sandbox.cdn.apollographql.com',
+      ],
       styleSrc: [
         "'self'",
         "'unsafe-inline'",
@@ -19,7 +24,11 @@ const devHelmetConfig: HelmetOptions = {
         'https://cdn.jsdelivr.net',
       ],
       imgSrc: ["'self'", 'data:', 'https://cdn.jsdelivr.net'],
-      connectSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+      connectSrc: [
+        "'self'",
+        'https://cdn.jsdelivr.net',
+        'https://embeddable-sandbox.cdn.apollographql.com',
+      ],
     },
   },
 };
