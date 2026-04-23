@@ -32,10 +32,10 @@ Uses `docker-compose.dev.yml` + `Dockerfile.dev`. The API runs with `nodemon` in
 
 ```bash
 # First run, or after changing package.json / prisma schema / tsconfig
-npm run docker:dev:build
+npm run dev:build
 
 # Normal workflow — just start, edits reload automatically
-npm run docker:dev
+npm run dev
 ```
 
 **When `--build` is required:**
@@ -93,10 +93,10 @@ The API runs at `http://localhost:3001`.
 
 ```bash
 # Start Docker dev stack (hot reload, no rebuild on code changes)
-npm run docker:dev
+npm run dev
 
 # Start Docker dev stack and rebuild image
-npm run docker:dev:build
+npm run dev:build
 
 # Start development server (with hot reload)
 npm start
