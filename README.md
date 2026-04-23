@@ -7,7 +7,7 @@ Finvest backend. REST API (TSOA + Express) with a GraphQL layer (Apollo Server) 
 | Layer            | Technology    | Version |
 | ---------------- | ------------- | ------- |
 | Language         | TypeScript    | 6       |
-| Runtime          | Node.js       | 20.13   |
+| Runtime          | Node.js       | 24      |
 | Framework        | Express       | v5      |
 | REST docs/routes | TSOA          | v5      |
 | GraphQL          | Apollo Server | v5      |
@@ -21,7 +21,7 @@ Finvest backend. REST API (TSOA + Express) with a GraphQL layer (Apollo Server) 
 
 ### Prerequisites
 
-- Node 20.13 / npm 10.5
+- Node 24 LTS
 - Docker
 
 ---
