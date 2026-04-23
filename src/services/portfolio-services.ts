@@ -55,10 +55,13 @@ export const PortfolioService = {
   },
 
   getPortfoliosByUserId: async (userId: number): Promise<Portfolio[]> => {
-    const [portfolios, user] = await Promise.all([
-      PortfolioRepository.findManyByUserId(userId),
-      UserRepository.findById(userId),
-    ]);
+    const portfolios = await PortfolioRepository.findManyByUserId(userId);
+
+    if (portfolios.length === 0) {
+      return [];
+    }
+
+    const user = await UserRepository.findById(userId);
 
     return portfolios.map(({ id, name, description, createdAt }) => ({
       id,

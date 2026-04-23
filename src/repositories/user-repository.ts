@@ -1,6 +1,3 @@
-import { ApiError } from '@config/api-error';
-import { errors } from '@config/errors';
-import { Prisma } from '@generated/prisma';
 import { db } from '@config/db';
 import { RegisterUserRequest } from '@typing/user';
 
@@ -11,18 +8,9 @@ export const UserRepository = {
 
   findByEmail: (email: string) => db.user.findUnique({ where: { email } }),
 
-  create: async (data: RegisterUserRequest) => {
-    try {
-      return await db.user.create({ data });
-    } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-        throw new ApiError(errors.USER_ALREADY_EXISTS);
-      }
-      throw err;
-    }
-  },
+  create: (data: RegisterUserRequest) => db.user.create({ data }),
 
-  update: (id: number, data: Partial<RegisterUserRequest>) =>
+  update: (id: number, data: Partial<Omit<RegisterUserRequest, 'password'>>) =>
     db.user.update({ where: { id }, data }),
 
   setFavoritePortfolio: (userId: number, portfolioId: number | null) =>

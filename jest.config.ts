@@ -27,6 +27,7 @@ const config: Config.InitialOptions = {
 
   collectCoverage: true,
   collectCoverageFrom: [
+    'src/apollo/resolvers/**/*.ts',
     'src/controllers/**/*.ts',
     'src/helpers/**/*.ts',
     'src/middlewares/**/*.ts',
