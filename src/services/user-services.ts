@@ -1,7 +1,7 @@
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
 import { Prisma } from '@generated/prisma';
-import { hashPassword } from '@helpers/password';
+import { comparePasswords, hashPassword } from '@helpers/password';
 import { UserRepository } from '@repositories/user-repository';
 import { RegisterUserRequest, User, UserIndex } from '@typing/user';
 
@@ -10,6 +10,25 @@ export const UserService = {
     const users = await UserRepository.findMany();
 
     return users.map(({ firstName, lastName }) => ({ firstName, lastName }));
+  },
+
+  changePasswordService: async (
+    userId: number,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> => {
+    const user = await UserRepository.findById(userId);
+    if (!user) {
+      throw new ApiError(errors.NOT_FOUND);
+    }
+
+    const valid = await comparePasswords(currentPassword, user.password);
+    if (!valid) {
+      throw new ApiError(errors.INVALID_CREDENTIALS);
+    }
+
+    const hashed = await hashPassword(newPassword);
+    await UserRepository.updatePassword(userId, hashed);
   },
 
   registerUserService: async (input: RegisterUserRequest): Promise<User> => {

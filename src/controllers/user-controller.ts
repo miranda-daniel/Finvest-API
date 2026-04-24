@@ -1,6 +1,17 @@
-import { Body, Get, Security, Controller, Post, Route } from '@tsoa/runtime';
+import {
+  Body,
+  Get,
+  Security,
+  Controller,
+  Post,
+  Route,
+  Request,
+  SuccessResponse,
+} from '@tsoa/runtime';
+import type { Request as ExpressRequest } from 'express';
 import { UserService } from '@services/user-services';
-import { RegisterUserRequest, User, UserIndex } from '@typing/user';
+import { ChangePasswordRequest, RegisterUserRequest, User, UserIndex } from '@typing/user';
+import { TokenPayload } from '@typing/session';
 
 // REST entry point for user endpoints.
 //
@@ -12,7 +23,7 @@ import { RegisterUserRequest, User, UserIndex } from '@typing/user';
 @Route('users')
 export class UserController extends Controller {
   /**
-   *  Register User.
+   * Register User.
    * @summary Register new user in database.
    * @returns {User} 200 - User
    */
@@ -22,7 +33,7 @@ export class UserController extends Controller {
   }
 
   /**
-   *  Index - Get all users.
+   * Index - Get all users.
    * @summary Get a list of all users.
    * @returns {User[]} 200 - List of users
    */
@@ -30,5 +41,21 @@ export class UserController extends Controller {
   @Security('jwt')
   public async getAllUsers(): Promise<UserIndex[]> {
     return await UserService.getUsersService();
+  }
+
+  /**
+   * Change the authenticated user's password.
+   * @summary Change password
+   */
+  @SuccessResponse(200, 'Password changed')
+  @Post('/change-password')
+  @Security('jwt')
+  public async changePassword(
+    @Body() body: ChangePasswordRequest,
+    @Request() request: ExpressRequest,
+  ): Promise<{ message: string }> {
+    const { userId } = (request as unknown as { user: TokenPayload }).user;
+    await UserService.changePasswordService(userId, body.currentPassword, body.newPassword);
+    return { message: 'Password changed successfully' };
   }
 }

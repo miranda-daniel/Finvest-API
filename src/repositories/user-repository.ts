@@ -16,6 +16,9 @@ export const UserRepository = {
   update: (id: number, data: Partial<Omit<RegisterUserRequest, 'password'>>) =>
     db.user.update({ where: { id }, data }),
 
+  updatePassword: (id: number, hashedPassword: string) =>
+    db.user.update({ where: { id }, data: { password: hashedPassword } }),
+
   setFavoritePortfolio: (userId: number, portfolioId: number | null) =>
     db.user.update({ where: { id: userId }, data: { favoritePortfolioId: portfolioId } }),
 };
