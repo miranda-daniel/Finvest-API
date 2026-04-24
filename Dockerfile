@@ -1,5 +1,5 @@
 # Stage 1: Dependencies
-FROM node:20-alpine AS deps
+FROM node:24-alpine AS deps
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ COPY package*.json .npmrc ./
 RUN npm ci --engine-strict=false --ignore-scripts
 
 # Stage 2: Builder
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -35,7 +35,7 @@ RUN cp -r src/generated build/
 RUN npx tsc-alias
 
 # Stage 3: Runner
-FROM node:20-alpine AS runner
+FROM node:24-alpine AS runner
 
 WORKDIR /app
 

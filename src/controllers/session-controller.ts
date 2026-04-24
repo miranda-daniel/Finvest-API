@@ -11,7 +11,6 @@ import {
 import type { Request as ExpressRequest } from 'express';
 import { SessionService } from '@services/session-services';
 import {
-  loginSchema,
   LoginUserRequest,
   Session,
   RefreshTokenResponse,
@@ -40,8 +39,6 @@ export class SessionController extends Controller {
     @Body() body: LoginUserRequest,
     @Request() request: ExpressRequest,
   ): Promise<Session> {
-    loginSchema.parse(body);
-
     const ip = request.ip ?? 'unknown';
     const userAgent = request.headers['user-agent'];
 
@@ -65,11 +62,19 @@ export class SessionController extends Controller {
     }
 
     const ip = request.ip ?? 'unknown';
-    const { rawRefreshToken, jwtToken } = await SessionService.refreshToken(rawToken, ip);
 
-    this.setHeader('Set-Cookie', buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE));
+    try {
+      const { rawRefreshToken, jwtToken } = await SessionService.refreshToken(rawToken, ip);
+      this.setHeader(
+        'Set-Cookie',
+        buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE),
+      );
 
-    return { jwtToken };
+      return { jwtToken };
+    } catch (err) {
+      this.setHeader('Set-Cookie', buildRefreshCookie('', 0));
+      throw err;
+    }
   }
 
   /**
@@ -99,6 +104,7 @@ export class SessionController extends Controller {
   @Get('/')
   public async getActiveSessions(@Request() request: ExpressRequest): Promise<ActiveSession[]> {
     const { userId } = (request as unknown as { user: TokenPayload }).user;
+
     return SessionService.listActiveSessions(userId);
   }
 
@@ -112,8 +118,10 @@ export class SessionController extends Controller {
   public async revokeAllSessions(@Request() request: ExpressRequest): Promise<{ message: string }> {
     const { userId } = (request as unknown as { user: TokenPayload }).user;
     const ip = request.ip ?? 'unknown';
+
     await SessionService.revokeAllSessions(userId, ip);
     this.setHeader('Set-Cookie', buildRefreshCookie('', 0));
+
     return { message: 'All sessions revoked' };
   }
 }

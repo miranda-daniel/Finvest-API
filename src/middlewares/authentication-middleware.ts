@@ -35,5 +35,5 @@ export const expressAuthentication = async (
     }
   }
 
-  return null;
+  throw new ApiError(errors.UNAUTHENTICATED);
 };

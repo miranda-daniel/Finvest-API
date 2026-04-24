@@ -22,3 +22,10 @@ export interface User {
   isActive: boolean;
   createdAt: Date;
 }
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, { message: 'Current password required' }),
+  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters' }),
+});
+
+export type ChangePasswordRequest = z.infer<typeof changePasswordSchema>;

@@ -13,11 +13,9 @@ export const PortfolioService = {
     description?: string,
     isFavorite?: boolean,
   ): Promise<Portfolio> => {
-    const portfolio = await PortfolioRepository.create({ name, description, userId });
-
-    if (isFavorite) {
-      await UserRepository.setFavoritePortfolio(userId, portfolio.id);
-    }
+    const portfolio = isFavorite
+      ? await PortfolioRepository.createAndSetFavorite({ name, description, userId })
+      : await PortfolioRepository.create({ name, description, userId });
 
     return {
       id: portfolio.id,
@@ -55,20 +53,18 @@ export const PortfolioService = {
   },
 
   getPortfoliosByUserId: async (userId: number): Promise<Portfolio[]> => {
-    const portfolios = await PortfolioRepository.findManyByUserId(userId);
+    const user = await UserRepository.findByIdWithPortfolios(userId);
 
-    if (portfolios.length === 0) {
+    if (!user || user.portfolios.length === 0) {
       return [];
     }
 
-    const user = await UserRepository.findById(userId);
-
-    return portfolios.map(({ id, name, description, createdAt }) => ({
+    return user.portfolios.map(({ id, name, description, createdAt }) => ({
       id,
       name,
       description: description ?? null,
       createdAt: createdAt.toISOString(),
-      isFavorite: user?.favoritePortfolioId === id,
+      isFavorite: user.favoritePortfolioId === id,
     }));
   },
 };

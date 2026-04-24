@@ -73,18 +73,16 @@ export const SessionService = {
       throw new ApiError(errors.INVALID_REFRESH_TOKEN);
     }
 
-    // Rotate: generate new token, revoke old one
+    // Rotate: create new token and revoke old one atomically
     const newRawToken = generateRefreshToken();
     const newHash = hashToken(newRawToken);
 
-    await RefreshTokenRepository.create({
+    await RefreshTokenRepository.rotate(stored.id, ip, {
       token: newHash,
       userId: stored.userId,
       expires: getRefreshTokenExpiry(),
       createdByIp: ip,
     });
-
-    await RefreshTokenRepository.revoke(stored.id, ip, newHash);
 
     const jwtToken = JWT.sign({ userId: stored.userId }, ENV_VARIABLES.jwtSignature, {
       expiresIn: ENV_VARIABLES.jwtExpiresIn,
@@ -105,6 +103,7 @@ export const SessionService = {
 
   listActiveSessions: async (userId: number): Promise<ActiveSession[]> => {
     const tokens = await RefreshTokenRepository.findActiveByUserId(userId);
+
     return tokens.map((t) => ({
       id: t.id,
       createdByIp: t.createdByIp,

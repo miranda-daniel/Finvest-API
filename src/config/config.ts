@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import dotenv from 'dotenv';
+import type { StringValue } from 'ms';
 
 dotenv.config();
 
@@ -7,7 +8,7 @@ export interface EnvVariables {
   databaseURL: string;
   port: string;
   jwtSignature: string;
-  jwtExpiresIn: string;
+  jwtExpiresIn: StringValue;
 }
 
 const envVariablesSchema = z.looseObject({
@@ -23,5 +24,5 @@ export const ENV_VARIABLES: EnvVariables = {
   databaseURL: envVars.DATABASE_URL,
   port: envVars.PORT,
   jwtSignature: envVars.JWT_SIGNATURE,
-  jwtExpiresIn: envVars.JWT_EXPIRES_IN,
+  jwtExpiresIn: envVars.JWT_EXPIRES_IN as StringValue,
 };
