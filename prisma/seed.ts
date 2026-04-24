@@ -4,7 +4,7 @@ import { hashPassword } from '../src/helpers/password';
 import { db } from '../src/config/db';
 
 faker.seed(1);
-const DEFAULT_PASSWORD = 'Password1';
+const DEFAULT_PASSWORD = 'Password1!';
 const DEFAULT_USERS_AMOUNT = 5;
 
 const seed = async () => {

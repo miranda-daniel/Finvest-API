@@ -8,3 +8,4 @@ build/
 src/generated/
 src/routes/
 .vscode/settings.json
+docs-internal/

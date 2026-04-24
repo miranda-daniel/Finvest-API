@@ -103,6 +103,7 @@ export const SessionService = {
 
   listActiveSessions: async (userId: number): Promise<ActiveSession[]> => {
     const tokens = await RefreshTokenRepository.findActiveByUserId(userId);
+
     return tokens.map((t) => ({
       id: t.id,
       createdByIp: t.createdByIp,

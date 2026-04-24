@@ -10,6 +10,7 @@ export const Query = {
         extensions: { code: 'UNAUTHENTICATED' },
       });
     }
+
     try {
       return await PortfolioService.getPortfoliosByUserId(context.user.userId);
     } catch (err) {
@@ -18,6 +19,7 @@ export const Query = {
           extensions: { code: err.message, httpCode: err.httpCode },
         });
       }
+
       throw err;
     }
   },
