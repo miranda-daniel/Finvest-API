@@ -111,6 +111,17 @@ These are intentionally not installed yet — they add complexity that isn't jus
 Architecture diagrams and flow charts are stored in `docs/architecture/`.
 When adding new diagrams, place them there.
 
+## Git workflow
+
+Always work on a feature branch — never commit directly to `main`.
+
+1. Create a branch from `main`: `git checkout -b feat/my-feature`
+2. Commit your changes on that branch
+3. Push the branch and open a Pull Request to `main`
+4. CI must pass before merging
+
+Branch naming follows the same types as commit messages: `feat/`, `fix/`, `refactor/`, `chore/`, etc.
+
 ## Commit messages
 
 Follow the **Conventional Commits** spec. Format:

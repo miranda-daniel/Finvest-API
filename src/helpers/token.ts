@@ -23,7 +23,7 @@ export const buildRefreshCookie = (value: string, maxAge: number): string => {
     `refreshToken=${value}`,
     'HttpOnly',
     'SameSite=Lax',
-    'Path=/session',
+    'Path=/',
     `Max-Age=${maxAge}`,
   ];
 

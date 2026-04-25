@@ -82,6 +82,7 @@ export const SessionService = {
       userId: stored.userId,
       expires: getRefreshTokenExpiry(),
       createdByIp: ip,
+      userAgent: stored.userAgent ?? undefined,
     });
 
     const jwtToken = JWT.sign({ userId: stored.userId }, ENV_VARIABLES.jwtSignature, {
