@@ -17,14 +17,12 @@ export const PortfolioService = {
       ? await PortfolioRepository.createAndSetFavorite({ name, description, userId })
       : await PortfolioRepository.create({ name, description, userId });
 
-    const user = await UserRepository.findByIdWithPortfolios(userId);
-
     return {
       id: portfolio.id,
       name: portfolio.name,
       description: portfolio.description ?? null,
       createdAt: portfolio.createdAt.toISOString(),
-      isFavorite: user?.favoritePortfolioId === portfolio.id,
+      isFavorite: !!isFavorite,
     };
   },
 

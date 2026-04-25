@@ -11,7 +11,7 @@ export const Mutation = {
   ) => {
     if (!context.user) {
       throw new GraphQLError('Not authenticated', {
-        extensions: { code: 'UNAUTHENTICATED' },
+        extensions: { code: 'UNAUTHENTICATED', httpCode: 401 },
       });
     }
 
@@ -39,7 +39,7 @@ export const Mutation = {
   ) => {
     if (!context.user) {
       throw new GraphQLError('Not authenticated', {
-        extensions: { code: 'UNAUTHENTICATED' },
+        extensions: { code: 'UNAUTHENTICATED', httpCode: 401 },
       });
     }
 

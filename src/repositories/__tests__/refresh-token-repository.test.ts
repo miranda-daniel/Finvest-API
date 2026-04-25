@@ -2,7 +2,7 @@ import { RefreshTokenRepository } from '@repositories/refresh-token-repository';
 import { UserRepository } from '@repositories/user-repository';
 import { hashPassword } from '@helpers/password';
 
-async function createTestUser() {
+const createTestUser = async () => {
   const email = `refresh.repo.${Date.now()}@test.com`;
   return UserRepository.create({
     email,
@@ -10,7 +10,7 @@ async function createTestUser() {
     firstName: 'Refresh',
     lastName: 'Test',
   });
-}
+};
 
 describe('RefreshTokenRepository', () => {
   describe('create', () => {
@@ -100,7 +100,7 @@ describe('RefreshTokenRepository', () => {
       // Pre-revoke t1
       await RefreshTokenRepository.revoke(t1.id, '127.0.0.1');
 
-      await RefreshTokenRepository.revokeAllForUser(user.id);
+      await RefreshTokenRepository.revokeAllForUser(user.id, '127.0.0.1');
 
       const updated1 = await RefreshTokenRepository.findByToken(t1.token);
       const updated2 = await RefreshTokenRepository.findByToken(t2.token);

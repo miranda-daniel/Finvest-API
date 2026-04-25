@@ -7,7 +7,7 @@ export const Query = {
   portfolios: async (_: unknown, __: unknown, context: ApolloContext) => {
     if (!context.user) {
       throw new GraphQLError('Not authenticated', {
-        extensions: { code: 'UNAUTHENTICATED' },
+        extensions: { code: 'UNAUTHENTICATED', httpCode: 401 },
       });
     }
 

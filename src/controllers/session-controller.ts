@@ -2,7 +2,7 @@ import { Body, Controller, Post, Route, SuccessResponse, Request } from '@tsoa/r
 import type { Request as ExpressRequest } from 'express';
 import { SessionService } from '@services/session-services';
 import { LoginUserRequest, Session, RefreshTokenResponse } from '@typing/session';
-import { REFRESH_TOKEN_COOKIE_MAX_AGE, buildRefreshCookie } from '@helpers/token';
+import { REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS, buildRefreshCookie } from '@helpers/token';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
 
@@ -27,7 +27,10 @@ export class SessionController extends Controller {
 
     const { rawRefreshToken, ...session } = await SessionService.loginUser(body, ip, userAgent);
 
-    this.setHeader('Set-Cookie', buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE));
+    this.setHeader(
+      'Set-Cookie',
+      buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS),
+    );
 
     return session;
   }
@@ -46,11 +49,13 @@ export class SessionController extends Controller {
 
     const ip = request.ip ?? 'unknown';
 
+    // try/catch is needed here to clear the cookie on failure before re-throwing,
+    // so the client doesn't keep sending an invalid token on every request.
     try {
       const { rawRefreshToken, jwtToken } = await SessionService.refreshToken(rawToken, ip);
       this.setHeader(
         'Set-Cookie',
-        buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE),
+        buildRefreshCookie(rawRefreshToken, REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS),
       );
 
       return { jwtToken };
