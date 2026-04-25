@@ -55,7 +55,11 @@ export const PortfolioService = {
   getPortfoliosByUserId: async (userId: number): Promise<Portfolio[]> => {
     const user = await UserRepository.findByIdWithPortfolios(userId);
 
-    if (!user || user.portfolios.length === 0) {
+    if (!user) {
+      throw new ApiError(errors.NOT_FOUND);
+    }
+
+    if (user.portfolios.length === 0) {
       return [];
     }
 

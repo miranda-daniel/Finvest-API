@@ -52,10 +52,10 @@ export const RefreshTokenRepository = {
       return newToken;
     }),
 
-  revokeAllForUser: async (userId: number, ip?: string) => {
+  revokeAllForUser: async (userId: number, ip: string) => {
     await db.refreshToken.updateMany({
       where: { userId, revoked: null },
-      data: { revoked: new Date(), revokedByIp: ip ?? null },
+      data: { revoked: new Date(), revokedByIp: ip },
     });
   },
 };

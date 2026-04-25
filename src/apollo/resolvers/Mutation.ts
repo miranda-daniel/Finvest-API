@@ -11,7 +11,7 @@ export const Mutation = {
   ) => {
     if (!context.user) {
       throw new GraphQLError('Not authenticated', {
-        extensions: { code: 'UNAUTHENTICATED' },
+        extensions: { code: 'UNAUTHENTICATED', httpCode: 401 },
       });
     }
 
@@ -25,7 +25,7 @@ export const Mutation = {
     } catch (err) {
       if (err instanceof ApiError) {
         throw new GraphQLError(err.message, {
-          extensions: { code: err.message, httpCode: err.httpCode },
+          extensions: { code: err.errorCode, httpCode: err.httpCode },
         });
       }
       throw err;
@@ -39,7 +39,7 @@ export const Mutation = {
   ) => {
     if (!context.user) {
       throw new GraphQLError('Not authenticated', {
-        extensions: { code: 'UNAUTHENTICATED' },
+        extensions: { code: 'UNAUTHENTICATED', httpCode: 401 },
       });
     }
 
@@ -51,7 +51,7 @@ export const Mutation = {
     } catch (err) {
       if (err instanceof ApiError) {
         throw new GraphQLError(err.message, {
-          extensions: { code: 'NOT_FOUND', httpCode: err.httpCode },
+          extensions: { code: err.errorCode, httpCode: err.httpCode },
         });
       }
       throw err;

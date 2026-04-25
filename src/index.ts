@@ -32,20 +32,25 @@ const startApolloServer = async () => {
 
 // After starting ApolloServer, register TSOA routes. Otherwise, TSOA would overwrite
 // Apollo routes (/graphql).
-startApolloServer().then(() => {
-  // TSOA generated routes
-  RegisterRoutes(app);
+startApolloServer()
+  .then(() => {
+    // TSOA generated routes
+    RegisterRoutes(app);
 
-  // Middleware for handling errors.
-  postRoutesMiddleware(app);
+    // Middleware for handling errors.
+    postRoutesMiddleware(app);
 
-  // Handler 404 routes.
-  app.use((req, res) => {
-    logger.warn(`Route Not Found: ${req.path}`);
-    res.status(errors.NOT_FOUND.httpCode).json(errors.NOT_FOUND);
+    // Handler 404 routes.
+    app.use((req, res) => {
+      logger.warn(`Route Not Found: ${req.path}`);
+      res.status(errors.NOT_FOUND.httpCode).json(errors.NOT_FOUND);
+    });
+
+    app.listen(ENV_VARIABLES.port, () => {
+      logger.info(`Listening on port ${ENV_VARIABLES.port}`);
+    });
+  })
+  .catch((err: unknown) => {
+    logger.error('Failed to start Apollo Server', err);
+    process.exit(1);
   });
-
-  app.listen(ENV_VARIABLES.port, () => {
-    logger.info(`Listening on port ${ENV_VARIABLES.port}`);
-  });
-});

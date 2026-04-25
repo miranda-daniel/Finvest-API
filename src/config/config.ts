@@ -9,6 +9,7 @@ export interface EnvVariables {
   port: string;
   jwtSignature: string;
   jwtExpiresIn: StringValue;
+  frontendUrl: string;
 }
 
 const envVariablesSchema = z.looseObject({
@@ -16,6 +17,7 @@ const envVariablesSchema = z.looseObject({
   PORT: z.string(),
   JWT_SIGNATURE: z.string(),
   JWT_EXPIRES_IN: z.string().default('1h'),
+  FRONTEND_URL: z.string().default('http://localhost:5173'),
 });
 
 const envVars = envVariablesSchema.parse(process.env);
@@ -25,4 +27,5 @@ export const ENV_VARIABLES: EnvVariables = {
   port: envVars.PORT,
   jwtSignature: envVars.JWT_SIGNATURE,
   jwtExpiresIn: envVars.JWT_EXPIRES_IN as StringValue,
+  frontendUrl: envVars.FRONTEND_URL,
 };

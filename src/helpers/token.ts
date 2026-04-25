@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { isProduction } from '@config/environments';
 
 export const REFRESH_TOKEN_EXPIRY_DAYS = 7;
-export const REFRESH_TOKEN_COOKIE_MAX_AGE = REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60; // seconds
+export const REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS = REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60;
 
 export const generateRefreshToken = (): string => {
   return crypto.randomBytes(40).toString('hex');
