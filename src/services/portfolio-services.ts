@@ -17,12 +17,14 @@ export const PortfolioService = {
       ? await PortfolioRepository.createAndSetFavorite({ name, description, userId })
       : await PortfolioRepository.create({ name, description, userId });
 
+    const user = await UserRepository.findByIdWithPortfolios(userId);
+
     return {
       id: portfolio.id,
       name: portfolio.name,
       description: portfolio.description ?? null,
       createdAt: portfolio.createdAt.toISOString(),
-      isFavorite: !!isFavorite,
+      isFavorite: user?.favoritePortfolioId === portfolio.id,
     };
   },
 
@@ -55,7 +57,11 @@ export const PortfolioService = {
   getPortfoliosByUserId: async (userId: number): Promise<Portfolio[]> => {
     const user = await UserRepository.findByIdWithPortfolios(userId);
 
-    if (!user || user.portfolios.length === 0) {
+    if (!user) {
+      throw new ApiError(errors.NOT_FOUND);
+    }
+
+    if (user.portfolios.length === 0) {
       return [];
     }
 

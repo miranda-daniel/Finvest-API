@@ -25,7 +25,7 @@ export const Mutation = {
     } catch (err) {
       if (err instanceof ApiError) {
         throw new GraphQLError(err.message, {
-          extensions: { code: err.message, httpCode: err.httpCode },
+          extensions: { code: err.errorCode, httpCode: err.httpCode },
         });
       }
       throw err;
@@ -51,7 +51,7 @@ export const Mutation = {
     } catch (err) {
       if (err instanceof ApiError) {
         throw new GraphQLError(err.message, {
-          extensions: { code: 'NOT_FOUND', httpCode: err.httpCode },
+          extensions: { code: err.errorCode, httpCode: err.httpCode },
         });
       }
       throw err;

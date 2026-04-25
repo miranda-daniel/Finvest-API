@@ -1,5 +1,6 @@
 import { UserService } from '@services/user-services';
 import { ApiError } from '@config/api-error';
+import { errors } from '@config/errors';
 
 describe('UserService', () => {
   describe('registerUserService', () => {
@@ -32,6 +33,52 @@ describe('UserService', () => {
       await UserService.registerUserService(data);
 
       await expect(UserService.registerUserService(data)).rejects.toThrow(ApiError);
+    });
+  });
+
+  describe('changePasswordService', () => {
+    it('changes the password successfully with correct current password', async () => {
+      const email = `change.svc.${Date.now()}@test.com`;
+      const user = await UserService.registerUserService({
+        firstName: 'Change',
+        lastName: 'Me',
+        email,
+        password: 'OldPass123!',
+      });
+
+      await expect(
+        UserService.changePasswordService(user.id, 'OldPass123!', 'NewPass456!'),
+      ).resolves.toBeUndefined();
+    });
+
+    it('throws INVALID_CREDENTIALS when current password is wrong', async () => {
+      const email = `wrong.svc.${Date.now()}@test.com`;
+      const user = await UserService.registerUserService({
+        firstName: 'Wrong',
+        lastName: 'Pass',
+        email,
+        password: 'OldPass123!',
+      });
+
+      const error = await UserService.changePasswordService(
+        user.id,
+        'WrongPassword!',
+        'NewPass456!',
+      ).catch((e) => e);
+
+      expect(error).toBeInstanceOf(ApiError);
+      expect(error.errorCode).toBe(errors.INVALID_CREDENTIALS.errorCode);
+    });
+
+    it('throws NOT_FOUND when user does not exist', async () => {
+      const error = await UserService.changePasswordService(
+        999999,
+        'AnyPassword!',
+        'NewPass456!',
+      ).catch((e) => e);
+
+      expect(error).toBeInstanceOf(ApiError);
+      expect(error.errorCode).toBe(errors.NOT_FOUND.errorCode);
     });
   });
 

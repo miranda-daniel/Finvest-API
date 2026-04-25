@@ -11,7 +11,7 @@ export const errors = {
   },
   INVALID_TOKEN: {
     httpCode: 400,
-    errorCode: 400_003,
+    errorCode: 400_002,
     description: 'Invalid token',
   },
   UNAUTHENTICATED: {

@@ -110,12 +110,28 @@ npm run lint
 # Lint and auto-fix
 npm run lint-fix
 
+# Type check
+npm run typecheck
+
 # Format
 npm run prettier-fix
 
 # Regenerate TSOA routes and Swagger spec
 npm run update-routes-and-swagger
 ```
+
+## Security
+
+All routes under `/session` (login, register, refresh-token, logout, etc.) are protected by a rate limiter: **20 requests per IP every 15 minutes**. Exceeding the limit returns `429 Too Many Requests`.
+
+## CI
+
+GitHub Actions runs on every PR to `main` and on post-merge pushes to `main`:
+
+1. Lint (`npm run lint`)
+2. Type check (`npm run typecheck`)
+3. Prisma generate + migrate
+4. Tests (`npm test`) against a Postgres 13 service container
 
 ## Endpoints
 
