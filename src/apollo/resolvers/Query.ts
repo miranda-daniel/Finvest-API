@@ -23,4 +23,23 @@ export const Query = {
       throw err;
     }
   },
+
+  portfolioDetail: async (_: unknown, args: { id: number }, context: ApolloContext) => {
+    if (!context.user) {
+      throw new GraphQLError('Not authenticated', {
+        extensions: { code: 'UNAUTHENTICATED', httpCode: 401 },
+      });
+    }
+
+    try {
+      return await PortfolioService.getPortfolioDetail(args.id, context.user.userId);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        throw new GraphQLError(err.message, {
+          extensions: { code: err.message, httpCode: err.httpCode },
+        });
+      }
+      throw err;
+    }
+  },
 };

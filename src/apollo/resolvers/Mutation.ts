@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { PortfolioService } from '@services/portfolio-services';
+import { OperationService } from '@services/operation-service';
 import { ApiError } from '@config/api-error';
 import { ApolloContext } from '@graphql/context';
 
@@ -52,6 +53,41 @@ export const Mutation = {
       if (err instanceof ApiError) {
         throw new GraphQLError(err.message, {
           extensions: { code: 'NOT_FOUND', httpCode: err.httpCode },
+        });
+      }
+      throw err;
+    }
+  },
+
+  addTransaction: async (
+    _: unknown,
+    args: {
+      portfolioId: number;
+      side: 'BUY' | 'SELL';
+      symbol: string;
+      name: string;
+      instrumentClass: string;
+      date: string;
+      price: number;
+      quantity: number;
+    },
+    context: ApolloContext,
+  ) => {
+    if (!context.user) {
+      throw new GraphQLError('Not authenticated', {
+        extensions: { code: 'UNAUTHENTICATED', httpCode: 401 },
+      });
+    }
+
+    try {
+      return await OperationService.addTransaction({
+        userId: context.user.userId,
+        ...args,
+      });
+    } catch (err) {
+      if (err instanceof ApiError) {
+        throw new GraphQLError(err.message, {
+          extensions: { code: err.message, httpCode: err.httpCode },
         });
       }
       throw err;
