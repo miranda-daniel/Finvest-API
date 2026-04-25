@@ -47,8 +47,8 @@ model Holding {
   portfolio    Portfolio   @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
   instrumentId Int
   instrument   Instrument  @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
-  platformId   Int
-  platform     Platform    @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  platformId   Int?
+  platform     Platform?   @relation(fields: [platformId], references: [id], onDelete: Cascade)
   operations   Operation[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
