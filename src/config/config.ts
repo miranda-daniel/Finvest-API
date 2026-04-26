@@ -10,6 +10,7 @@ export interface EnvVariables {
   jwtSignature: string;
   jwtExpiresIn: StringValue;
   twelveDataApiKey: string;
+  frontendUrl: string;
 }
 
 const envVariablesSchema = z.looseObject({
@@ -18,6 +19,7 @@ const envVariablesSchema = z.looseObject({
   JWT_SIGNATURE: z.string(),
   JWT_EXPIRES_IN: z.string().default('1h'),
   TWELVEDATA_API_KEY: z.string(),
+  FRONTEND_URL: z.string().default('http://localhost:5173'),
 });
 
 const envVars = envVariablesSchema.parse(process.env);
@@ -28,4 +30,5 @@ export const ENV_VARIABLES: EnvVariables = {
   jwtSignature: envVars.JWT_SIGNATURE,
   jwtExpiresIn: envVars.JWT_EXPIRES_IN as StringValue,
   twelveDataApiKey: envVars.TWELVEDATA_API_KEY,
+  frontendUrl: envVars.FRONTEND_URL,
 };

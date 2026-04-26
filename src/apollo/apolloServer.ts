@@ -44,11 +44,11 @@ export const buildApolloContext = async ({ req }: { req: Request }): Promise<Apo
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
       throw new GraphQLError('Token expired', {
-        extensions: { code: 'TOKEN_EXPIRED' },
+        extensions: { code: 'TOKEN_EXPIRED', httpCode: 401 },
       });
     }
     throw new GraphQLError('Invalid token', {
-      extensions: { code: 'UNAUTHENTICATED' },
+      extensions: { code: 'UNAUTHENTICATED', httpCode: 401 },
     });
   }
 };
