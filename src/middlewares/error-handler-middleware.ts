@@ -1,4 +1,4 @@
-import { ValidateError } from 'tsoa';
+import { ValidateError } from '@tsoa/runtime';
 import { ZodError } from 'zod';
 import { Request, Response, NextFunction } from 'express';
 import { ApiError } from '@config/api-error';

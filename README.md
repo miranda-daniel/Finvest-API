@@ -49,6 +49,8 @@ npm run dev
 
 The DB becomes healthy first; the API waits and starts automatically after.
 
+> **Docker Desktop:** use it to inspect containers and view logs, but always start the dev environment from the terminal with `npm run dev` — not from the Desktop UI. Starting from the UI skips the volume mount and nodemon, so code changes won't reload.
+
 ---
 
 ### Option B — Local development

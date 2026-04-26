@@ -1,8 +1,10 @@
 import { PortfolioRepository } from '@repositories/portfolio-repository';
+import { HoldingRepository } from '@repositories/holding-repository';
 import { UserRepository } from '@repositories/user-repository';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
-import { Portfolio } from '@typing/portfolio';
+import { computeHoldingMetrics } from '@helpers/holdings';
+import { Portfolio, HoldingDTO, PortfolioDetailDTO } from '@typing/portfolio';
 
 export type { Portfolio };
 
@@ -49,6 +51,40 @@ export const PortfolioService = {
       description: portfolio.description ?? null,
       createdAt: portfolio.createdAt.toISOString(),
       isFavorite: true,
+    };
+  },
+
+  getPortfolioDetail: async (portfolioId: number, userId: number): Promise<PortfolioDetailDTO> => {
+    const portfolio = await PortfolioRepository.findById(portfolioId);
+
+    if (!portfolio || portfolio.userId !== userId) {
+      throw new ApiError(errors.NOT_FOUND);
+    }
+
+    const holdingsWithDetails = await HoldingRepository.findByPortfolioWithDetails(portfolioId);
+
+    const holdings: HoldingDTO[] = holdingsWithDetails
+      .map((h) => {
+        const { quantity, avgCost } = computeHoldingMetrics(h.operations);
+        return {
+          id: h.id,
+          instrument: {
+            symbol: h.instrument.symbol,
+            name: h.instrument.name,
+            instrumentClass: h.instrument.instrumentClass.name,
+            country: h.instrument.country ?? null,
+          },
+          quantity,
+          avgCost,
+        };
+      })
+      .filter((h) => h.quantity > 0);
+
+    return {
+      id: portfolio.id,
+      name: portfolio.name,
+      description: portfolio.description ?? null,
+      holdings,
     };
   },
 

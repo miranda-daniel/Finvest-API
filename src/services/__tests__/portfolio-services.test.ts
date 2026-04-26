@@ -1,7 +1,19 @@
 import { PortfolioService } from '@services/portfolio-services';
+import { OperationService } from '@services/operation-service';
 import { UserService } from '@services/user-services';
 import { PortfolioRepository } from '@repositories/portfolio-repository';
 import { UserRepository } from '@repositories/user-repository';
+import { hashPassword } from '@helpers/password';
+
+const createTestUser = async () => {
+  const email = `portfolio.svc.${Date.now()}@test.com`;
+  return UserRepository.create({
+    email,
+    password: await hashPassword('password123'),
+    firstName: 'Port',
+    lastName: 'Service',
+  });
+};
 
 describe('PortfolioService', () => {
   describe('getPortfoliosByUserId', () => {
@@ -101,6 +113,72 @@ describe('PortfolioService', () => {
       expect(result).toBeNull();
       const updatedUser = await UserRepository.findById(user.id);
       expect(updatedUser?.favoritePortfolioId).toBeNull();
+    });
+  });
+
+  describe('getPortfolioDetail', () => {
+    it('returns portfolio with computed holdings', async () => {
+      const user = await createTestUser();
+      const portfolio = await PortfolioRepository.create({ name: 'Detail Test', userId: user.id });
+
+      await OperationService.addTransaction({
+        userId: user.id,
+        portfolioId: portfolio.id,
+        side: 'BUY',
+        symbol: `DETTEST${Date.now()}`,
+        name: 'Detail Test Corp.',
+        instrumentClass: 'Stock',
+        date: '2026-04-25',
+        price: 200,
+        quantity: 3,
+      });
+
+      const detail = await PortfolioService.getPortfolioDetail(portfolio.id, user.id);
+
+      expect(detail.id).toBe(portfolio.id);
+      expect(detail.holdings).toHaveLength(1);
+      expect(detail.holdings[0].quantity).toBe(3);
+      expect(detail.holdings[0].avgCost).toBeCloseTo(200);
+    });
+
+    it('throws NOT_FOUND when portfolio does not belong to user', async () => {
+      const user = await createTestUser();
+      const otherUser = await createTestUser();
+      const portfolio = await PortfolioRepository.create({ name: 'Other', userId: otherUser.id });
+
+      await expect(PortfolioService.getPortfolioDetail(portfolio.id, user.id)).rejects.toThrow();
+    });
+
+    it('excludes holdings with zero quantity (fully sold positions)', async () => {
+      const user = await createTestUser();
+      const portfolio = await PortfolioRepository.create({ name: 'Zero Test', userId: user.id });
+      const symbol = `ZERO${Date.now()}`;
+
+      await OperationService.addTransaction({
+        userId: user.id,
+        portfolioId: portfolio.id,
+        side: 'BUY',
+        symbol,
+        name: 'Zero Corp.',
+        instrumentClass: 'Stock',
+        date: '2026-04-20',
+        price: 100,
+        quantity: 5,
+      });
+      await OperationService.addTransaction({
+        userId: user.id,
+        portfolioId: portfolio.id,
+        side: 'SELL',
+        symbol,
+        name: 'Zero Corp.',
+        instrumentClass: 'Stock',
+        date: '2026-04-25',
+        price: 120,
+        quantity: 5,
+      });
+
+      const detail = await PortfolioService.getPortfolioDetail(portfolio.id, user.id);
+      expect(detail.holdings).toHaveLength(0);
     });
   });
 
