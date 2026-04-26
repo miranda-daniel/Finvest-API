@@ -7,6 +7,7 @@ export const InstrumentRepository = {
     symbol: string;
     name: string;
     exchange: string;
+    country?: string;
     instrumentClassId: number;
   }) =>
     db.instrument.upsert({

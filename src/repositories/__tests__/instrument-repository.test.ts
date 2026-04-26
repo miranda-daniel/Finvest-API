@@ -48,6 +48,29 @@ describe('InstrumentRepository', () => {
       });
       expect(a.id).toBe(b.id);
     });
+
+    it('persists country when provided', async () => {
+      const cls = await seedInstrumentClass();
+      const instrument = await InstrumentRepository.findOrCreate({
+        symbol: 'NVO',
+        name: 'Novo Nordisk A/S',
+        exchange: 'NYSE',
+        country: 'DK',
+        instrumentClassId: cls.id,
+      });
+      expect(instrument.country).toBe('DK');
+    });
+
+    it('stores null country when not provided', async () => {
+      const cls = await seedInstrumentClass();
+      const instrument = await InstrumentRepository.findOrCreate({
+        symbol: 'NOCOUNTRY',
+        name: 'No Country Corp.',
+        exchange: 'NYSE',
+        instrumentClassId: cls.id,
+      });
+      expect(instrument.country).toBeNull();
+    });
   });
 
   describe('findBySymbol', () => {
