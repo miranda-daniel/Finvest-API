@@ -61,3 +61,4 @@ jobs:
           NODE_ENV: test
           PORT: 3001
           FRONTEND_URL: http://localhost:5173
+          TWELVEDATA_API_KEY: test-key
