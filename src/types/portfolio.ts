@@ -10,6 +10,7 @@ export interface InstrumentDTO {
   symbol: string;
   name: string;
   instrumentClass: string;
+  country: string | null;
 }
 
 export interface HoldingDTO {

@@ -88,5 +88,26 @@ describe('OperationService', () => {
         }),
       ).rejects.toThrow();
     });
+
+    it('returns country in instrument when provided', async () => {
+      const user = await createTestUser();
+      const portfolio = await PortfolioRepository.create({ name: 'Test', userId: user.id });
+
+      const holding = await OperationService.addTransaction({
+        userId: user.id,
+        portfolioId: portfolio.id,
+        side: 'BUY',
+        symbol: `NVO${Date.now()}`,
+        name: 'Novo Nordisk A/S',
+        instrumentClass: 'American Depositary Receipt',
+        country: 'DK',
+        date: '2026-04-26',
+        price: 90,
+        quantity: 10,
+      });
+
+      expect(holding.instrument.country).toBe('DK');
+      expect(holding.instrument.instrumentClass).toBe('Stock');
+    });
   });
 });

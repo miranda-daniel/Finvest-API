@@ -9,6 +9,7 @@ import { HoldingDTO } from '@typing/portfolio';
 
 const INSTRUMENT_CLASS_MAP: Record<string, string> = {
   'Common Stock': 'Stock',
+  'American Depositary Receipt': 'Stock',
   ETF: 'ETF',
   'Digital Currency': 'Crypto',
   Bond: 'Bond',
@@ -25,6 +26,7 @@ export const OperationService = {
     symbol: string;
     name: string;
     instrumentClass: string;
+    country?: string;
     date: string;
     price: number;
     quantity: number;
@@ -42,6 +44,7 @@ export const OperationService = {
       symbol: params.symbol,
       name: params.name,
       exchange: '',
+      country: params.country,
       instrumentClassId: instrumentClass.id,
     });
 
@@ -74,6 +77,7 @@ export const OperationService = {
         symbol: holdingWithDetails.instrument.symbol,
         name: holdingWithDetails.instrument.name,
         instrumentClass: holdingWithDetails.instrument.instrumentClass.name,
+        country: holdingWithDetails.instrument.country ?? null,
       },
       quantity,
       avgCost,

@@ -72,6 +72,7 @@ export const PortfolioService = {
             symbol: h.instrument.symbol,
             name: h.instrument.name,
             instrumentClass: h.instrument.instrumentClass.name,
+            country: h.instrument.country ?? null,
           },
           quantity,
           avgCost,
