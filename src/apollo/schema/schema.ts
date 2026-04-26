@@ -11,6 +11,7 @@ export const typeDefs = `#graphql
     symbol: String!
     name: String!
     instrumentClass: String!
+    country: String
   }
 
   type Holding {
@@ -51,6 +52,7 @@ export const typeDefs = `#graphql
       symbol: String!
       name: String!
       instrumentClass: String!
+      country: String
       date: String!
       price: Float!
       quantity: Float!
