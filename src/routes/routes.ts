@@ -23,6 +23,7 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string","required":true},
             "type": {"dataType":"string","required":true},
             "exchange": {"dataType":"string","required":true},
+            "country": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },

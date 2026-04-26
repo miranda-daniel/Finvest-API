@@ -1,11 +1,60 @@
-// src/clients/instrument-client.ts
 import { ENV_VARIABLES } from '@config/config';
+
+const COUNTRY_TO_ISO2: Record<string, string> = {
+  'United States': 'US',
+  Canada: 'CA',
+  'United Kingdom': 'GB',
+  Germany: 'DE',
+  France: 'FR',
+  Japan: 'JP',
+  Australia: 'AU',
+  China: 'CN',
+  'Hong Kong': 'HK',
+  Switzerland: 'CH',
+  Netherlands: 'NL',
+  Sweden: 'SE',
+  Denmark: 'DK',
+  Norway: 'NO',
+  Finland: 'FI',
+  Spain: 'ES',
+  Italy: 'IT',
+  Portugal: 'PT',
+  Belgium: 'BE',
+  Austria: 'AT',
+  Poland: 'PL',
+  Mexico: 'MX',
+  Brazil: 'BR',
+  India: 'IN',
+  'South Korea': 'KR',
+  Singapore: 'SG',
+  'New Zealand': 'NZ',
+  Ireland: 'IE',
+  Israel: 'IL',
+  'South Africa': 'ZA',
+  Russia: 'RU',
+  Taiwan: 'TW',
+  Argentina: 'AR',
+  Chile: 'CL',
+  Colombia: 'CO',
+  Indonesia: 'ID',
+  Malaysia: 'MY',
+  Thailand: 'TH',
+  Philippines: 'PH',
+};
+
+const toIso2 = (country: string): string => {
+  if (country.length === 2) {
+    return country.toUpperCase();
+  }
+  return COUNTRY_TO_ISO2[country] ?? '';
+};
 
 export interface InstrumentSearchResult {
   symbol: string;
   name: string;
   type: string; // raw TwelveData instrument_type, e.g. "Common Stock", "ETF"
   exchange: string;
+  country: string;
 }
 
 export const InstrumentClient = {
@@ -27,6 +76,7 @@ export const InstrumentClient = {
         instrument_name: string;
         instrument_type: string;
         exchange: string;
+        country: string;
       }>;
     };
 
@@ -35,26 +85,27 @@ export const InstrumentClient = {
       name: item.instrument_name,
       type: item.instrument_type,
       exchange: item.exchange,
+      country: toIso2(item.country ?? ''),
     }));
   },
 
   getQuote: async (symbol: string): Promise<number> => {
-    const url = new URL('https://api.twelvedata.com/quote');
+    const url = new URL('https://api.twelvedata.com/price');
     url.searchParams.set('symbol', symbol);
     url.searchParams.set('apikey', ENV_VARIABLES.twelveDataApiKey);
 
     const res = await fetch(url.toString());
 
     if (!res.ok) {
-      throw new Error(`TwelveData quote failed: ${res.status}`);
+      throw new Error(`TwelveData price failed: ${res.status}`);
     }
 
-    const json = (await res.json()) as { close?: string };
+    const json = (await res.json()) as { price?: string };
 
-    const price = parseFloat(json.close ?? '');
+    const price = parseFloat(json.price ?? '');
 
     if (isNaN(price)) {
-      throw new Error(`TwelveData returned invalid price for ${symbol}`);
+      throw new Error(`TwelveData returned invalid price for ${symbol}: ${JSON.stringify(json)}`);
     }
 
     return price;
