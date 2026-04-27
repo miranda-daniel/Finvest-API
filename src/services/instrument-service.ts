@@ -1,4 +1,4 @@
-import { InstrumentClient, InstrumentSearchResult } from '../clients/twelve-data-client';
+import { InstrumentClient, InstrumentSearchResult } from '@clients/twelve-data-client';
 
 export const InstrumentService = {
   search: (query: string): Promise<InstrumentSearchResult[]> => InstrumentClient.search(query),
