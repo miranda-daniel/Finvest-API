@@ -2,6 +2,8 @@ import { OperationService } from '@services/operation-service';
 import { UserRepository } from '@repositories/user-repository';
 import { PortfolioRepository } from '@repositories/portfolio-repository';
 import { hashPassword } from '@helpers/password';
+import { errors } from '@config/errors';
+import { ApiError } from '@config/api-error';
 
 const createTestUser = async () => {
   const email = `op.service.${Date.now()}@test.com`;
@@ -74,19 +76,20 @@ describe('OperationService', () => {
       const otherUser = await createTestUser();
       const portfolio = await PortfolioRepository.create({ name: 'Other', userId: otherUser.id });
 
-      await expect(
-        OperationService.addTransaction({
-          userId: user.id,
-          portfolioId: portfolio.id,
-          side: 'BUY',
-          symbol: 'AAPL',
-          name: 'Apple Inc.',
-          instrumentClass: 'Stock',
-          date: '2026-04-25',
-          price: 100,
-          quantity: 1,
-        }),
-      ).rejects.toThrow();
+      const error = await OperationService.addTransaction({
+        userId: user.id,
+        portfolioId: portfolio.id,
+        side: 'BUY',
+        symbol: 'AAPL',
+        name: 'Apple Inc.',
+        instrumentClass: 'Stock',
+        date: '2026-04-25',
+        price: 100,
+        quantity: 1,
+      }).catch((e) => e);
+
+      expect(error).toBeInstanceOf(ApiError);
+      expect(error.errorCode).toBe(errors.NOT_FOUND.errorCode);
     });
 
     it('returns country in instrument when provided', async () => {
