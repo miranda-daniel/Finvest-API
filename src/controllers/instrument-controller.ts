@@ -1,5 +1,5 @@
 import { Controller, Get, Query, Route, Security, Path } from '@tsoa/runtime';
-import { InstrumentClient, InstrumentSearchResult } from '../clients/instrument-client';
+import { InstrumentClient, InstrumentSearchResult } from '../clients/twelve-data-client';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
 
