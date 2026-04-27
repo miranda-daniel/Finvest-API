@@ -4,6 +4,7 @@ import { InstrumentRepository } from '@repositories/instrument-repository';
 import { UserRepository } from '@repositories/user-repository';
 import { db } from '@config/db';
 import { hashPassword } from '@helpers/password';
+import { OperationType } from '@generated/prisma';
 
 const setup = async () => {
   const email = `op.repo.${Date.now()}@test.com`;
@@ -40,14 +41,14 @@ describe('OperationRepository', () => {
 
       const op = await OperationRepository.create({
         holdingId: holding.id,
-        type: 'BUY',
+        type: OperationType.BUY,
         quantity: 5,
         price: 150.25,
         date,
       });
 
       expect(op.holdingId).toBe(holding.id);
-      expect(op.type).toBe('BUY');
+      expect(op.type).toBe(OperationType.BUY);
       expect(Number(op.quantity)).toBe(5);
       expect(Number(op.price)).toBeCloseTo(150.25);
     });

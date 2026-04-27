@@ -59,7 +59,7 @@ export interface InstrumentSearchResult {
   country: string;
 }
 
-export const InstrumentClient = {
+export const TwelveDataClient = {
   search: async (query: string): Promise<InstrumentSearchResult[]> => {
     const url = new URL('https://api.twelvedata.com/symbol_search');
     url.searchParams.set('symbol', query);

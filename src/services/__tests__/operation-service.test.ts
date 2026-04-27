@@ -2,6 +2,7 @@ import { OperationService } from '@services/operation-service';
 import { UserRepository } from '@repositories/user-repository';
 import { PortfolioRepository } from '@repositories/portfolio-repository';
 import { hashPassword } from '@helpers/password';
+import { OperationType } from '@generated/prisma';
 
 const createTestUser = async () => {
   const email = `op.service.${Date.now()}@test.com`;
@@ -22,7 +23,7 @@ describe('OperationService', () => {
       const holding = await OperationService.addTransaction({
         userId: user.id,
         portfolioId: portfolio.id,
-        side: 'BUY',
+        side: OperationType.BUY,
         symbol: `SVCTEST${Date.now()}`,
         name: 'Service Test Corp.',
         instrumentClass: 'Stock',
@@ -44,7 +45,7 @@ describe('OperationService', () => {
       await OperationService.addTransaction({
         userId: user.id,
         portfolioId: portfolio.id,
-        side: 'BUY',
+        side: OperationType.BUY,
         symbol,
         name: 'Accum Corp.',
         instrumentClass: 'Stock',
@@ -56,7 +57,7 @@ describe('OperationService', () => {
       const holding = await OperationService.addTransaction({
         userId: user.id,
         portfolioId: portfolio.id,
-        side: 'BUY',
+        side: OperationType.BUY,
         symbol,
         name: 'Accum Corp.',
         instrumentClass: 'Stock',
@@ -78,7 +79,7 @@ describe('OperationService', () => {
         OperationService.addTransaction({
           userId: user.id,
           portfolioId: portfolio.id,
-          side: 'BUY',
+          side: OperationType.BUY,
           symbol: 'AAPL',
           name: 'Apple Inc.',
           instrumentClass: 'Stock',
@@ -96,7 +97,7 @@ describe('OperationService', () => {
       const holding = await OperationService.addTransaction({
         userId: user.id,
         portfolioId: portfolio.id,
-        side: 'BUY',
+        side: OperationType.BUY,
         symbol: `NVO${Date.now()}`,
         name: 'Novo Nordisk A/S',
         instrumentClass: 'American Depositary Receipt',

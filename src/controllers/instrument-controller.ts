@@ -1,5 +1,5 @@
 import { Controller, Get, Query, Route, Security, Path } from '@tsoa/runtime';
-import { InstrumentClient, InstrumentSearchResult } from '../clients/twelve-data-client';
+import { TwelveDataClient, InstrumentSearchResult } from '../clients/twelve-data-client';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
 
@@ -21,7 +21,7 @@ export class InstrumentController extends Controller {
       throw new ApiError(errors.VALIDATION_ERROR);
     }
 
-    return InstrumentClient.search(q.trim());
+    return TwelveDataClient.search(q.trim());
   }
 
   /**
@@ -31,7 +31,7 @@ export class InstrumentController extends Controller {
   @Security('jwt')
   @Get('/quote/{symbol}')
   public async getQuote(@Path() symbol: string): Promise<QuoteResponse> {
-    const price = await InstrumentClient.getQuote(symbol);
+    const price = await TwelveDataClient.getQuote(symbol);
     return { symbol, price };
   }
 }
