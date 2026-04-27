@@ -13,7 +13,7 @@ export interface EnvVariables {
   frontendUrl: string;
 }
 
-const envVariablesSchema = z.looseObject({
+const envVariablesSchema = z.object({
   DATABASE_URL: z.string(),
   PORT: z.string(),
   JWT_SIGNATURE: z.string(),

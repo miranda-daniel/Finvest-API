@@ -13,6 +13,8 @@ export interface HoldingMetrics {
 }
 
 export const computeHoldingMetrics = (operations: OperationLike[]): HoldingMetrics => {
+  // DIVIDEND and FEE operations are intentionally excluded: dividends are not reinvested
+  // and fees are not capitalized into cost basis at this stage.
   const buyOps = operations.filter((op) => op.type === OperationType.BUY);
   const sellOps = operations.filter((op) => op.type === OperationType.SELL);
 
