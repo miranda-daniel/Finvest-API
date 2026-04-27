@@ -64,7 +64,7 @@ export const Mutation = {
     _: unknown,
     args: {
       portfolioId: number;
-      side: OperationType;
+      side: Extract<OperationType, 'BUY' | 'SELL'>;
       symbol: string;
       name: string;
       instrumentClass: string;
