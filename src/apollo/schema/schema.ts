@@ -52,6 +52,7 @@ export const typeDefs = `#graphql
       symbol: String!
       name: String!
       instrumentClass: String!
+      exchange: String
       country: String
       date: String!
       price: Float!

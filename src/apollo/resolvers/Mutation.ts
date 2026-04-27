@@ -68,6 +68,7 @@ export const Mutation = {
       symbol: string;
       name: string;
       instrumentClass: string;
+      exchange?: string;
       country?: string;
       date: string;
       price: number;

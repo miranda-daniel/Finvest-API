@@ -27,6 +27,7 @@ export const OperationService = {
     symbol: string;
     name: string;
     instrumentClass: string;
+    exchange?: string;
     country?: string;
     date: string;
     price: number;
@@ -44,7 +45,7 @@ export const OperationService = {
     const instrument = await InstrumentRepository.findOrCreate({
       symbol: params.symbol,
       name: params.name,
-      exchange: '',
+      exchange: params.exchange ?? '',
       country: params.country,
       instrumentClassId: instrumentClass.id,
     });
