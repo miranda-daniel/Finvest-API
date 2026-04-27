@@ -1,7 +1,8 @@
 import { HoldingRepository } from '@repositories/holding-repository';
 import { InstrumentRepository } from '@repositories/instrument-repository';
+import { PortfolioRepository } from '@repositories/portfolio-repository';
+import { OperationRepository } from '@repositories/operation-repository';
 import { UserRepository } from '@repositories/user-repository';
-import { db } from '@config/db';
 import { hashPassword } from '@helpers/password';
 
 const createTestUser = async () => {
@@ -15,14 +16,10 @@ const createTestUser = async () => {
 };
 
 const createTestPortfolio = async (userId: number) =>
-  db.portfolio.create({ data: { name: 'Test Portfolio', userId } });
+  PortfolioRepository.create({ name: 'Test Portfolio', userId });
 
 const createTestInstrument = async (symbol: string) => {
-  const cls = await db.instrumentClass.upsert({
-    where: { name: 'Stock' },
-    update: {},
-    create: { name: 'Stock' },
-  });
+  const cls = await InstrumentRepository.findOrCreateClass('Stock');
   return InstrumentRepository.findOrCreate({
     symbol,
     name: `${symbol} Corp.`,
@@ -75,15 +72,12 @@ describe('HoldingRepository', () => {
         instrumentId: instrument.id,
       });
 
-      await db.operation.create({
-        data: {
-          holdingId: holding.id,
-          type: 'BUY',
-          quantity: 10,
-          price: 150,
-          fees: 0,
-          date: new Date(),
-        },
+      await OperationRepository.create({
+        holdingId: holding.id,
+        type: 'BUY',
+        quantity: 10,
+        price: 150,
+        date: new Date(),
       });
 
       const holdings = await HoldingRepository.findByPortfolioWithDetails(portfolio.id);

@@ -1,8 +1,6 @@
 import { InstrumentRepository } from '@repositories/instrument-repository';
-import { db } from '@config/db';
 
-const seedInstrumentClass = async (name = 'Stock') =>
-  db.instrumentClass.upsert({ where: { name }, update: {}, create: { name } });
+const seedInstrumentClass = async (name = 'Stock') => InstrumentRepository.findOrCreateClass(name);
 
 describe('InstrumentRepository', () => {
   describe('findOrCreateClass', () => {
