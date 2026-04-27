@@ -1,3 +1,4 @@
+import { OperationType } from '@generated/prisma';
 import { PortfolioRepository } from '@repositories/portfolio-repository';
 import { InstrumentRepository } from '@repositories/instrument-repository';
 import { HoldingRepository } from '@repositories/holding-repository';
@@ -22,7 +23,7 @@ export const OperationService = {
   addTransaction: async (params: {
     userId: number;
     portfolioId: number;
-    side: 'BUY' | 'SELL';
+    side: OperationType;
     symbol: string;
     name: string;
     instrumentClass: string;

@@ -4,7 +4,7 @@ import { OperationType } from '@generated/prisma';
 export const OperationRepository = {
   create: (data: {
     holdingId: number;
-    type: 'BUY' | 'SELL';
+    type: OperationType;
     quantity: number;
     price: number;
     date: Date;
@@ -12,7 +12,7 @@ export const OperationRepository = {
     db.operation.create({
       data: {
         holdingId: data.holdingId,
-        type: data.type as OperationType,
+        type: data.type,
         quantity: data.quantity,
         price: data.price,
         fees: 0,

@@ -1,3 +1,5 @@
+// TwelveData (twelvedata.com) — market data provider. Used for instrument search
+// (symbol_search endpoint) and real-time price quotes (price endpoint).
 import { ENV_VARIABLES } from '@config/config';
 
 const COUNTRY_TO_ISO2: Record<string, string> = {
