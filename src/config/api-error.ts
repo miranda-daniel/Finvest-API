@@ -6,11 +6,11 @@ export interface ErrorInterface {
 }
 
 export class ApiError extends Error {
-  code;
+  code: string;
 
-  httpCode;
+  httpCode: number;
 
-  errorCode;
+  errorCode: number;
 
   constructor(error: ErrorInterface) {
     super(error.description);
