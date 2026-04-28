@@ -16,7 +16,7 @@ export const Query = {
     } catch (err) {
       if (err instanceof ApiError) {
         throw new GraphQLError(err.message, {
-          extensions: { code: err.errorCode, httpCode: err.httpCode },
+          extensions: { code: err.code, httpCode: err.httpCode },
         });
       }
 
@@ -36,7 +36,7 @@ export const Query = {
     } catch (err) {
       if (err instanceof ApiError) {
         throw new GraphQLError(err.message, {
-          extensions: { code: err.message, httpCode: err.httpCode },
+          extensions: { code: err.code, httpCode: err.httpCode },
         });
       }
       throw err;

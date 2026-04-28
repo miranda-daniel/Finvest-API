@@ -2,7 +2,18 @@ import { db } from '@config/db';
 import { RegisterUserRequest } from '@typing/user';
 
 export const UserRepository = {
-  findMany: () => db.user.findMany(),
+  findMany: () =>
+    db.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        createdAt: true,
+        updatedAt: true,
+        favoritePortfolioId: true,
+      },
+    }),
 
   findById: (id: number) => db.user.findUnique({ where: { id } }),
 

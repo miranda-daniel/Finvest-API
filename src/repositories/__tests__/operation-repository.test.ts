@@ -1,8 +1,8 @@
 import { OperationRepository } from '@repositories/operation-repository';
 import { HoldingRepository } from '@repositories/holding-repository';
 import { InstrumentRepository } from '@repositories/instrument-repository';
+import { PortfolioRepository } from '@repositories/portfolio-repository';
 import { UserRepository } from '@repositories/user-repository';
-import { db } from '@config/db';
 import { hashPassword } from '@helpers/password';
 
 const setup = async () => {
@@ -13,12 +13,8 @@ const setup = async () => {
     firstName: 'Op',
     lastName: 'Test',
   });
-  const portfolio = await db.portfolio.create({ data: { name: 'Test', userId: user.id } });
-  const cls = await db.instrumentClass.upsert({
-    where: { name: 'Stock' },
-    update: {},
-    create: { name: 'Stock' },
-  });
+  const portfolio = await PortfolioRepository.create({ name: 'Test', userId: user.id });
+  const cls = await InstrumentRepository.findOrCreateClass('Stock');
   const instrument = await InstrumentRepository.findOrCreate({
     symbol: `OPREPO${Date.now()}`,
     name: 'Op Repo Corp.',
