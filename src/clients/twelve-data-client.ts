@@ -1,6 +1,9 @@
 // TwelveData (twelvedata.com) — market data provider. Used for instrument search
 // (symbol_search endpoint) and real-time price quotes (price endpoint).
 import { ENV_VARIABLES } from '@config/config';
+import { InstrumentSearchResult } from '@typing/instrument';
+
+export type { InstrumentSearchResult };
 
 const COUNTRY_TO_ISO2: Record<string, string> = {
   'United States': 'US',
@@ -50,14 +53,6 @@ const toIso2 = (country: string): string => {
   }
   return COUNTRY_TO_ISO2[country] ?? '';
 };
-
-export interface InstrumentSearchResult {
-  symbol: string;
-  name: string;
-  type: string; // raw TwelveData instrument_type, e.g. "Common Stock", "ETF"
-  exchange: string;
-  country: string;
-}
 
 export const InstrumentClient = {
   search: async (query: string): Promise<InstrumentSearchResult[]> => {
