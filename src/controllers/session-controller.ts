@@ -2,6 +2,7 @@ import { Body, Controller, Post, Route, SuccessResponse, Request } from '@tsoa/r
 import type { Request as ExpressRequest } from 'express';
 import { SessionService } from '@services/session-services';
 import { LoginUserRequest, Session, RefreshTokenResponse } from '@typing/session';
+import { MessageResponse } from '@typing/common';
 import { REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS, buildRefreshCookie } from '@helpers/token';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
@@ -71,7 +72,7 @@ export class SessionController extends Controller {
    */
   @SuccessResponse(200, 'Logged out')
   @Post('/logout')
-  public async logout(@Request() request: ExpressRequest): Promise<{ message: string }> {
+  public async logout(@Request() request: ExpressRequest): Promise<MessageResponse> {
     const rawToken = (request.cookies as Record<string, string | undefined>)?.refreshToken;
     const ip = request.ip ?? 'unknown';
 

@@ -1,13 +1,8 @@
 import { Controller, Get, Query, Route, Security, Path } from '@tsoa/runtime';
-import { InstrumentSearchResult } from '@typing/instrument';
+import { InstrumentSearchResponse, QuoteResponse } from '@typing/instrument';
 import { InstrumentService } from '@services/instrument-service';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
-
-interface QuoteResponse {
-  symbol: string;
-  price: number;
-}
 
 @Route('instruments')
 export class InstrumentController extends Controller {
@@ -17,7 +12,7 @@ export class InstrumentController extends Controller {
    */
   @Security('jwt')
   @Get('/search')
-  public async searchInstruments(@Query() q: string): Promise<InstrumentSearchResult[]> {
+  public async searchInstruments(@Query() q: string): Promise<InstrumentSearchResponse[]> {
     if (!q || q.trim().length === 0) {
       throw new ApiError(errors.VALIDATION_ERROR);
     }

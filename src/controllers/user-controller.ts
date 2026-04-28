@@ -12,6 +12,7 @@ import type { Request as ExpressRequest } from 'express';
 import { UserService } from '@services/user-services';
 import { ChangePasswordRequest, RegisterUserRequest, User, UserIndex } from '@typing/user';
 import { TokenPayload } from '@typing/session';
+import { MessageResponse } from '@typing/common';
 
 // REST entry point for user endpoints.
 //
@@ -53,7 +54,7 @@ export class UserController extends Controller {
   public async changePassword(
     @Body() body: ChangePasswordRequest,
     @Request() request: ExpressRequest,
-  ): Promise<{ message: string }> {
+  ): Promise<MessageResponse> {
     const { userId } = (request as unknown as { user: TokenPayload }).user;
     await UserService.changePasswordService(userId, body.currentPassword, body.newPassword);
     return { message: 'Password changed successfully' };
