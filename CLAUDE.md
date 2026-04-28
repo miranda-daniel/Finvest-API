@@ -84,6 +84,12 @@ try {
 }
 ```
 
+### Services (`src/services/`)
+
+- One file per domain, singular noun: `user-service.ts`, `portfolio-service.ts`, `session-service.ts`
+- Never use the plural form (`user-services.ts`) or a `-services` suffix
+- Method names must not repeat the entity name. `UserService.getUsers()` ✅ — `UserService.getUsersService()` ❌
+
 ### Types (`src/types/`)
 
 One file per domain/feature, not one per database table.
@@ -102,6 +108,7 @@ One file per domain/feature, not one per database table.
 - `*Response` — HTTP response shapes that have no domain equivalent (e.g. `QuoteResponse`, `MessageResponse`). Use this when the type was created specifically to describe what an endpoint returns, not when it maps to a domain entity.
 - No suffix — domain entities returned as-is (e.g. `User`, `Session`, `Portfolio`). These exist independently of any single endpoint.
 - `*Result` — internal service outputs only, never returned directly to the client (e.g. `LoginResult` extends `Session` and adds `rawRefreshToken` for the controller to set as a cookie). Never use `Result` as a suffix for HTTP response types.
+- Never use `DTO` as a suffix — it's a Java-ism with no meaning here. Use the plain entity name (`Holding`, not `HoldingDTO`).
 
 ## Deferred improvements
 
