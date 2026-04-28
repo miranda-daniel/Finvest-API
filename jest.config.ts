@@ -23,6 +23,7 @@ const config: Config.InitialOptions = {
     '^@graphql/(.*)$': '<rootDir>/src/apollo/$1',
     '^@root/(.*)$': '<rootDir>/$1',
     '^@generated/(.*)$': '<rootDir>/src/generated/$1',
+    '^@clients/(.*)$': '<rootDir>/src/clients/$1',
   },
 
   collectCoverage: true,
