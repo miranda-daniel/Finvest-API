@@ -1,8 +1,8 @@
 import { InstrumentClient } from '@clients/twelve-data-client';
-import { InstrumentSearchResult } from '@typing/instrument';
+import { InstrumentSearchResponse } from '@typing/instrument';
 
 export const InstrumentService = {
-  search: (query: string): Promise<InstrumentSearchResult[]> => InstrumentClient.search(query),
+  search: (query: string): Promise<InstrumentSearchResponse[]> => InstrumentClient.search(query),
 
   getQuote: (symbol: string): Promise<number> => InstrumentClient.getQuote(symbol),
 };

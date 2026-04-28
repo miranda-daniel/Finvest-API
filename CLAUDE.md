@@ -96,6 +96,13 @@ One file per domain/feature, not one per database table.
 **What belongs in `types/`:** request/response shapes and domain types shared across layers.
 **What does NOT belong:** types used by a single file (keep them inline), Prisma-generated types (`src/generated/prisma/`), config types (keep them in `config/` next to the file that uses them).
 
+**Naming conventions:**
+
+- `*Request` — body/input shapes coming from the client (e.g. `RegisterUserRequest`, `LoginUserRequest`)
+- `*Response` — HTTP response shapes that have no domain equivalent (e.g. `QuoteResponse`, `MessageResponse`). Use this when the type was created specifically to describe what an endpoint returns, not when it maps to a domain entity.
+- No suffix — domain entities returned as-is (e.g. `User`, `Session`, `Portfolio`). These exist independently of any single endpoint.
+- `*Result` — internal service outputs only, never returned directly to the client (e.g. `LoginResult` extends `Session` and adds `rawRefreshToken` for the controller to set as a cookie). Never use `Result` as a suffix for HTTP response types.
+
 ## Deferred improvements
 
 These are intentionally not installed yet — they add complexity that isn't justified at the current scale. Add them when the trigger condition is met.
