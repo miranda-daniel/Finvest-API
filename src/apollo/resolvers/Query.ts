@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql';
-import { PortfolioService } from '@services/portfolio-services';
+import { PortfolioService } from '@services/portfolio-service';
 import { ApiError } from '@config/api-error';
 import { ApolloContext } from '@graphql/context';
 

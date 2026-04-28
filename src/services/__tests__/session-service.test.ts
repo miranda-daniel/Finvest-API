@@ -1,5 +1,5 @@
-import { SessionService } from '@services/session-services';
-import { UserService } from '@services/user-services';
+import { SessionService } from '@services/session-service';
+import { UserService } from '@services/user-service';
 import { ApiError } from '@config/api-error';
 import { generateRefreshToken, hashToken } from '@helpers/token';
 import { RefreshTokenRepository } from '@repositories/refresh-token-repository';
@@ -11,7 +11,7 @@ describe('SessionService', () => {
     it('returns a jwtToken on valid credentials', async () => {
       const email = `login.valid.${Date.now()}@test.com`;
 
-      await UserService.registerUserService({
+      await UserService.register({
         firstName: 'Login',
         lastName: 'User',
         email,
@@ -27,7 +27,7 @@ describe('SessionService', () => {
     it('returns a rawRefreshToken on valid credentials', async () => {
       const email = `login.refresh.${Date.now()}@test.com`;
 
-      await UserService.registerUserService({
+      await UserService.register({
         firstName: 'Login',
         lastName: 'User',
         email,
@@ -52,7 +52,7 @@ describe('SessionService', () => {
     it('throws ApiError when the password is incorrect', async () => {
       const email = `login.wrong.${Date.now()}@test.com`;
 
-      await UserService.registerUserService({
+      await UserService.register({
         firstName: 'Wrong',
         lastName: 'Pass',
         email,
@@ -67,7 +67,7 @@ describe('SessionService', () => {
     it('returns user data alongside the token on valid credentials', async () => {
       const email = `login.userdata.${Date.now()}@test.com`;
 
-      await UserService.registerUserService({
+      await UserService.register({
         firstName: 'Data',
         lastName: 'Test',
         email,
@@ -89,7 +89,7 @@ describe('SessionService', () => {
     it('returns a new jwtToken and rawRefreshToken on valid token', async () => {
       const email = `refresh.valid.${Date.now()}@test.com`;
 
-      await UserService.registerUserService({
+      await UserService.register({
         firstName: 'Refresh',
         lastName: 'User',
         email,
@@ -114,7 +114,7 @@ describe('SessionService', () => {
     it('throws ApiError and revokes token family when token is already revoked', async () => {
       const email = `refresh.revoked.${Date.now()}@test.com`;
 
-      await UserService.registerUserService({
+      await UserService.register({
         firstName: 'Revoked',
         lastName: 'User',
         email,
@@ -133,7 +133,7 @@ describe('SessionService', () => {
     it('throws ApiError when token is expired', async () => {
       const email = `refresh.expired.${Date.now()}@test.com`;
 
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'Expired',
         lastName: 'User',
         email,
@@ -159,7 +159,7 @@ describe('SessionService', () => {
     it('revokes the refresh token on logout', async () => {
       const email = `logout.valid.${Date.now()}@test.com`;
 
-      await UserService.registerUserService({
+      await UserService.register({
         firstName: 'Logout',
         lastName: 'User',
         email,
@@ -183,7 +183,7 @@ describe('SessionService', () => {
   describe('listActiveSessions', () => {
     it('returns active sessions for a user', async () => {
       const email = `sessions.list.${Date.now()}@test.com`;
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'Sessions',
         lastName: 'Test',
         email,
@@ -205,7 +205,7 @@ describe('SessionService', () => {
 
     it('returns empty array when user has no active sessions', async () => {
       const email = `sessions.empty.${Date.now()}@test.com`;
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'NoSession',
         lastName: 'Test',
         email,
@@ -220,7 +220,7 @@ describe('SessionService', () => {
   describe('revokeAllSessions', () => {
     it('revokes all active sessions for a user', async () => {
       const email = `sessions.revoke.${Date.now()}@test.com`;
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'Revoke',
         lastName: 'All',
         email,

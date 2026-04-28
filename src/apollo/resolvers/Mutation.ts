@@ -1,6 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { OperationType } from '@generated/prisma';
-import { PortfolioService } from '@services/portfolio-services';
+import { PortfolioService } from '@services/portfolio-service';
 import { OperationService } from '@services/operation-service';
 import { ApiError } from '@config/api-error';
 import { ApolloContext } from '@graphql/context';

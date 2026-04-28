@@ -6,13 +6,13 @@ import { UserRepository } from '@repositories/user-repository';
 import { RegisterUserRequest, User, UserIndex } from '@typing/user';
 
 export const UserService = {
-  getUsersService: async (): Promise<UserIndex[]> => {
+  getUsers: async (): Promise<UserIndex[]> => {
     const users = await UserRepository.findMany();
 
     return users.map(({ firstName, lastName }) => ({ firstName, lastName }));
   },
 
-  changePasswordService: async (
+  changePassword: async (
     userId: number,
     currentPassword: string,
     newPassword: string,
@@ -31,7 +31,7 @@ export const UserService = {
     await UserRepository.updatePassword(userId, hashed);
   },
 
-  registerUserService: async (input: RegisterUserRequest): Promise<User> => {
+  register: async (input: RegisterUserRequest): Promise<User> => {
     const { firstName, lastName, email, password } = input;
 
     const hashedPassword = await hashPassword(password);

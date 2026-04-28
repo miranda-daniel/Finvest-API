@@ -1,6 +1,6 @@
-import { PortfolioService } from '@services/portfolio-services';
+import { PortfolioService } from '@services/portfolio-service';
 import { OperationService } from '@services/operation-service';
-import { UserService } from '@services/user-services';
+import { UserService } from '@services/user-service';
 import { PortfolioRepository } from '@repositories/portfolio-repository';
 import { UserRepository } from '@repositories/user-repository';
 import { hashPassword } from '@helpers/password';
@@ -18,7 +18,7 @@ const createTestUser = async () => {
 describe('PortfolioService', () => {
   describe('getPortfoliosByUserId', () => {
     it('returns an empty array when the user has no portfolios', async () => {
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'No',
         lastName: 'Portfolios',
         email: `no.portfolios.${Date.now()}@test.com`,
@@ -32,7 +32,7 @@ describe('PortfolioService', () => {
     });
 
     it('returns portfolios for the user with id, name, and createdAt', async () => {
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'With',
         lastName: 'Portfolios',
         email: `with.portfolios.${Date.now()}@test.com`,
@@ -51,7 +51,7 @@ describe('PortfolioService', () => {
     });
 
     it('returns isFavorite: true for the user favorite portfolio', async () => {
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'Fav',
         lastName: 'Portfolio',
         email: `fav.portfolio.${Date.now()}@test.com`,
@@ -67,7 +67,7 @@ describe('PortfolioService', () => {
     });
 
     it('returns isFavorite: false for non-favorite portfolios', async () => {
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'NonFav',
         lastName: 'Portfolio',
         email: `nonfav.portfolio.${Date.now()}@test.com`,
@@ -83,7 +83,7 @@ describe('PortfolioService', () => {
 
   describe('setFavoritePortfolio', () => {
     it('sets a portfolio as favorite and returns it with isFavorite: true', async () => {
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'Set',
         lastName: 'Fav',
         email: `set.fav.${Date.now()}@test.com`,
@@ -99,7 +99,7 @@ describe('PortfolioService', () => {
     });
 
     it('returns null and clears the favorite when portfolioId is null', async () => {
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'Clear',
         lastName: 'Fav',
         email: `clear.fav.${Date.now()}@test.com`,
@@ -184,7 +184,7 @@ describe('PortfolioService', () => {
 
   describe('createPortfolio', () => {
     it('creates a portfolio and returns it with isFavorite: false when not marked', async () => {
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'Create',
         lastName: 'NoFav',
         email: `create.nofav.${Date.now()}@test.com`,
@@ -200,7 +200,7 @@ describe('PortfolioService', () => {
     });
 
     it('creates a portfolio and sets it as favorite when isFavorite is true', async () => {
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'Create',
         lastName: 'Fav',
         email: `create.fav.${Date.now()}@test.com`,
@@ -221,7 +221,7 @@ describe('PortfolioService', () => {
     });
 
     it('replaces the previous favorite when creating a new one marked as favorite', async () => {
-      const user = await UserService.registerUserService({
+      const user = await UserService.register({
         firstName: 'Replace',
         lastName: 'Fav',
         email: `replace.fav.${Date.now()}@test.com`,

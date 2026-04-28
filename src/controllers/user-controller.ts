@@ -9,7 +9,7 @@ import {
   SuccessResponse,
 } from '@tsoa/runtime';
 import type { Request as ExpressRequest } from 'express';
-import { UserService } from '@services/user-services';
+import { UserService } from '@services/user-service';
 import { ChangePasswordRequest, RegisterUserRequest, User, UserIndex } from '@typing/user';
 import { TokenPayload } from '@typing/session';
 import { MessageResponse } from '@typing/common';
@@ -30,7 +30,7 @@ export class UserController extends Controller {
    */
   @Post('/')
   public async register(@Body() requestBody: RegisterUserRequest): Promise<User> {
-    return await UserService.registerUserService(requestBody);
+    return await UserService.register(requestBody);
   }
 
   /**
@@ -41,7 +41,7 @@ export class UserController extends Controller {
   @Get('/')
   @Security('jwt')
   public async getAllUsers(): Promise<UserIndex[]> {
-    return await UserService.getUsersService();
+    return await UserService.getUsers();
   }
 
   /**
@@ -56,7 +56,7 @@ export class UserController extends Controller {
     @Request() request: ExpressRequest,
   ): Promise<MessageResponse> {
     const { userId } = (request as unknown as { user: TokenPayload }).user;
-    await UserService.changePasswordService(userId, body.currentPassword, body.newPassword);
+    await UserService.changePassword(userId, body.currentPassword, body.newPassword);
     return { message: 'Password changed successfully' };
   }
 }

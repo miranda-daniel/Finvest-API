@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Route, SuccessResponse, Request } from '@tsoa/runtime';
 import type { Request as ExpressRequest } from 'express';
-import { SessionService } from '@services/session-services';
+import { SessionService } from '@services/session-service';
 import { LoginUserRequest, Session, RefreshTokenResponse } from '@typing/session';
 import { MessageResponse } from '@typing/common';
 import { REFRESH_TOKEN_COOKIE_MAX_AGE_SECONDS, buildRefreshCookie } from '@helpers/token';

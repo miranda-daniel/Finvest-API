@@ -6,7 +6,7 @@ import { OperationRepository } from '@repositories/operation-repository';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
 import { computeHoldingMetrics } from '@helpers/holdings';
-import { HoldingDTO } from '@typing/portfolio';
+import { Holding } from '@typing/portfolio';
 
 const INSTRUMENT_CLASS_MAP: Record<string, string> = {
   'Common Stock': 'Stock',
@@ -32,7 +32,7 @@ export const OperationService = {
     date: string;
     price: number;
     quantity: number;
-  }): Promise<HoldingDTO> => {
+  }): Promise<Holding> => {
     const portfolio = await PortfolioRepository.findById(params.portfolioId);
 
     if (!portfolio || portfolio.userId !== params.userId) {
