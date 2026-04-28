@@ -6,23 +6,23 @@ export interface Portfolio {
   isFavorite: boolean;
 }
 
-export interface InstrumentDTO {
+export interface Instrument {
   symbol: string;
   name: string;
   instrumentClass: string;
   country: string | null;
 }
 
-export interface HoldingDTO {
+export interface Holding {
   id: number;
-  instrument: InstrumentDTO;
+  instrument: Instrument;
   quantity: number;
   avgCost: number;
 }
 
-export interface PortfolioDetailDTO {
+export interface PortfolioDetail {
   id: number;
   name: string;
   description: string | null;
-  holdings: HoldingDTO[];
+  holdings: Holding[];
 }

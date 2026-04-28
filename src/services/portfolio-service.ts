@@ -4,7 +4,7 @@ import { UserRepository } from '@repositories/user-repository';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
 import { computeHoldingMetrics } from '@helpers/holdings';
-import { Portfolio, HoldingDTO, PortfolioDetailDTO } from '@typing/portfolio';
+import { Portfolio, Holding, PortfolioDetail } from '@typing/portfolio';
 
 export type { Portfolio };
 
@@ -56,7 +56,7 @@ export const PortfolioService = {
     };
   },
 
-  getPortfolioDetail: async (portfolioId: number, userId: number): Promise<PortfolioDetailDTO> => {
+  getPortfolioDetail: async (portfolioId: number, userId: number): Promise<PortfolioDetail> => {
     const portfolio = await PortfolioRepository.findById(portfolioId);
 
     if (!portfolio || portfolio.userId !== userId) {
@@ -65,7 +65,7 @@ export const PortfolioService = {
 
     const holdingsWithDetails = await HoldingRepository.findByPortfolioWithDetails(portfolioId);
 
-    const holdings: HoldingDTO[] = holdingsWithDetails
+    const holdings: Holding[] = holdingsWithDetails
       .map((h) => {
         const { quantity, avgCost } = computeHoldingMetrics(h.operations);
         return {
