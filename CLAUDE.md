@@ -125,6 +125,12 @@ These are intentionally not installed yet — they add complexity that isn't jus
 Architecture diagrams and flow charts are stored in `docs/architecture/`.
 When adding new diagrams, place them there.
 
+## Code Comments
+
+All code comments (inline comments, block comments, JSDoc) must be written in **English**.
+
+Never delete existing comments unless the code they describe is also being removed. If the surrounding code changes, update the comment to match — but preserve it. Only add new comments when the WHY is non-obvious.
+
 ## Git workflow
 
 Always work on a feature branch — never commit directly to `main`.
@@ -135,6 +141,8 @@ Always work on a feature branch — never commit directly to `main`.
 4. CI must pass before merging
 
 Branch naming follows the same types as commit messages: `feat/`, `fix/`, `refactor/`, `chore/`, etc.
+
+**When using subagent-driven-development or executing-plans:** Create the feature branch before dispatching any subagent. All subagent commits must land on that branch, never on `main`.
 
 ## Commit messages
 
