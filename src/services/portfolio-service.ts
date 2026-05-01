@@ -19,6 +19,10 @@ export const PortfolioService = {
       ? await PortfolioRepository.createAndSetFavorite({ name, description, userId })
       : await PortfolioRepository.create({ name, description, userId });
 
+    // Re-fetches the user to read the DB-committed favoritePortfolioId after the write.
+    // createAndSetFavorite runs two queries (create + update user) with no transaction,
+    // so deriving isFavorite from the input flag alone could be stale if the update fails.
+    // This ensures the returned value always reflects actual DB state.
     const user = await UserRepository.findById(userId);
 
     return {
