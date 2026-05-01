@@ -70,19 +70,17 @@ describe('UserRepository', () => {
 
   describe('findMany', () => {
     it('returns an array that includes the created user', async () => {
-      const email = `alice.repo.${Date.now()}@test.com`;
-
       await UserRepository.create({
         firstName: 'Alice',
-        lastName: 'A',
-        email,
+        lastName: 'Repo',
+        email: `alice.repo.${Date.now()}@test.com`,
         password: 'hash',
       });
 
       const users = await UserRepository.findMany();
 
       expect(Array.isArray(users)).toBe(true);
-      expect(users.some((u) => u.email === email)).toBe(true);
+      expect(users.some((u) => u.firstName === 'Alice' && u.lastName === 'Repo')).toBe(true);
     });
   });
 

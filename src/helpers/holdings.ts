@@ -25,5 +25,5 @@ export const computeHoldingMetrics = (operations: OperationLike[]): HoldingMetri
   const totalBuyCost = buyOps.reduce((sum, op) => sum + Number(op.price) * Number(op.quantity), 0);
   const avgCost = totalBuyQty > 0 ? totalBuyCost / totalBuyQty : 0;
 
-  return { quantity, avgCost };
+  return { quantity: Math.max(0, quantity), avgCost };
 };

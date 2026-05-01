@@ -1,5 +1,4 @@
 import { GraphQLError } from 'graphql';
-import { OperationType } from '@generated/prisma';
 import { PortfolioService } from '@services/portfolio-service';
 import { OperationService } from '@services/operation-service';
 import { ApiError } from '@config/api-error';
@@ -64,7 +63,7 @@ export const Mutation = {
     _: unknown,
     args: {
       portfolioId: number;
-      side: OperationType;
+      side: 'BUY' | 'SELL';
       symbol: string;
       name: string;
       instrumentClass: string;

@@ -1,17 +1,18 @@
 import { db } from '@config/db';
-import { RegisterUserRequest } from '@typing/user';
+
+interface CreateUserData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
 
 export const UserRepository = {
   findMany: () =>
     db.user.findMany({
       select: {
-        id: true,
-        email: true,
         firstName: true,
         lastName: true,
-        createdAt: true,
-        updatedAt: true,
-        favoritePortfolioId: true,
       },
     }),
 
@@ -22,9 +23,9 @@ export const UserRepository = {
 
   findByEmail: (email: string) => db.user.findUnique({ where: { email } }),
 
-  create: (data: RegisterUserRequest) => db.user.create({ data }),
+  create: (data: CreateUserData) => db.user.create({ data }),
 
-  update: (id: number, data: Partial<Omit<RegisterUserRequest, 'password'>>) =>
+  update: (id: number, data: Partial<Omit<CreateUserData, 'password'>>) =>
     db.user.update({ where: { id }, data }),
 
   updatePassword: (id: number, hashedPassword: string) =>
