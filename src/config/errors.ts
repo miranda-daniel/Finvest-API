@@ -53,6 +53,12 @@ export const errors = {
     errorCode: 422_000,
     description: 'TSOA Validation error',
   },
+  INSUFFICIENT_HOLDINGS: {
+    code: 'INSUFFICIENT_HOLDINGS',
+    httpCode: 422,
+    errorCode: 422_001,
+    description: 'Insufficient holdings to perform this sell',
+  },
   INTERNAL_SERVER_ERROR: {
     code: 'INTERNAL_SERVER_ERROR',
     httpCode: 500,

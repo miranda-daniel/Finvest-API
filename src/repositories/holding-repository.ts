@@ -25,4 +25,10 @@ export const HoldingRepository = {
         operations: true,
       },
     }),
+
+  findByInstrumentWithOperations: (portfolioId: number, instrumentId: number) =>
+    db.holding.findFirst({
+      where: { portfolioId, instrumentId, platformId: null },
+      include: { operations: true },
+    }),
 };

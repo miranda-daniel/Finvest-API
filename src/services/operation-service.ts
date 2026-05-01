@@ -50,6 +50,21 @@ export const OperationService = {
       instrumentClassId: instrumentClass.id,
     });
 
+    if (params.side === OperationType.SELL) {
+      const existingHolding = await HoldingRepository.findByInstrumentWithOperations(
+        params.portfolioId,
+        instrument.id,
+      );
+
+      const currentQuantity = existingHolding
+        ? computeHoldingMetrics(existingHolding.operations).quantity
+        : 0;
+
+      if (currentQuantity < params.quantity) {
+        throw new ApiError(errors.INSUFFICIENT_HOLDINGS);
+      }
+    }
+
     const holding = await HoldingRepository.findOrCreate({
       portfolioId: params.portfolioId,
       instrumentId: instrument.id,
