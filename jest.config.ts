@@ -7,6 +7,7 @@ const config: Config.InitialOptions = {
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.ts?$',
   roots: ['<rootDir>/src'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+  globalSetup: '<rootDir>/src/test/jest.globalSetup.ts',
   setupFiles: ['<rootDir>/src/test/jest.env.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test/jest.setup.ts'],
   globalTeardown: '<rootDir>/src/test/jest.teardown.ts',
