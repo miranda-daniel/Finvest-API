@@ -118,7 +118,7 @@ These are intentionally not installed yet — they add complexity that isn't jus
 |---|---|---|
 | `express-rate-limit` | Before going to production | Rate limit auth endpoints (`/session/login`, `/users`) by IP to prevent brute force. One middleware call per route — trivial to add. |
 | `@prisma/extension-accelerate` or PgBouncer | When DB connections become a bottleneck | Prisma Accelerate adds connection pooling at the edge. Only relevant under real concurrent load — irrelevant with a single user. |
-| Sentry | Before going to production | Error monitoring with stack traces, request context, and email alerts on new errors. Free tier (5k errors/month) is more than enough for personal use. Integration is ~3 lines with `@sentry/node`. |
+| Sentry Node SDK | Before going to production | Backend error monitoring. Install `@sentry/node`, initialize in `src/index.ts` before Express is set up, and add `Sentry.setupExpressErrorHandler(app)` after routes. The frontend Sentry (`@sentry/react`) is already set up — this adds the API side. |
 
 ## Diagrams
 
