@@ -41,6 +41,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Generate TSOA routes
+        run: npm run update-routes-and-swagger
+
       - name: Type check
         run: npm run typecheck
 
