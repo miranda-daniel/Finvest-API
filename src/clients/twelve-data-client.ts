@@ -107,4 +107,40 @@ export const InstrumentClient = {
 
     return price;
   },
+
+  // Returns a map of symbol → price. Symbols not found in the response are omitted.
+  // TwelveData returns { price: "123" } for a single symbol and { AAPL: { price: "..." }, ... }
+  // for multiple symbols — both cases are handled here.
+  getBatchQuotes: async (symbols: string[]): Promise<Record<string, number>> => {
+    if (symbols.length === 0) {
+      return {};
+    }
+
+    const url = new URL('https://api.twelvedata.com/price');
+    url.searchParams.set('symbol', symbols.join(','));
+    url.searchParams.set('apikey', ENV_VARIABLES.twelveDataApiKey);
+
+    const res = await fetch(url.toString());
+
+    if (!res.ok) {
+      throw new Error(`TwelveData batch price failed: ${res.status}`);
+    }
+
+    const json = (await res.json()) as unknown;
+
+    if (symbols.length === 1) {
+      const price = parseFloat((json as { price?: string }).price ?? '');
+      return isNaN(price) ? {} : { [symbols[0]]: price };
+    }
+
+    const result: Record<string, number> = {};
+    const map = json as Record<string, { price?: string }>;
+    for (const symbol of symbols) {
+      const price = parseFloat(map[symbol]?.price ?? '');
+      if (!isNaN(price)) {
+        result[symbol] = price;
+      }
+    }
+    return result;
+  },
 };

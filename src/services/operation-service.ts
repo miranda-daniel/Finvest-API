@@ -86,7 +86,7 @@ export const OperationService = {
       throw new ApiError(errors.NOT_FOUND);
     }
 
-    const { quantity, avgCost } = computeHoldingMetrics(holdingWithDetails.operations);
+    const { quantity, avgCost, realizedPnl } = computeHoldingMetrics(holdingWithDetails.operations);
 
     return {
       id: holdingWithDetails.id,
@@ -98,6 +98,7 @@ export const OperationService = {
       },
       quantity,
       avgCost,
+      realizedPnl,
     };
   },
 };

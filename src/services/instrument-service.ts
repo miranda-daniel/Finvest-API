@@ -5,4 +5,7 @@ export const InstrumentService = {
   search: (query: string): Promise<InstrumentSearchResponse[]> => InstrumentClient.search(query),
 
   getQuote: (symbol: string): Promise<number> => InstrumentClient.getQuote(symbol),
+
+  getBatchQuotes: (symbols: string[]): Promise<Record<string, number>> =>
+    InstrumentClient.getBatchQuotes(symbols),
 };

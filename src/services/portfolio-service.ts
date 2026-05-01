@@ -69,28 +69,38 @@ export const PortfolioService = {
 
     const holdingsWithDetails = await HoldingRepository.findByPortfolioWithDetails(portfolioId);
 
-    const holdings: Holding[] = holdingsWithDetails
-      .map((h) => {
-        const { quantity, avgCost } = computeHoldingMetrics(h.operations);
-        return {
-          id: h.id,
-          instrument: {
-            symbol: h.instrument.symbol,
-            name: h.instrument.name,
-            instrumentClass: h.instrument.instrumentClass.name,
-            country: h.instrument.country ?? null,
-          },
-          quantity,
-          avgCost,
-        };
-      })
-      .filter((h) => h.quantity > 0);
+    const allHoldingMetrics = holdingsWithDetails.map((h) => ({
+      h,
+      metrics: computeHoldingMetrics(h.operations),
+    }));
+
+    const holdings: Holding[] = allHoldingMetrics
+      .filter(({ metrics }) => metrics.quantity > 0)
+      .map(({ h, metrics }) => ({
+        id: h.id,
+        instrument: {
+          symbol: h.instrument.symbol,
+          name: h.instrument.name,
+          instrumentClass: h.instrument.instrumentClass.name,
+          country: h.instrument.country ?? null,
+        },
+        quantity: metrics.quantity,
+        avgCost: metrics.avgCost,
+        realizedPnl: metrics.realizedPnl,
+      }));
+
+    // Sum realized P&L across ALL holdings (including closed ones with quantity = 0).
+    const realizedPnl = allHoldingMetrics.reduce(
+      (sum, { metrics }) => sum + metrics.realizedPnl,
+      0,
+    );
 
     return {
       id: portfolio.id,
       name: portfolio.name,
       description: portfolio.description ?? null,
       holdings,
+      realizedPnl,
     };
   },
 

@@ -18,6 +18,7 @@ export interface Holding {
   instrument: Instrument;
   quantity: number;
   avgCost: number;
+  realizedPnl: number;
 }
 
 export interface PortfolioDetail {
@@ -25,4 +26,5 @@ export interface PortfolioDetail {
   name: string;
   description: string | null;
   holdings: Holding[];
+  realizedPnl: number;
 }
