@@ -143,4 +143,38 @@ export const InstrumentClient = {
     }
     return result;
   },
+
+  // Returns a map of symbol → previous close price. Same single/multi response shape as getBatchQuotes.
+  getBatchEodPrices: async (symbols: string[]): Promise<Record<string, number>> => {
+    if (symbols.length === 0) {
+      return {};
+    }
+
+    const url = new URL('https://api.twelvedata.com/eod');
+    url.searchParams.set('symbol', symbols.join(','));
+    url.searchParams.set('apikey', ENV_VARIABLES.twelveDataApiKey);
+
+    const res = await fetch(url.toString());
+
+    if (!res.ok) {
+      throw new Error(`TwelveData batch eod failed: ${res.status}`);
+    }
+
+    const json = (await res.json()) as unknown;
+
+    if (symbols.length === 1) {
+      const close = parseFloat((json as { close?: string }).close ?? '');
+      return isNaN(close) ? {} : { [symbols[0]]: close };
+    }
+
+    const result: Record<string, number> = {};
+    const map = json as Record<string, { close?: string }>;
+    for (const symbol of symbols) {
+      const close = parseFloat(map[symbol]?.close ?? '');
+      if (!isNaN(close)) {
+        result[symbol] = close;
+      }
+    }
+    return result;
+  },
 };

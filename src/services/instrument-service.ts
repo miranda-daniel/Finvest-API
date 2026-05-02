@@ -8,4 +8,7 @@ export const InstrumentService = {
 
   getBatchQuotes: (symbols: string[]): Promise<Record<string, number>> =>
     InstrumentClient.getBatchQuotes(symbols),
+
+  getBatchEodPrices: (symbols: string[]): Promise<Record<string, number>> =>
+    InstrumentClient.getBatchEodPrices(symbols),
 };
