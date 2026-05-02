@@ -191,4 +191,41 @@ export const InstrumentClient = {
     }
     return result;
   },
+
+  // Returns daily closing prices for a symbol between startDate and endDate (inclusive).
+  // Dates are "YYYY-MM-DD" strings. Returns oldest-first (TwelveData returns newest-first, reversed here).
+  getHistoricalClosePrices: async (
+    symbol: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<Array<{ date: string; close: number }>> => {
+    const url = new URL('https://api.twelvedata.com/time_series');
+    url.searchParams.set('symbol', symbol);
+    url.searchParams.set('interval', '1day');
+    url.searchParams.set('start_date', startDate);
+    url.searchParams.set('end_date', endDate);
+    url.searchParams.set('outputsize', '5000');
+    url.searchParams.set('apikey', ENV_VARIABLES.twelveDataApiKey);
+
+    const res = await fetch(url.toString());
+
+    if (!res.ok) {
+      throw new Error(`TwelveData time_series failed: ${res.status}`);
+    }
+
+    const json = (await res.json()) as unknown;
+
+    if ((json as { status?: string }).status === 'error') {
+      throw new Error(
+        `TwelveData time_series error for ${symbol}: ${(json as { message?: string }).message ?? 'unknown'}`,
+      );
+    }
+
+    const data = json as { values?: Array<{ datetime: string; close: string }> };
+
+    return (data.values ?? [])
+      .map((v) => ({ date: v.datetime.slice(0, 10), close: parseFloat(v.close) }))
+      .filter((v) => !isNaN(v.close))
+      .reverse(); // TwelveData returns newest-first; we want oldest-first
+  },
 };
