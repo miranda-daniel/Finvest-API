@@ -17,8 +17,11 @@ export const PriceSnapshotRepository = {
       orderBy: [{ date: 'asc' }, { instrumentId: 'asc' }],
     }),
 
-  upsertMany: (rows: Array<{ instrumentId: number; date: Date; closePrice: number }>) =>
-    db.$transaction(
+  upsertMany: (rows: Array<{ instrumentId: number; date: Date; closePrice: number }>) => {
+    if (rows.length === 0) {
+      return Promise.resolve([]);
+    }
+    return db.$transaction(
       rows.map((row) =>
         db.priceSnapshot.upsert({
           // eslint-disable-next-line camelcase
@@ -27,5 +30,6 @@ export const PriceSnapshotRepository = {
           create: row,
         }),
       ),
-    ),
+    );
+  },
 };

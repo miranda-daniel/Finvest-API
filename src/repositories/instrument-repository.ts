@@ -34,17 +34,4 @@ export const InstrumentRepository = {
       where: { id: { in: ids } },
       select: { id: true, symbol: true },
     }),
-
-  upsert: (data: {
-    symbol: string;
-    name: string;
-    exchange: string;
-    country: string;
-    instrumentClassId: number;
-  }) =>
-    db.instrument.upsert({
-      where: { symbol: data.symbol },
-      update: {},
-      create: data,
-    }),
 };
