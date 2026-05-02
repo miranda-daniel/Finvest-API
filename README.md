@@ -13,6 +13,7 @@ Finvest backend. REST API (TSOA + Express) with a GraphQL layer (Apollo Server) 
 | GraphQL          | Apollo Server | v5      |
 | ORM              | Prisma        | v7      |
 | Database         | PostgreSQL    | 13      |
+| Cache            | Redis         | 7       |
 | Validation       | Zod           | v4      |
 | Logging          | Winston       | v3      |
 | Testing          | Jest          | v30     |
@@ -47,7 +48,7 @@ npm run dev
 | Change Prisma schema                 | Yes                     |
 | Change `tsconfig.json` / `tsoa.json` | Yes                     |
 
-The DB becomes healthy first; the API waits and starts automatically after.
+PostgreSQL and Redis become healthy first; the API waits for both and starts automatically after.
 
 > **Docker Desktop:** use it to inspect containers and view logs, but always start the dev environment from the terminal with `npm run dev` — not from the Desktop UI. Starting from the UI skips the volume mount and nodemon, so code changes won't reload.
 

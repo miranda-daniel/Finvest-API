@@ -28,6 +28,8 @@ Browser (localhost:5100)
 - **Finvest-API** (Node.js, port 3001): Runs directly on the host machine or via
   `docker-compose.dev.yml`. Handles all business logic.
 - **PostgreSQL**: Runs via Docker (`docker-compose.dev.yml`).
+- **Redis**: Runs via Docker (`docker-compose.dev.yml`, port 6379). Used as a cache for
+  market data (live quotes and EOD prices) to avoid exceeding TwelveData API rate limits.
 
 **What Vite does in dev:** Vite is a build tool with a built-in HTTP server. In
 development it serves source files directly (no bundling step) and supports HMR —
@@ -94,4 +96,5 @@ nginx container  (port 80)
 | `/posthog/*` proxy   | Vite proxy                 | nginx proxy                 |
 | `/sentry/*` proxy    | Vite proxy                 | nginx proxy                 |
 | API process          | Host machine or Docker     | Docker container            |
+| Redis                | Docker container           | Docker container            |
 | Hot reload           | Yes (Vite HMR)             | No                          |
