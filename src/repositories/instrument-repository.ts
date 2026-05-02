@@ -22,4 +22,29 @@ export const InstrumentRepository = {
       update: {},
       create: { name },
     }),
+
+  findBySymbols: (symbols: string[]) =>
+    db.instrument.findMany({
+      where: { symbol: { in: symbols } },
+      select: { id: true, symbol: true },
+    }),
+
+  findByIds: (ids: number[]) =>
+    db.instrument.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, symbol: true },
+    }),
+
+  upsert: (data: {
+    symbol: string;
+    name: string;
+    exchange: string;
+    country: string;
+    instrumentClassId: number;
+  }) =>
+    db.instrument.upsert({
+      where: { symbol: data.symbol },
+      update: {},
+      create: data,
+    }),
 };

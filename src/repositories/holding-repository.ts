@@ -31,4 +31,12 @@ export const HoldingRepository = {
       where: { portfolioId, instrumentId, platformId: null },
       include: { operations: true },
     }),
+
+  findDistinctInstrumentIds: async (): Promise<number[]> => {
+    const rows = await db.holding.findMany({
+      distinct: ['instrumentId'],
+      select: { instrumentId: true },
+    });
+    return rows.map((r) => r.instrumentId);
+  },
 };
