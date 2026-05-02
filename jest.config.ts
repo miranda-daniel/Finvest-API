@@ -25,6 +25,7 @@ const config: Config.InitialOptions = {
     '^@root/(.*)$': '<rootDir>/$1',
     '^@generated/(.*)$': '<rootDir>/src/generated/$1',
     '^@clients/(.*)$': '<rootDir>/src/clients/$1',
+    '^@cache/(.*)$': '<rootDir>/src/cache/$1',
   },
 
   collectCoverage: true,

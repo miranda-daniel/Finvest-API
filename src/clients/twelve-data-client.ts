@@ -128,6 +128,13 @@ export const InstrumentClient = {
 
     const json = (await res.json()) as unknown;
 
+    // TwelveData returns errors as HTTP 200 with { status: "error", ... } in the body
+    if ((json as { status?: string }).status === 'error') {
+      throw new Error(
+        `TwelveData batch quotes error: ${(json as { message?: string }).message ?? 'unknown'}`,
+      );
+    }
+
     if (symbols.length === 1) {
       const price = parseFloat((json as { price?: string }).price ?? '');
       return isNaN(price) ? {} : { [symbols[0]]: price };
@@ -161,6 +168,13 @@ export const InstrumentClient = {
     }
 
     const json = (await res.json()) as unknown;
+
+    // TwelveData returns errors as HTTP 200 with { status: "error", ... } in the body
+    if ((json as { status?: string }).status === 'error') {
+      throw new Error(
+        `TwelveData batch eod error: ${(json as { message?: string }).message ?? 'unknown'}`,
+      );
+    }
 
     if (symbols.length === 1) {
       const close = parseFloat((json as { close?: string }).close ?? '');
