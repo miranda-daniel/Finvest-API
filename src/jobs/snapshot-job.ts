@@ -1,5 +1,4 @@
 import cron from 'node-cron';
-import { db } from '@config/db';
 import logger from '@config/logger';
 import { InstrumentClient } from '@clients/twelve-data-client';
 import { PriceSnapshotRepository } from '@repositories/price-snapshot-repository';
@@ -7,6 +6,7 @@ import { HoldingRepository } from '@repositories/holding-repository';
 import { InstrumentRepository } from '@repositories/instrument-repository';
 
 const BENCHMARK_SYMBOLS = ['SPX', 'NDX'] as const;
+const BENCHMARK_SYMBOL_SET = new Set<string>(BENCHMARK_SYMBOLS);
 const DELAY_MS = 200;
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -25,15 +25,6 @@ const oneYearAgo = (): Date => {
   d.setUTCFullYear(d.getUTCFullYear() - 1);
   d.setUTCHours(0, 0, 0, 0);
   return d;
-};
-
-const ensureIndexClass = async (): Promise<number> => {
-  const cls = await db.instrumentClass.upsert({
-    where: { name: 'Index' },
-    update: {},
-    create: { name: 'Index' },
-  });
-  return cls.id;
 };
 
 const ensureBenchmarks = async (indexClassId: number): Promise<number[]> => {
@@ -56,27 +47,11 @@ const ensureBenchmarks = async (indexClassId: number): Promise<number[]> => {
   return benchmarks.map((b) => b.id);
 };
 
-const getEarliestOperationDateForInstrument = async (
-  instrumentId: number,
-): Promise<Date | null> => {
-  const earliest = await db.operation.findFirst({
-    where: { holding: { instrumentId } },
-    orderBy: { date: 'asc' },
-    select: { date: true },
-  });
-  if (!earliest) {
-    return null;
-  }
-  const d = new Date(earliest.date);
-  d.setUTCHours(0, 0, 0, 0);
-  return d;
-};
-
 const processInstrument = async (
   instrumentId: number,
   symbol: string,
   isBenchmark: boolean,
-): Promise<void> => {
+): Promise<boolean> => {
   const latest = await PriceSnapshotRepository.findLatestDateByInstrumentId(instrumentId);
 
   let startDate: Date;
@@ -86,13 +61,15 @@ const processInstrument = async (
   } else if (isBenchmark) {
     startDate = oneYearAgo();
   } else {
-    startDate = (await getEarliestOperationDateForInstrument(instrumentId)) ?? oneYearAgo();
+    startDate =
+      (await HoldingRepository.findEarliestOperationDateByInstrumentId(instrumentId)) ??
+      oneYearAgo();
   }
 
   const end = yesterday();
 
   if (startDate > end) {
-    return; // already up to date
+    return false; // already up to date, no API call
   }
 
   const closes = await InstrumentClient.getHistoricalClosePrices(
@@ -102,7 +79,7 @@ const processInstrument = async (
   );
 
   if (closes.length === 0) {
-    return;
+    return false;
   }
 
   await PriceSnapshotRepository.upsertMany(
@@ -114,13 +91,15 @@ const processInstrument = async (
   );
 
   logger.info(`[snapshot-job] ${symbol}: saved ${closes.length} snapshots`);
+  return true; // API call was made
 };
 
 export const runSnapshotJob = async (): Promise<void> => {
   logger.info('[snapshot-job] starting');
 
   try {
-    const indexClassId = await ensureIndexClass();
+    const indexClass = await InstrumentRepository.findOrCreateClass('Index');
+    const indexClassId = indexClass.id;
     const benchmarkIds = await ensureBenchmarks(indexClassId);
 
     const holdingInstrumentIds = await HoldingRepository.findDistinctInstrumentIds();
@@ -128,14 +107,19 @@ export const runSnapshotJob = async (): Promise<void> => {
 
     const instruments = await InstrumentRepository.findByIds(allIds);
 
-    for (const instrument of instruments) {
-      const isBenchmark = (BENCHMARK_SYMBOLS as readonly string[]).includes(instrument.symbol);
+    for (let i = 0; i < instruments.length; i++) {
+      const instrument = instruments[i];
+      const isBenchmark = BENCHMARK_SYMBOL_SET.has(instrument.symbol);
+      let calledApi = false;
       try {
-        await processInstrument(instrument.id, instrument.symbol, isBenchmark);
+        calledApi = await processInstrument(instrument.id, instrument.symbol, isBenchmark);
       } catch (err) {
         logger.error(`[snapshot-job] failed for ${instrument.symbol}:`, err);
+        calledApi = true; // treat error as if a call was attempted
       }
-      await sleep(DELAY_MS);
+      if (calledApi && i < instruments.length - 1) {
+        await sleep(DELAY_MS);
+      }
     }
 
     logger.info('[snapshot-job] complete');

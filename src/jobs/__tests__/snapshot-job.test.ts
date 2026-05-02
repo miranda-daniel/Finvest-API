@@ -29,31 +29,52 @@ describe('runSnapshotJob', () => {
         instrumentClassId: cls.id,
       },
     });
-    const portfolio = await db.portfolio.create({
-      data: {
-        name: 'Test Portfolio',
-        user: {
-          create: {
-            email: 'snapshot-job-test@test.com',
-            password: 'hash',
-            firstName: 'T',
-            lastName: 'T',
-          },
+
+    const user = await db.user.upsert({
+      where: { email: 'snapshot-job-test@test.com' },
+      update: {},
+      create: {
+        email: 'snapshot-job-test@test.com',
+        password: 'hash',
+        firstName: 'T',
+        lastName: 'T',
+      },
+    });
+
+    let portfolio = await db.portfolio.findFirst({
+      where: { name: 'Test Portfolio', userId: user.id },
+    });
+    if (!portfolio) {
+      portfolio = await db.portfolio.create({
+        data: { name: 'Test Portfolio', userId: user.id },
+      });
+    }
+
+    let holding = await db.holding.findFirst({
+      where: { portfolioId: portfolio.id, instrumentId: instrument.id },
+    });
+    if (!holding) {
+      holding = await db.holding.create({
+        data: { portfolioId: portfolio.id, instrumentId: instrument.id },
+      });
+    }
+
+    const existingOp = await db.operation.findFirst({ where: { holdingId: holding.id } });
+    if (!existingOp) {
+      await db.operation.create({
+        data: {
+          holdingId: holding.id,
+          type: 'BUY',
+          quantity: 5,
+          price: 100,
+          date: new Date('2026-01-15T14:30:00Z'),
         },
-      },
-    });
-    const holding = await db.holding.create({
-      data: { portfolioId: portfolio.id, instrumentId: instrument.id },
-    });
-    await db.operation.create({
-      data: {
-        holdingId: holding.id,
-        type: 'BUY',
-        quantity: 5,
-        price: 100,
-        date: new Date('2026-01-15T14:30:00Z'),
-      },
-    });
+      });
+    }
+  });
+
+  beforeEach(() => {
+    mockGetHistorical.mockReset();
   });
 
   afterAll(async () => {
