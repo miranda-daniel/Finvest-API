@@ -120,7 +120,6 @@ describe('runSnapshotJob', () => {
       create: { instrumentId: instrument!.id, date: yesterday, closePrice: 200 },
     });
 
-    mockGetHistorical.mockClear();
     await runSnapshotJob();
 
     const calledSymbols = mockGetHistorical.mock.calls.map((c: unknown[]) => c[0]);
