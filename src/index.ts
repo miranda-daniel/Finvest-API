@@ -7,6 +7,7 @@ import { ENV_VARIABLES } from '@config/config';
 import { postRoutesMiddleware, preRoutesMiddleware } from '@middlewares/index-middlewares';
 import { errors } from '@config/errors';
 import { createApolloServer, buildApolloContext, ApolloContext } from '@graphql/apolloServer';
+import { startSnapshotCron } from './jobs/snapshot-job';
 
 const app: Application = express();
 
@@ -45,6 +46,9 @@ startApolloServer()
       logger.warn(`Route Not Found: ${req.path}`);
       res.status(errors.NOT_FOUND.httpCode).json(errors.NOT_FOUND);
     });
+
+    // Start daily price snapshot job (runs backfill immediately, then at 23:00 UTC)
+    startSnapshotCron();
 
     app.listen(ENV_VARIABLES.port, () => {
       logger.info(`Listening on port ${ENV_VARIABLES.port}`);
