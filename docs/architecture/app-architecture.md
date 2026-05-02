@@ -89,6 +89,7 @@
 | **Services**     | `src/services/`         | Business logic. Shared between controllers and resolvers. Never imports `db` directly. |
 | **Repositories** | `src/repositories/`     | Only layer that imports `db`. All Prisma queries live here. No business logic.         |
 | **Clients**      | `src/clients/`          | External HTTP integrations (e.g. stock quote APIs).                                    |
+| **Cache**        | `src/cache/`            | Redis client singleton. Used by services to cache external API responses.              |
 
 ---
 
@@ -152,6 +153,7 @@ POST /session/logout        → revoke refresh token in DB, clear cookie
 | File                                           | Purpose                                                  |
 | ---------------------------------------------- | -------------------------------------------------------- |
 | `src/index.ts`                                 | Entry point. Express + Apollo setup and startup.         |
+| `src/cache/redis.ts`                           | ioredis client singleton. Used by services to cache market data.         |
 | `src/config/db.ts`                             | Prisma client singleton.                                 |
 | `src/config/config.ts`                         | Environment variables (PORT, JWT secret, etc).           |
 | `src/config/environments.ts`                   | `isDevelopment()`, `isProduction()`, `isTest()` helpers. |

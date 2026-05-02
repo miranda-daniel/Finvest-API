@@ -117,6 +117,7 @@ These are intentionally not installed yet — they add complexity that isn't jus
 | What | When to add | Notes |
 |---|---|---|
 | `express-rate-limit` | Before going to production | Rate limit auth endpoints (`/session/login`, `/users`) by IP to prevent brute force. One middleware call per route — trivial to add. |
+| AWS ElastiCache (Redis) | When scaling beyond a single server | Currently Redis runs as a container in `docker-compose.yml`. Replace it with ElastiCache when high availability or multi-instance deployments are needed. The API connects via `REDIS_URL` — swapping the URL is the only change required. |
 | `@prisma/extension-accelerate` or PgBouncer | When DB connections become a bottleneck | Prisma Accelerate adds connection pooling at the edge. Only relevant under real concurrent load — irrelevant with a single user. |
 | Sentry Node SDK | Before going to production | Backend error monitoring. Install `@sentry/node`, initialize in `src/index.ts` before Express is set up, and add `Sentry.setupExpressErrorHandler(app)` after routes. The frontend Sentry (`@sentry/react`) is already set up — this adds the API side. |
 

@@ -1,5 +1,5 @@
 import { Controller, Get, Query, Route, Security, Path } from '@tsoa/runtime';
-import { InstrumentSearchResponse, QuoteResponse } from '@typing/instrument';
+import { InstrumentSearchResponse, QuoteResponse, BatchQuotesResponse } from '@typing/instrument';
 import { InstrumentService } from '@services/instrument-service';
 import { ApiError } from '@config/api-error';
 import { errors } from '@config/errors';
@@ -29,5 +29,45 @@ export class InstrumentController extends Controller {
   public async getQuote(@Path() symbol: string): Promise<QuoteResponse> {
     const price = await InstrumentService.getQuote(symbol);
     return { symbol, price };
+  }
+
+  /**
+   * Get current market prices for multiple symbols in a single request via TwelveData.
+   * Returns a map of symbol → price. Symbols not found are omitted from the response.
+   * @summary Get batch quotes
+   */
+  @Security('jwt')
+  @Get('/quotes')
+  public async getBatchQuotes(@Query() symbols: string): Promise<BatchQuotesResponse> {
+    const list = symbols
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    if (list.length === 0) {
+      throw new ApiError(errors.VALIDATION_ERROR);
+    }
+
+    return InstrumentService.getBatchQuotes(list);
+  }
+
+  /**
+   * Get previous close prices for multiple symbols in a single request via TwelveData.
+   * Returns a map of symbol → previous close price. Symbols not found are omitted.
+   * @summary Get batch EOD prices
+   */
+  @Security('jwt')
+  @Get('/eod')
+  public async getBatchEodPrices(@Query() symbols: string): Promise<BatchQuotesResponse> {
+    const list = symbols
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    if (list.length === 0) {
+      throw new ApiError(errors.VALIDATION_ERROR);
+    }
+
+    return InstrumentService.getBatchEodPrices(list);
   }
 }

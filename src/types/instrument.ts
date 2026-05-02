@@ -10,3 +10,6 @@ export interface QuoteResponse {
   symbol: string;
   price: number;
 }
+
+// Map of symbol → current price for all requested symbols that were found.
+export type BatchQuotesResponse = Record<string, number>;

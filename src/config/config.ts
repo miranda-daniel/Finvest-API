@@ -11,6 +11,7 @@ export interface EnvVariables {
   jwtExpiresIn: StringValue;
   twelveDataApiKey: string;
   frontendUrl: string;
+  redisUrl: string;
 }
 
 const envVariablesSchema = z.object({
@@ -20,6 +21,7 @@ const envVariablesSchema = z.object({
   JWT_EXPIRES_IN: z.string().default('1h'),
   TWELVEDATA_API_KEY: z.string(),
   FRONTEND_URL: z.string().default('http://localhost:5173'),
+  REDIS_URL: z.string().default('redis://localhost:6379'),
 });
 
 const envVars = envVariablesSchema.parse(process.env);
@@ -31,4 +33,5 @@ export const ENV_VARIABLES: EnvVariables = {
   jwtExpiresIn: envVars.JWT_EXPIRES_IN as StringValue,
   twelveDataApiKey: envVars.TWELVEDATA_API_KEY,
   frontendUrl: envVars.FRONTEND_URL,
+  redisUrl: envVars.REDIS_URL,
 };

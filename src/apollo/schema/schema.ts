@@ -19,6 +19,7 @@ export const typeDefs = `#graphql
     instrument: Instrument!
     quantity: Float!
     avgCost: Float!
+    realizedPnl: Float!
   }
 
   type PortfolioDetail {
@@ -26,6 +27,7 @@ export const typeDefs = `#graphql
     name: String!
     description: String
     holdings: [Holding!]!
+    realizedPnl: Float!
   }
 
   enum OperationSide {
