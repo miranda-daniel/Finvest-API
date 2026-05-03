@@ -62,6 +62,7 @@ model Instrument {
   name              String
   exchange          String?          // Exchange where it trades (e.g. "NYSE", "NASDAQ")
   country           String?          // Country of origin (ISO 3166-1 alpha-2, e.g. "US", "CN")
+  isBenchmark       Boolean          @default(false)  // True for market benchmark proxies (e.g. SPY, QQQ) — not user holdings
   instrumentClassId Int
   instrumentClass   InstrumentClass  @relation(fields: [instrumentClassId], references: [id], onDelete: Restrict)
   holdings          Holding[]

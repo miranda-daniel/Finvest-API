@@ -21,7 +21,7 @@ export interface PortfolioPerformancePoint {
   ndxReturnPct: number;
 }
 
-// Symbols can be overridden in tests to use fixture instruments instead of real SPX/NDX
+// Symbols can be overridden in tests to use fixture instruments instead of real SPY/QQQ
 interface BenchmarkSymbols {
   spxSymbol?: string;
   ndxSymbol?: string;
@@ -94,8 +94,8 @@ export const PortfolioPerformanceService = {
       throw new ApiError(errors.NOT_FOUND);
     }
 
-    const spxSymbol = benchmarks.spxSymbol ?? 'SPX';
-    const ndxSymbol = benchmarks.ndxSymbol ?? 'NDX';
+    const spxSymbol = benchmarks.spxSymbol ?? 'SPY';
+    const ndxSymbol = benchmarks.ndxSymbol ?? 'QQQ';
 
     const holdingsWithDetails = await HoldingRepository.findByPortfolioWithDetails(portfolioId);
     if (holdingsWithDetails.length === 0) {
@@ -181,16 +181,21 @@ export const PortfolioPerformanceService = {
       return [];
     }
 
-    const basePortfolio = points[0].portfolioValue;
-    const baseSpx = points[0].spxClose;
-    const baseNdx = points[0].ndxClose;
+    // Use the first point where each series has a non-zero value as its base.
+    // This handles ranges (e.g. YTD) where benchmark snapshots exist before the
+    // first portfolio snapshot, which would produce a zero base and flat 0% line.
+    const basePortfolio = points.find((p) => p.portfolioValue > 0)?.portfolioValue ?? 0;
+    const baseSpx = points.find((p) => p.spxClose > 0)?.spxClose ?? 0;
+    const baseNdx = points.find((p) => p.ndxClose > 0)?.ndxClose ?? 0;
 
-    return points.map((p) => ({
-      date: p.date,
-      portfolioValue: p.portfolioValue,
-      portfolioReturnPct: normalizeReturnPct(p.portfolioValue, basePortfolio),
-      spxReturnPct: normalizeReturnPct(p.spxClose, baseSpx),
-      ndxReturnPct: normalizeReturnPct(p.ndxClose, baseNdx),
-    }));
+    return points
+      .filter((p) => p.portfolioValue > 0)
+      .map((p) => ({
+        date: p.date,
+        portfolioValue: p.portfolioValue,
+        portfolioReturnPct: normalizeReturnPct(p.portfolioValue, basePortfolio),
+        spxReturnPct: normalizeReturnPct(p.spxClose, baseSpx),
+        ndxReturnPct: normalizeReturnPct(p.ndxClose, baseNdx),
+      }));
   },
 };

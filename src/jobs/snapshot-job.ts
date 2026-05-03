@@ -5,7 +5,13 @@ import { PriceSnapshotRepository } from '@repositories/price-snapshot-repository
 import { HoldingRepository } from '@repositories/holding-repository';
 import { InstrumentRepository } from '@repositories/instrument-repository';
 
-const BENCHMARK_SYMBOLS = ['SPX', 'NDX'] as const;
+// SPY (S&P 500 ETF) and QQQ (Nasdaq 100 ETF) are used as benchmark proxies instead of
+// the SPX and NDX indices because TwelveData only exposes index symbols (SPX, NDX) on
+// paid plans (Pro / Grow tier and above). SPY and QQQ track their respective indices
+// very closely and are available on the free tier as regular equity symbols.
+// If the plan is upgraded, swap these back to 'SPX' and 'NDX' and update
+// portfolio-performance-service.ts and PortfolioPerformanceChart.tsx to match.
+const BENCHMARK_SYMBOLS = ['SPY', 'QQQ'] as const;
 const BENCHMARK_SYMBOL_SET = new Set<string>(BENCHMARK_SYMBOLS);
 const DELAY_MS = 200;
 
@@ -30,17 +36,19 @@ const oneYearAgo = (): Date => {
 const ensureBenchmarks = async (indexClassId: number): Promise<number[]> => {
   const benchmarks = await Promise.all([
     InstrumentRepository.findOrCreate({
-      symbol: 'SPX',
-      name: 'S&P 500 Index',
+      symbol: 'SPY',
+      name: 'SPDR S&P 500 ETF',
       exchange: 'NYSE',
       country: 'US',
+      isBenchmark: true,
       instrumentClassId: indexClassId,
     }),
     InstrumentRepository.findOrCreate({
-      symbol: 'NDX',
-      name: 'Nasdaq 100 Index',
+      symbol: 'QQQ',
+      name: 'Invesco QQQ ETF',
       exchange: 'NASDAQ',
       country: 'US',
+      isBenchmark: true,
       instrumentClassId: indexClassId,
     }),
   ]);

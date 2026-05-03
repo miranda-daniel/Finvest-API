@@ -8,6 +8,7 @@ export const InstrumentRepository = {
     name: string;
     exchange: string;
     country?: string;
+    isBenchmark?: boolean;
     instrumentClassId: number;
   }) =>
     db.instrument.upsert({
