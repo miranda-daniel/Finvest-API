@@ -35,11 +35,29 @@ export const typeDefs = `#graphql
     SELL
   }
 
+  enum PortfolioRange {
+    ONE_MONTH
+    THREE_MONTHS
+    YEAR_TO_DATE
+    ONE_YEAR
+    ALL
+  }
+
+  type PortfolioPerformancePoint {
+    date: String!
+    portfolioValue: Float!
+    portfolioReturnPct: Float!
+    spxReturnPct: Float!
+    ndxReturnPct: Float!
+  }
+
   type Query {
     # Returns the portfolios owned by the authenticated user.
     portfolios: [Portfolio!]!
     # Returns detail (holdings) for a single portfolio owned by the authenticated user.
     portfolioDetail(id: Int!): PortfolioDetail
+    # Returns daily portfolio value and % returns vs SPX and NDX for the given range.
+    portfolioPerformance(portfolioId: Int!, range: PortfolioRange!): [PortfolioPerformancePoint!]!
   }
 
   type Mutation {
