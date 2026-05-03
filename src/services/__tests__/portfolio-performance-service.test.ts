@@ -156,15 +156,14 @@ describe('PortfolioPerformanceService.getPerformance', () => {
     ).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 
-  it('returns empty array when no snapshots exist for range', async () => {
+  it('returns only available snapshot points when range is wider than history', async () => {
     const result = await PortfolioPerformanceService.getPerformance(
       portfolioId,
       userId,
       'ONE_YEAR',
       { spxSymbol: '__PERF_SPX__', ndxSymbol: '__PERF_NDX__' },
     );
-    // Snapshots only exist for 2026-01-01 to 2026-01-03; ONE_YEAR goes back ~365 days
-    // Only 3 points should be returned
+    // Fixture has 3 snapshots; ONE_YEAR is a wider window but only 3 data points exist
     expect(result.length).toBe(3);
   });
 });
