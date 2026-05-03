@@ -8,6 +8,7 @@ export const InstrumentRepository = {
     name: string;
     exchange: string;
     country?: string;
+    isBenchmark?: boolean;
     instrumentClassId: number;
   }) =>
     db.instrument.upsert({
@@ -21,5 +22,17 @@ export const InstrumentRepository = {
       where: { name },
       update: {},
       create: { name },
+    }),
+
+  findBySymbols: (symbols: string[]) =>
+    db.instrument.findMany({
+      where: { symbol: { in: symbols } },
+      select: { id: true, symbol: true },
+    }),
+
+  findByIds: (ids: number[]) =>
+    db.instrument.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, symbol: true },
     }),
 };

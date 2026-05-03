@@ -31,4 +31,26 @@ export const HoldingRepository = {
       where: { portfolioId, instrumentId, platformId: null },
       include: { operations: true },
     }),
+
+  findDistinctInstrumentIds: async (): Promise<number[]> => {
+    const rows = await db.holding.findMany({
+      distinct: ['instrumentId'],
+      select: { instrumentId: true },
+    });
+    return rows.map((r) => r.instrumentId);
+  },
+
+  findEarliestOperationDateByInstrumentId: async (instrumentId: number): Promise<Date | null> => {
+    const earliest = await db.operation.findFirst({
+      where: { holding: { instrumentId } },
+      orderBy: { date: 'asc' },
+      select: { date: true },
+    });
+    if (!earliest) {
+      return null;
+    }
+    const d = new Date(earliest.date);
+    d.setUTCHours(0, 0, 0, 0);
+    return d;
+  },
 };
