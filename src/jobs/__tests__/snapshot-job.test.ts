@@ -101,8 +101,8 @@ describe('runSnapshotJob', () => {
     // Should have been called for __SNAP_JOB_TEST__, SPX, NDX
     const calledSymbols = mockGetHistorical.mock.calls.map((c: unknown[]) => c[0]);
     expect(calledSymbols).toContain('__SNAP_JOB_TEST__');
-    expect(calledSymbols).toContain('SPX');
-    expect(calledSymbols).toContain('NDX');
+    expect(calledSymbols).toContain('SPY');
+    expect(calledSymbols).toContain('QQQ');
   });
 
   it('skips an instrument already up to date (no calls after yesterday)', async () => {
