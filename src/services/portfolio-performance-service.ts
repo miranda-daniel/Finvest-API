@@ -110,6 +110,7 @@ export const PortfolioPerformanceService = {
         : null;
 
     const startDate = resolveStartDate(range, earliestOperationDate);
+    startDate.setUTCHours(0, 0, 0, 0);
     const endDate = new Date();
     endDate.setUTCHours(0, 0, 0, 0);
 
